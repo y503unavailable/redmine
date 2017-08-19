@@ -312,7 +312,7 @@ module IssuesHelper
 
   def email_issue_attributes(issue, user)
     items = []
-    %w(author status priority assigned_to category fixed_version).each do |attribute|
+    %w(author status priority assigned_to category fixed_version start_date due_date).each do |attribute|
       unless issue.disabled_core_fields.include?(attribute+"_id")
         items << "#{l("field_#{attribute}")}: #{issue.send attribute}"
       end
