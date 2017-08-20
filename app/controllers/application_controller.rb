@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
 
     req_param = params.map {|key,value| "#{key} => #{value}"}.join(",")
     message = "#{User.current.login}: #{req_param}"
-    log = Logger.new(File.join(RAILS_ROOT, "/log/access.log"), "daily")
+    log = Logger.new(File.join(Rails.root, "/log/access.log"), "daily")
     log.formatter = Logger::Formatter.new
     log.info(message)
     log.close
