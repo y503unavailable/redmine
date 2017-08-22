@@ -6,8 +6,7 @@ More details can be found in the doc directory or on the official website http:/
 
 = 標準からの変更点
 
-[姫路IT系勉強会](http://histudy.doorkeeper.jp/)
-
+[
  [232](https://redmine.tokyo/issues/232) 
 
 |Unofficial |Redmine本家/引用元 |概要 |
