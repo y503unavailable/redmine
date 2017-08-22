@@ -3,3 +3,22 @@
 Redmine is a flexible project management web application written using Ruby on Rails framework.
 
 More details can be found in the doc directory or on the official website http://www.redmine.org
+
+= 標準からの変更点
+
+[姫路IT系勉強会](http://histudy.doorkeeper.jp/)
+
+ [232](https://redmine.tokyo/issues/232) 
+
+|Unofficial |Redmine本家/引用元 |概要 |
+|------|:-----|------------------------------|
+| [232](https://redmine.tokyo/issues/232) | [引用元](https://groups.google.com/forum/#!topic/redmine-users-ja/T1b7j4UM1XA) | アクセスログ機能|
+|----------|--------------------------|----------|
+
+[google]: http://google.com/        "Google"
+
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
