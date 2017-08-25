@@ -6,7 +6,7 @@ More details can be found in the doc directory or on the official website http:/
 
 = 標準からの変更点
 
-3.3.4-unofficialcooking(2017/08/17--)
+= 3.3.4-unofficialcooking(2017/08/17--)
 
 ---
 
