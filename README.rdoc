@@ -6,18 +6,60 @@ More details can be found in the doc directory or on the official website http:/
 
 = 標準からの変更点
 
-[
- [232](https://redmine.tokyo/issues/232) 
+3.3.4-unofficialcooking(2017/08/17--)
 
-|Unofficial |Redmine本家/引用元 |概要 |
-|------|:-----|------------------------------|
-| [232](https://redmine.tokyo/issues/232) | [引用元](https://groups.google.com/forum/#!topic/redmine-users-ja/T1b7j4UM1XA) | アクセスログ機能|
-|----------|--------------------------|----------|
+---
 
-[google]: http://google.com/        "Google"
+Redmine access logging
+
+https://redmine.tokyo/issues/232
+https://github.com/y503unavailable/redmine/issues/1
+
+original https://groups.google.com/forum/#!topic/redmine-users-ja/T1b7j4UM1XA
+
+commit af0bd41d96fd7d6b99740f97d2c0012a39d46cc1
+commit 534cfbb23f2b3cf153100d7cab8111a238719c94
+
+---
+
+display updated_time on forum message list
+
+https://redmine.tokyo/issues/701
+
+---
+
+backport to Redmine3.3 from Redmine3.4.0
+
+Browser js/css cache remains after upgrade
+
+Restore timestamp in asset paths (#24617).
+
+http://www.redmine.org/issues/24617
+https://redmine.tokyo/issues/301
+
+commit 5f02c6696f6b35a8d3f7033360a5c3b435f88073
+
+---
+
+display due_date and start_date in issue notification mail
+
+https://redmine.tokyo/issues/319
+
+original http://www.redmine.org/issues/13307#3
+
+commit c92fc73758d25d8512d8f890c7bac7f37c065ea2
+
+---
+
+backport to Redmine3.3 from Redmine3.4.0 (#23610)
+
+Reset status when copying issues
+
+http://www.redmine.org/issues/23610
+
+commit e7c6f900a2ed3e79df1228452d91bde19db2d883
+
+---
 
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
+
