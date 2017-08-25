@@ -18,6 +18,7 @@ https://github.com/y503unavailable/redmine/issues/1
 original https://groups.google.com/forum/#!topic/redmine-users-ja/T1b7j4UM1XA
 
 commit af0bd41d96fd7d6b99740f97d2c0012a39d46cc1
+
 commit 534cfbb23f2b3cf153100d7cab8111a238719c94
 
 ---
@@ -25,6 +26,8 @@ commit 534cfbb23f2b3cf153100d7cab8111a238719c94
 display updated_time on forum message list
 
 https://redmine.tokyo/issues/701
+
+commit 86a2265e9805c3cd0583dc899ac06c20e93333f5
 
 ---
 
