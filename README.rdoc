@@ -10,7 +10,7 @@ More details can be found in the doc directory or on the official website http:/
 
 ---
 
-Redmine access logging
+= Redmine access logging
 
 https://redmine.tokyo/issues/232
 https://github.com/y503unavailable/redmine/issues/1
@@ -23,7 +23,7 @@ commit 534cfbb23f2b3cf153100d7cab8111a238719c94
 
 ---
 
-display updated_time on forum message list
+= display updated_time on forum message list
 
 https://redmine.tokyo/issues/701
 
@@ -31,11 +31,9 @@ commit 86a2265e9805c3cd0583dc899ac06c20e93333f5
 
 ---
 
-backport to Redmine3.3 from Redmine3.4.0
+= Browser js/css cache remains after upgrade ( #24617 backport from 3.4.0)
 
-Browser js/css cache remains after upgrade
-
-Restore timestamp in asset paths (#24617).
+Restore timestamp in asset paths
 
 http://www.redmine.org/issues/24617
 https://redmine.tokyo/issues/301
@@ -44,7 +42,7 @@ commit 5f02c6696f6b35a8d3f7033360a5c3b435f88073
 
 ---
 
-display due_date and start_date in issue notification mail
+= display due_date and start_date in issue notification mail
 
 https://redmine.tokyo/issues/319
 
@@ -54,9 +52,7 @@ commit c92fc73758d25d8512d8f890c7bac7f37c065ea2
 
 ---
 
-backport to Redmine3.3 from Redmine3.4.0 (#23610)
-
-Reset status when copying issues
+= Reset status when copying issues ( #23610 backport from 3.4.0)
 
 http://www.redmine.org/issues/23610
 
