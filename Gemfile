@@ -6,6 +6,9 @@ end
 
 gem "rails", "4.2.8"
 gem "addressable", "2.4.0" if RUBY_VERSION < "2.0"
+if RUBY_VERSION < "2.1"
+  gem "public_suffix", (RUBY_VERSION < "2.0" ? "~> 1.4" : "~> 2.0.5")
+end
 gem "jquery-rails", "~> 3.1.4"
 gem "coderay", "~> 1.1.1"
 gem "request_store", "1.0.5"
@@ -25,7 +28,7 @@ gem "rails-html-sanitizer", ">= 1.0.3"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
-gem "rbpdf", "~> 1.19.2"
+gem "rbpdf", "~> 1.19.3"
 
 # Optional gem for LDAP authentication
 group :ldap do
