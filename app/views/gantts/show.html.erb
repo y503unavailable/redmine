@@ -49,6 +49,15 @@
             </label>
           </fieldset>
         </td>
+        <td>
+          <fieldset>
+            <legend><%= l(:field_assigned_to) %></legend>
+            <label for="draw_assigned_to_names">
+              <%= check_box 'query', 'draw_assigned_to_names', :id => 'draw_assigned_to_names' %>
+              <%= l(:label_display) %>
+            </label>
+          </fieldset>
+        </td>
       </tr>
     </table>
   </div>
@@ -86,6 +95,7 @@
 
   subject_width = 330
   header_height = 18
+  assigned_to_width = 100
 
   headers_height = header_height
   show_weeks = false
@@ -119,7 +129,7 @@
   <p class="warning"><%= l(:notice_gantt_chart_truncated, :max => @gantt.max_rows) %></p>
 <% end %>
 
-<table style="width:100%; border:0; border-collapse: collapse;">
+<table style="width:100%; border:0; border-collapse: collapse;", class="gantt_container">
 <tr>
 <td style="width:<%= subject_width %>px; padding:0px;" class="gantt_subjects_column">
   <%
@@ -149,7 +159,34 @@
     <% end %>
   <% end %>
 </td>
-
+<td style="width:<%= assigned_to_width %>px; padding:0px; display:none;" class="gantt_assigned_to_names_column">
+  <%
+    style  = ""
+    style += "position:relative;"
+    style += "height: #{t_height + 24}px;"
+    style += "width: #{assigned_to_width + 1}px;"
+  %>
+  <%= content_tag(:div, :style => style, :class => "gantt_assigned_to_names_container") do %>
+    <%
+      style  = ""
+      style += "width: #{assigned_to_width}px;"
+      style += "height: #{headers_height}px;"
+      style += 'background: #eee;'
+    %>
+    <%= content_tag(:div, "", :style => style, :class => "gantt_hdr") %>
+    <%
+      style  = ""
+      style += "width: #{assigned_to_width}px;"
+      style += "height: #{t_height}px;"
+      style += 'border-left: 1px solid #c0c0c0;'
+      style += 'overflow: hidden;'
+    %>
+    <%= content_tag(:div, "", :style => style, :class => "gantt_hdr") %>
+    <%= content_tag(:div, :class => "gantt_assigned_to_names") do %>
+      <%= @gantt.assigned_to_names.html_safe %>
+    <% end %>
+  <% end %>
+</td>
 <td>
 <div style="position:relative;height:<%= t_height + 24 %>px;overflow:auto;" id="gantt_area">
 <%
@@ -364,8 +401,7 @@
   $(function() {
     drawGanttHandler();
     resizableSubjectColumn();
-    $("#draw_relations").change(drawGanttHandler);
-    $("#draw_progress_line").change(drawGanttHandler);
+    $("#draw_relations, #draw_progress_line, #draw_assigned_to_names").change(drawGanttHandler);
   });
   $(window).resize(function() {
     drawGanttHandler();

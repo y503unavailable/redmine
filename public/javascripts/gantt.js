@@ -161,6 +161,36 @@ function drawGanttProgressLines() {
   }
 }
 
+function drawAssignedToNames(){
+  if ($("#draw_assigned_to_names").prop('checked')){
+    $('td.gantt_assigned_to_names_column').show();
+    $('td.gantt_assigned_to_names_column').resizable({
+      alsoResize: ".gantt_assigned_to_names_container, .gantt_assigned_to_names_container>.gantt_hdr, .issue-assigned-name",
+      minWidth: 20,
+      handles: "e",
+      containment: "#content",
+      create: function( event, ui ) {
+        $(".ui-resizable-e").css("cursor","ew-resize");
+      }
+    }).on('resize', function (e) {
+        e.stopPropagation();
+    });
+    if(isMobile()) {
+      var width = Math.round($('.gantt_container').width()*0.15)
+      $('.gantt_assigned_to_names_container>.gantt_hdr').width(width-2);
+      $('.gantt_assigned_to_names_container, .gantt_assigned_to_names_column').width(width);
+      $('.issue-assigned-name').each(function(){
+        $(this).width($(".gantt_assigned_to_names_column").width());
+      });
+      $('td.gantt_assigned_to_names_column').resizable('disable');
+    }else{
+      $('td.gantt_assigned_to_names_column').resizable('enable');
+    };
+  }else{
+    $('td.gantt_assigned_to_names_column').hide();
+  }
+}
+
 function drawGanttHandler() {
   var folder = document.getElementById('gantt_draw_area');
   if(draw_gantt != null)
@@ -168,6 +198,7 @@ function drawGanttHandler() {
   else
     draw_gantt = Raphael(folder);
   setDrawArea();
+  drawAssignedToNames();
   if ($("#draw_progress_line").prop('checked'))
     drawGanttProgressLines();
   if ($("#draw_relations").prop('checked'))

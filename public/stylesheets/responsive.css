@@ -693,7 +693,7 @@
    * [4] maintain width due to [3]
    */
   .gantt_subjects_column {
-    width: 60% !important; /* [1] */
+    width: 50% !important; /* [1] */
   }
 
   .gantt_subjects_container {
@@ -843,4 +843,3 @@
 
   #login-form {width:100%; margin-top:2em;}
 }
-

@@ -76,6 +76,7 @@ module Redmine
         @date_to = (@date_from >> @months) - 1
         @subjects = ''
         @lines = ''
+        @assigned_to_names = ''
         @number_of_rows = nil
         @truncated = false
         if options.has_key?(:max_rows)
@@ -133,6 +134,12 @@ module Redmine
       def lines(options={})
         render(options.merge(:only => :lines)) unless @lines_rendered
         @lines
+      end
+
+      # Renders the assigned_to_names of the Gantt chart, the right side of subjects.
+      def assigned_to_names(options={})
+        render(options.merge(:only => :assigned_to_names)) unless @assigned_to_names_rendered
+        @assigned_to_names
       end
 
       # Returns issues that will be rendered
@@ -196,8 +203,9 @@ module Redmine
                    :indent_increment => 20, :render => :subject,
                    :format => :html}.merge(options)
         indent = options[:indent] || 4
-        @subjects = '' unless options[:only] == :lines
-        @lines = '' unless options[:only] == :subjects
+        @subjects = '' unless options[:only] == :lines || options[:only] == :assigned_to_names
+        @lines = '' unless options[:only] == :subjects || options[:only] == :assigned_to_names
+        @assigned_to_names = '' unless options[:only] == :lines || options[:only] == :subjects
         @number_of_rows = 0
         begin
           Project.project_tree(projects) do |project, level|
@@ -207,8 +215,9 @@ module Redmine
         rescue MaxLinesLimitReached
           @truncated = true
         end
-        @subjects_rendered = true unless options[:only] == :lines
-        @lines_rendered = true unless options[:only] == :subjects
+        @subjects_rendered = true unless options[:only] == :lines || options[:only] == :assigned_to_names
+        @lines_rendered = true unless options[:only] == :subjects || options[:only] == :assigned_to_names
+        @assigned_to_names_rendered = true unless options[:only] == :lines || options[:only] == :subjects
         render_end(options)
       end
 
@@ -254,8 +263,9 @@ module Redmine
 
       def render_object_row(object, options)
         class_name = object.class.name.downcase
-        send("subject_for_#{class_name}", object, options) unless options[:only] == :lines
-        send("line_for_#{class_name}", object, options) unless options[:only] == :subjects
+        send("subject_for_#{class_name}", object, options) unless options[:only] == :lines || options[:only] == :assigned_to_names
+        send("line_for_#{class_name}", object, options) unless options[:only] == :subjects || options[:only] == :assigned_to_names
+        assigned_to_name(object, options) unless options[:only] == :lines || options[:only] == :subjects
         options[:top] += options[:top_increment]
         @number_of_rows += 1
         if @max_rows && @number_of_rows >= @max_rows
@@ -320,6 +330,18 @@ module Redmine
           end
           markers = !issue.leaf?
           line(issue.start_date, issue.due_before, issue.done_ratio, markers, label, options, issue)
+        end
+      end
+
+      def assigned_to_name(issue, options)
+        if issue.is_a?(Issue) && options[:format] == :html && issue.assigned_to.present?
+          style = "position: absolute;top: #{options[:top]}px;"
+          content = view.avatar(issue.assigned_to,
+                                 :class => 'gravatar icon-gravatar',
+                                 :size => 10) + view.link_to_user(issue.assigned_to)
+          assigned_to_name = view.content_tag(:div, content.html_safe, :style => style, :class => 'issue-assigned-name')
+          @assigned_to_names << assigned_to_name
+          assigned_to_name
         end
       end
 

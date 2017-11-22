@@ -237,6 +237,16 @@ class Redmine::Helpers::GanttHelperTest < Redmine::HelperTest
     assert_select "div.tooltip", /#{@issue.subject}/
   end
 
+  test "#assigned_to_names" do
+    create_gantt
+    issue = Issue.generate!
+    issue.update(:assigned_to_id => issue.assignable_users.first.id)
+    @project.issues << issue
+    @output_buffer = @gantt.assigned_to_names(:format => :html)
+
+    assert_select "div.issue-assigned-name span", /#{issue.assigned_to.name}/
+  end
+
   test "#subject_for_project" do
     create_gantt
     @output_buffer = @gantt.subject_for_project(@project, :format => :html)
@@ -416,6 +426,18 @@ class Redmine::Helpers::GanttHelperTest < Redmine::HelperTest
     create_gantt
     @output_buffer = @gantt.line(gantt_start - 30, gantt_start - 21, 30, true, 'line', :format => :html)
     assert_select "div.label", :text => 'line'
+  end
+
+  test "#assigned_to_name" do
+    create_gantt
+    options = {:top => 64, :format => :html}
+    issue = Issue.generate!
+    issue.assigned_to_id = issue.assignable_users.first.id
+    @output_buffer = @gantt.assigned_to_name(issue, options)
+
+    assert_select 'div.issue-assigned-name[style*="position: absolute;top: 64px;"]' do
+      assert_select 'span', issue.assigned_to.name
+    end
   end
 
   def test_sort_issues_no_date

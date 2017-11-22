@@ -73,10 +73,20 @@ class IssueQuery < Query
     options[:draw_progress_line] = (arg == '1' ? '1' : nil)
   end
 
+  def draw_assigned_to_names
+    r = options[:draw_assigned_to_names]
+    r == '1'
+  end
+
+  def draw_assigned_to_names=(arg)
+    options[:draw_assigned_to_names] = (arg == '1' ? '1' : nil)
+  end
+
   def build_from_params(params)
     super
     self.draw_relations = params[:draw_relations] || (params[:query] && params[:query][:draw_relations])
     self.draw_progress_line = params[:draw_progress_line] || (params[:query] && params[:query][:draw_progress_line])
+    self.draw_assigned_to_names = params[:draw_assigned_to_names] || (params[:query] && params[:query][:draw_assigned_to_names])
     self
   end
 
