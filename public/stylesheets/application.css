@@ -1154,6 +1154,7 @@ div.wiki img {vertical-align:middle; max-width:100%;}
 .gantt_subjects .issue-subject img.icon-gravatar {
   margin: 2px 5px 0px 2px;
 }
+.gantt_subjects div.issue-subject:hover { background-color:#ffffdd; }
 
 .task {
   position: absolute;
