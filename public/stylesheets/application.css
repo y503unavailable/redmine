@@ -1151,6 +1151,10 @@ div.wiki img {vertical-align:middle; max-width:100%;}
 .gantt_subjects div, .issue-assigned-name { line-height:16px;height:16px;overflow:hidden;white-space:nowrap;text-overflow: ellipsis; }
 .issue-assigned-name { padding: 0px 3px; width: 100px; }
 
+.gantt_subjects .issue-subject img.icon-gravatar {
+  margin: 2px 5px 0px 2px;
+}
+
 .task {
   position: absolute;
   height:8px;
