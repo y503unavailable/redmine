@@ -52,7 +52,8 @@ class ApplicationController < ActionController::Base
   end
 
   before_action :session_expiration, :user_setup, :check_if_login_required, :set_localization, :check_password_change
-
+  after_action :access_logging 
+  
   rescue_from ::Unauthorized, :with => :deny_access
   rescue_from ::ActionView::MissingTemplate, :with => :missing_template
 
@@ -194,6 +195,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def access_logging 
+    params.delete(:password) 
+    params.delete(:password_confirmation) 
+    params.delete(:new_password) 
+    params.delete(:new_password_confirmation) 
+    req_param = params.map {|key,value| "#{key} => #{value}"}.join(",") 
+    message = "#{User.current.login}: #{req_param}" 
+    log = Logger.new(File.join(Rails.root, "/log/access.log"), "daily") 
+    log.formatter = Logger::Formatter.new 
+    log.info(message) 
+    log.close 
+  end 
+  
   def set_localization(user=User.current)
     lang = nil
     if user && user.logged?
