@@ -1341,6 +1341,11 @@ RAW
       assert !avatar('jsmith <jsmith@somenet.foo>', :class => 'picture').include?('class="gravatar"')
       assert_nil avatar('jsmith')
       assert_nil avatar(nil)
+      # Avatar for anonymous user
+      assert_match %r{src="/images/anonymous.png(\?\d+)?"}, avatar(User.anonymous)
+      # No avatar for groups
+      assert_nil avatar(Group.first)
+      assert avatar(User.anonymous, :size => 24).include?('width="24" height="24"')
     end
   end
 

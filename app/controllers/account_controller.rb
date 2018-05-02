@@ -87,7 +87,7 @@ class AccountController < ApplicationController
           @user.must_change_passwd = false
           if @user.save
             @token.destroy
-            Mailer.password_updated(@user)
+            Mailer.password_updated(@user, { remote_ip: request.remote_ip })
             flash[:notice] = l(:notice_account_password_updated)
             redirect_to signin_path
             return
@@ -98,7 +98,7 @@ class AccountController < ApplicationController
       return
     else
       if request.post?
-        email = params[:mail].to_s
+        email = params[:mail].to_s.strip
         user = User.find_by_mail(email)
         # user not found
         unless user

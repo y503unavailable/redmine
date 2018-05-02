@@ -140,8 +140,6 @@ a.collapsible.collapsed {background: url(../images/arrow_collapsed.png) no-repea
 
 a#toggle-completed-versions {color:#999;}
 
-a.toggle-checkboxes { margin-left: 5px; padding-left: 12px; background: url(../images/toggle_check.png) no-repeat 0% 50%; }
-
 /***** Dropdown *****/
 .drdn {position:relative;}
 .drdn-trigger {
@@ -274,6 +272,7 @@ tr.issue.idnt-8 td.subject {padding-left: 136px; background-position: 120px 50%;
 tr.issue.idnt-9 td.subject {padding-left: 152px; background-position: 136px 50%;}
 
 table.issue-report {table-layout:fixed;}
+table.issue-report th {white-space: normal;}
 
 tr.entry { border: 1px solid #f8f8f8; }
 tr.entry td { white-space: nowrap; }
@@ -447,8 +446,8 @@ div.issue {background:#ffffdd; padding:6px; margin-bottom:6px; border: 1px solid
 p.breadcrumb { font-size: 0.9em; margin: 4px 0 4px 0;}
 p.subtitle { font-size: 0.9em; margin: -6px 0 12px 0; font-style: italic; }
 p.footnote { font-size: 0.9em; margin-top: 0px; margin-bottom: 0px; }
-.ltr {direction:ltr !important; unicode-bidi:bidi-override;}
-.rtl {direction:rtl !important; unicode-bidi:bidi-override;}
+.wiki-class-ltr {direction:ltr !important;}
+.wiki-class-rtl {direction:rtl !important;}
 
 div.issue div.subject div div { padding-left: 16px; }
 div.issue div.subject p {margin: 0; margin-bottom: 0.1em; font-size: 90%; color: #999;}
@@ -700,7 +699,7 @@ label.no-css {
 }
 input#time_entry_comments { width: 90%;}
 
-#preview fieldset {margin-top: 1em; background: url(../images/draft.png)}
+fieldset.preview {margin-top: 1em; min-width: inherit; background: url(../images/draft.png)}
 
 .tabular.settings p{ padding-left: 300px; }
 .tabular.settings label{ margin-left: -300px; width: 295px; }
@@ -902,9 +901,9 @@ table.cal td p.day-num {font-size: 1.1em; text-align:right;}
 table.cal td.odd p.day-num {color: #bbb;}
 table.cal td.today {background:#ffffdd;}
 table.cal td.today p.day-num {font-weight: bold;}
-table.cal .starting a, p.cal.legend .starting {background: url(../images/bullet_go.png) no-repeat -1px -2px; padding-left:16px;}
-table.cal .ending a, p.cal.legend .ending {background: url(../images/bullet_end.png) no-repeat -1px -2px; padding-left:16px;}
-table.cal .starting.ending a, p.cal.legend .starting.ending {background: url(../images/bullet_diamond.png) no-repeat -1px -2px; padding-left:16px;}
+table.cal .starting a.issue, p.cal.legend .starting {background: url(../images/bullet_go.png) no-repeat -1px -2px; padding-left:16px;}
+table.cal .ending a.issue, p.cal.legend .ending {background: url(../images/bullet_end.png) no-repeat -1px -2px; padding-left:16px;}
+table.cal .starting.ending a.issue, p.cal.legend .starting.ending {background: url(../images/bullet_diamond.png) no-repeat -1px -2px; padding-left:16px;}
 p.cal.legend span {display:block;}
 
 /***** Tooltips ******/
@@ -1106,7 +1105,7 @@ div.wiki ul.toc a:hover { color: #c61a1a; text-decoration: underline;}
 
 a.wiki-anchor { display: none; margin-left: 6px; text-decoration: none; }
 a.wiki-anchor:hover { color: #aaa !important; text-decoration: none; }
-h1:hover a.wiki-anchor, h2:hover a.wiki-anchor, h3:hover a.wiki-anchor { display: inline; color: #ddd; }
+h1:hover a.wiki-anchor, h2:hover a.wiki-anchor, h3:hover a.wiki-anchor, h4:hover a.wiki-anchor, h5:hover a.wiki-anchor, h6:hover a.wiki-anchor { display: inline; color: #ddd; }
 
 div.wiki img {vertical-align:middle; max-width:100%;}
 
@@ -1155,6 +1154,10 @@ div.wiki img {vertical-align:middle; max-width:100%;}
   margin: 2px 5px 0px 2px;
 }
 .gantt_subjects div.issue-subject:hover { background-color:#ffffdd; }
+
+.gantt_subjects .issue-subject img.icon-gravatar {
+  margin: 2px 5px 0px 2px;
+}
 
 .task {
   position: absolute;
