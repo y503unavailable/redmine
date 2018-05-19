@@ -186,7 +186,7 @@ class IssueRelation < ActiveRecord::Base
   def successor_soonest_start
     if (TYPE_PRECEDES == self.relation_type) && delay && issue_from &&
            (issue_from.start_date || issue_from.due_date)
-      (issue_from.due_date || issue_from.start_date) + 1 + delay
+      (issue_from.due_date || issue_from.start_date) + delay
     end
   end
 
