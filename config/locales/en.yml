@@ -1074,6 +1074,7 @@ en:
   button_reopen: Reopen
   button_import: Import
   button_filter: Filter
+  button_actions: Actions
 
   status_active: active
   status_registered: registered
