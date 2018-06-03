@@ -507,6 +507,33 @@ class Project < ActiveRecord::Base
     end
   end
 
+
+  # Returns a scope of the Categories used by the project
+  def shared_categories
+    if new_record?
+      IssueCategory.
+        joins(:project).
+        preload(:project).
+        where("#{Project.table_name}.status <> ? AND #{IssueCategory.table_name}.sharing = 'system'", STATUS_ARCHIVED)
+    else
+      @shared_categories ||= begin
+        r = root? ? self : root
+        IssueCategory.
+          joins(:project).
+          preload(:project).
+          where("#{Project.table_name}.id = #{id}" +
+                  " OR (#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND (" +
+                    " #{IssueCategory.table_name}.sharing = 'system'" +
+                    " OR (#{Project.table_name}.lft >= #{r.lft} AND #{Project.table_name}.rgt <= #{r.rgt} AND #{IssueCategory.table_name}.sharing = 'tree')" +
+                    " OR (#{Project.table_name}.lft < #{lft} AND #{Project.table_name}.rgt > #{rgt} AND #{IssueCategory.table_name}.sharing IN ('hierarchy', 'descendants'))" +
+                    " OR (#{Project.table_name}.lft > #{lft} AND #{Project.table_name}.rgt < #{rgt} AND #{IssueCategory.table_name}.sharing = 'hierarchy')" +
+                  "))")
+      end
+    end
+  end
+
+
+
   # Returns a hash of project users grouped by role
   def users_by_role
     members.includes(:user, :roles).inject({}) do |h, m|

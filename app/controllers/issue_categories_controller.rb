@@ -24,6 +24,8 @@ class IssueCategoriesController < ApplicationController
   before_action :authorize
   accept_api_auth :index, :show, :create, :update, :destroy
 
+  helper :projects
+
   def index
     respond_to do |format|
       format.html { redirect_to_settings_in_projects }
@@ -50,7 +52,14 @@ class IssueCategoriesController < ApplicationController
 
   def create
     @category = @project.issue_categories.build
-    @category.safe_attributes = params[:issue_category]
+
+#    @category.safe_attributes = params[:issue_category]
+    if params[:issue_category]
+      attributes = params[:issue_category].dup
+      attributes.delete('sharing') unless attributes.nil? || @category.allowed_sharings.include?(attributes['sharing'])
+      @category.safe_attributes = attributes
+    end
+
     if @category.save
       respond_to do |format|
         format.html do
@@ -73,7 +82,15 @@ class IssueCategoriesController < ApplicationController
   end
 
   def update
-    @category.safe_attributes = params[:issue_category]
+
+#    @category.safe_attributes = params[:issue_category]
+    @category.safe_attributes=nil
+    if params[:issue_category]
+      attributes = params[:issue_category].dup
+      attributes.delete('sharing') unless @category.allowed_sharings.include?(attributes['sharing'])
+      @category.safe_attributes = attributes
+    end
+
     if @category.save
       respond_to do |format|
         format.html {

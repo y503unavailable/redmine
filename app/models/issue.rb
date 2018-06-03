@@ -1391,6 +1391,23 @@ class Issue < ActiveRecord::Base
           )
   end
 
+  # Unassigns issues from +categories+ if it's no longer shared with issue's project
+  def self.update_categories_from_sharing_change(category)
+    # Update issues assigned to the category
+    update_categories(["#{Issue.table_name}.category_id = ?", category.id])
+  end
+
+  # Unassigns issues from categories that are no longer shared
+  # after +project+ was moved
+  def self.update_categories_from_hierarchy_change(project)
+    moved_project_ids = project.self_and_descendants.reload.collect(&:id)
+    # Update issues of the moved projects and issues assigned to a category of a moved project
+    Issue.update_categories(
+            ["#{IssueCategory.table_name}.project_id IN (?) OR #{Issue.table_name}.project_id IN (?)",
+             moved_project_ids, moved_project_ids]
+          )
+  end
+
   def parent_issue_id=(arg)
     s = arg.to_s.strip.presence
     if s && (m = s.match(%r{\A#?(\d+)\z})) && (@parent_issue = Issue.find_by_id(m[1]))
@@ -1735,6 +1752,26 @@ class Issue < ActiveRecord::Base
       end
     end
   end
+
+  # Update issues so their categories are not pointing to a
+  # categories that is not shared with the issue's project
+  def self.update_categories(conditions=nil)
+    # Only need to update issues with a categories from
+    # a different project and that is not systemwide shared
+    Issue.joins(:project, :categories).
+      where("#{Issue.table_name}.category_id IS NOT NULL" +
+        " AND #{Issue.table_name}.project_id <> #{IssueCategory.table_name}.project_id" +
+        " AND #{IssueCategory.table_name}.sharing <> 'system'").
+      where(conditions).each do |issue|
+      next if issue.project.nil? || issue.category_id.nil?
+      unless issue.project.shared_categories.include?(issue.category_id)
+        issue.init_journal(User.current)
+        issue.category_id = nil
+        issue.save
+      end
+    end
+  end
+
 
   def delete_selected_attachments
     if deleted_attachment_ids.present?
