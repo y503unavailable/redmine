@@ -88,7 +88,7 @@ module ProjectsHelper
       grouped[category.project.name] << [category.name, category.id]
     end
 
-    selected = selected.is_a?(Category) ? selected.id : selected
+    selected = selected.is_a?(IssueCategory) ? selected.id : selected
     if grouped.keys.size > 1
       grouped_options_for_select(grouped, selected)
     else
@@ -115,7 +115,7 @@ module ProjectsHelper
   end
 
   def format_category_sharing(sharing)
-    sharing = 'none' unless Category::CATEGORY_SHARINGS.include?(sharing)
+    sharing = 'none' unless IssueCategory::CATEGORY_SHARINGS.include?(sharing)
     l("label_category_sharing_#{sharing}")
   end
 

@@ -137,6 +137,39 @@ class Project < ActiveRecord::Base
     end
   end
 
+
+# for sharing categories
+
+  # walks ancestors up to the first that doesn't inherit from his parent
+  def inherited_projects
+	l = [self]
+	self_and_ancestors.reverse.each { |p|
+	  if p.inherit_categs and ! p.parent.nil?
+		l << p.parent
+	  else
+		break
+	  end
+	}
+	return l
+  end
+
+  # get inherited categories (all = false) or all categories from inherited
+  # projects if all is true
+  def inherited_categories(all = false)
+	categs = IssueCategory.find(:all ,
+						  :joins => :project,
+						  :conditions => { :project_id => inherited_projects },
+						  :order => "name, #{Project.table_name}.rgt")
+	old = nil
+	# a category from a deep project masks categories of same name from others
+	return all ? categs : categs.reject { |c| cr = (c.name == old)
+	  old = c.name
+	  cr
+	}
+  end
+
+
+
   def identifier=(identifier)
     super unless identifier_frozen?
   end

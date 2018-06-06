@@ -31,7 +31,7 @@ class IssueCategory < ActiveRecord::Base
   validates_inclusion_of :sharing, :in => CATEGORY_SHARINGS
   attr_protected :id
 
-  safe_attributes 'name', 'assigned_to_id'
+  safe_attributes 'name', 'assigned_to_id', 'sharing'
 
   scope :named, lambda {|arg| where("LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip)}
   scope :visible, lambda {|*args|

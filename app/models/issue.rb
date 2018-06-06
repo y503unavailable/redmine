@@ -239,6 +239,7 @@ class Issue < ActiveRecord::Base
   def reload(*args)
     @workflow_rule_by_attribute = nil
     @assignable_versions = nil
+    @assignable_categories = nil
     @relations = nil
     @spent_hours = nil
     @total_spent_hours = nil
@@ -378,14 +379,22 @@ class Issue < ActiveRecord::Base
     end
     if project_was && project && project_was != project
       @assignable_versions = nil
+      @assignable_categories = nil
 
       unless keep_tracker || project.trackers.include?(tracker)
         self.tracker = project.trackers.first
       end
+
       # Reassign to the category with same name if any
-      if category
-        self.category = project.issue_categories.find_by_name(category.name)
+      # if category
+      #   self.category = project.issue_categories.find_by_name(category.name)
+      # end
+
+      # Keep the category if it's still valid in the new_project
+      if category && category.project != project && !project.shared_categories.include?(category)
+        self.category = nil
       end
+
       # Clear the assignee if not available in the new project for new issues (eg. copy)
       # For existing issue, the previous assignee is still valid, so we keep it
       if new_record? && assigned_to && !assignable_users.include?(assigned_to)
@@ -408,6 +417,9 @@ class Issue < ActiveRecord::Base
         self.fixed_version_id = project.default_version_id
       end
     end
+
+    # Category doesn't have default value
+
     self.project
   end
 
@@ -767,7 +779,8 @@ class Issue < ActiveRecord::Base
         end
       else
         if respond_to?(attribute) && send(attribute).blank? && !disabled_core_fields.include?(attribute)
-          next if attribute == 'category_id' && project.try(:issue_categories).blank?
+          # next if attribute == 'category_id' && project.try(:issue_categories).blank?
+          next if attribute == 'category_id' &&  assignable_categories.blank?
           next if attribute == 'fixed_version_id' && assignable_versions.blank?
           errors.add attribute, :blank
         end
@@ -949,6 +962,28 @@ class Issue < ActiveRecord::Base
     end
     @assignable_versions = versions.uniq.sort
   end
+
+  # Categories that the issue can be assigned to
+  def assignable_categories
+    return @assignable_categories if @assignable_categories
+
+# category not status=open
+    categories = project.shared_categories.to_a
+    if category
+      if category_id_changed?
+        # nothing to do
+      elsif project_id_changed?
+        if project.shared_categories.include?(fixed_version)
+          categories << category
+        end
+      else
+        categories << category
+      end
+    end
+    @assignable_categories = categories.uniq.sort
+  end
+
+
 
   # Returns true if this issue is blocked by another issue that is still open
   def blocked?
@@ -1758,7 +1793,7 @@ class Issue < ActiveRecord::Base
   def self.update_categories(conditions=nil)
     # Only need to update issues with a categories from
     # a different project and that is not systemwide shared
-    Issue.joins(:project, :categories).
+    Issue.joins(:project, :category).
       where("#{Issue.table_name}.category_id IS NOT NULL" +
         " AND #{Issue.table_name}.project_id <> #{IssueCategory.table_name}.project_id" +
         " AND #{IssueCategory.table_name}.sharing <> 'system'").
