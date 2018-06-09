@@ -13,7 +13,7 @@
   <% unless category.new_record? %>
   <tr>
     <tr class="category <%= 'shared' if category.project != @project %>">
-    <td class="name <%= 'icon icon-shared' if category.project != @project %>">category.name </td>
+    <td class="name <%= 'icon icon-shared' if category.project != @project %>"><%= category.name %></td>
     <td><%= category.assigned_to.name if category.assigned_to %></td>
     <td class="sharing"><%=h format_category_sharing(category.sharing) %></td>
     <td class="buttons">
