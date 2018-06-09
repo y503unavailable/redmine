@@ -51,7 +51,7 @@ class IssueCategoriesController < ApplicationController
   end
 
   def create
-    @category = @project.categories.build
+    @category = @project.issue_categories.build
     if params[:issue_category]
       attributes = params[:issue_category].dup
       attributes.delete('sharing') unless attributes.nil? || @category.allowed_sharings.include?(attributes['sharing'])
