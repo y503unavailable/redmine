@@ -19,7 +19,6 @@
 <% end %>
 
 <% if @issue.safe_attribute?('category_id') && @issue.assignable_categories.any? %>
-#<p><%= f.select :category_id, (@issue.project.assignable_categories.collect {|c| [c.name, c.id]}), :include_blank => true, :required => @issue.required_attribute?('category_id') %>
 <p><%= f.select :category_id, category_options_for_select(@issue.assignable_categories, @issue.category), :include_blank => true, :required => @issue.required_attribute?('category_id') %>
 
 <%= link_to(l(:label_issue_category_new),
