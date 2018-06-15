@@ -18,8 +18,9 @@
 <p><%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to), :include_blank => true, :required => @issue.required_attribute?('assigned_to_id') %></p>
 <% end %>
 
-<% if @issue.safe_attribute?('category_id') && @issue.project.issue_categories.any? %>
-<p><%= f.select :category_id, (@issue.project.issue_categories.collect {|c| [c.name, c.id]}), :include_blank => true, :required => @issue.required_attribute?('category_id') %>
+<% if @issue.safe_attribute?('category_id') && @issue.assignable_categories.any? %>
+<p><%= f.select :category_id, category_options_for_select(@issue.assignable_categories, @issue.category), :include_blank => true, :required => @issue.required_attribute?('category_id') %>
+
 <%= link_to(l(:label_issue_category_new),
             new_project_issue_category_path(@issue.project),
             :remote => true,
