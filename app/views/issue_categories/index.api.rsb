@@ -4,6 +4,7 @@ api.array :issue_categories, api_meta(:total_count => @categories.size) do
       api.id category.id
       api.project(:id => category.project_id, :name => category.project.name) unless category.project.nil?
       api.name category.name
+  api.sharing     category.sharing
       api.assigned_to(:id => category.assigned_to_id, :name => category.assigned_to.name) unless category.assigned_to.nil?
     end
   end
