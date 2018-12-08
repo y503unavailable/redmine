@@ -486,7 +486,7 @@ module Redmine
 
       def validate_single_value(custom_field, value, customized=nil)
         errs = super
-        errs << ::I18n.t('activerecord.errors.messages.not_a_number') unless value.to_s =~ /^[+-]?\d+$/
+        errs << ::I18n.t('activerecord.errors.messages.not_a_number') unless value.to_s.strip =~ /^[+-]?\d+$/
         errs
       end
 
@@ -734,6 +734,16 @@ module Redmine
           options += target_class.where(:id => missing.map(&:to_i)).map {|o| [o.to_s, o.id.to_s]}
         end
         options
+      end
+
+      def validate_custom_value(custom_value)
+        values = Array.wrap(custom_value.value).reject {|value| value.to_s == ''}
+        invalid_values = values - possible_custom_value_options(custom_value).map(&:last)
+        if invalid_values.any?
+          [::I18n.t('activerecord.errors.messages.inclusion')]
+        else
+          []
+        end
       end
 
       def order_statement(custom_field)

@@ -1034,7 +1034,7 @@ class RedCloth3 < String
     def flush_left( text )
         indt = 0
         if text =~ /^ /
-            while text !~ /^ {#{indt}}\S/
+            while text !~ /^ {#{indt}}[^ ]/
                 indt += 1
             end unless text.empty?
             if indt.nonzero?
@@ -1049,7 +1049,7 @@ class RedCloth3 < String
     end
     
     OFFTAGS = /(code|pre|kbd|notextile)/
-    OFFTAG_MATCH = /(?:(<\/#{ OFFTAGS }>)|(<#{ OFFTAGS }[^>]*>))(.*?)(?=<\/?#{ OFFTAGS }\W|\Z)/mi
+    OFFTAG_MATCH = /(?:(<\/#{ OFFTAGS }\b>)|(<#{ OFFTAGS }\b[^>]*>))(.*?)(?=<\/?#{ OFFTAGS }\b\W|\Z)/mi
     OFFTAG_OPEN = /<#{ OFFTAGS }/
     OFFTAG_CLOSE = /<\/?#{ OFFTAGS }/
     HASTAG_MATCH = /(<\/?\w[^\n]*?>)/m
