@@ -67,7 +67,7 @@ class IssueCategoriesController < ApplicationController
           end
           format.js
           format.api do
-            render :action => 'show', :status => :created, :location => category_url(@category)
+            render :action => 'show', :status => :created, :location => issue_category_path(@category)
           end
         end
       else
