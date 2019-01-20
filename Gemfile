@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 
-if Gem::Version.new(Bundler::VERSION) < Gem::Version.new('1.5.0')
-  abort "Redmine requires Bundler 1.5.0 or higher (you're using #{Bundler::VERSION}).\nPlease update with 'gem update bundler'."
-end
+gem "bundler", ">= 1.5.0", "< 2.0.0"
 
 gem "rails", "4.2.11"
 gem "addressable", "2.4.0" if RUBY_VERSION < "2.0"
@@ -106,9 +104,4 @@ end
 local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")
 if File.exists?(local_gemfile)
   eval_gemfile local_gemfile
-end
-
-# Load plugins' Gemfiles
-Dir.glob File.expand_path("../plugins/*/{Gemfile,PluginGemfile}", __FILE__) do |file|
-  eval_gemfile file
 end
