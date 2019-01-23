@@ -105,3 +105,8 @@ local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")
 if File.exists?(local_gemfile)
   eval_gemfile local_gemfile
 end
+
+# Load plugins' Gemfiles
+Dir.glob File.expand_path("../plugins/*/{Gemfile,PluginGemfile}", __FILE__) do |file|
+  eval_gemfile file
+end
