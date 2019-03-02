@@ -1,12 +1,5 @@
 <div class="contextual">
 <%= link_to(l(:button_edit), edit_version_path(@version), :class => 'icon icon-edit') if User.current.allowed_to?(:manage_versions, @version.project) %>
-<% if @project.active? %>
-<% if @version.open? %>
-<% if new_issue_tracker = Issue.allowed_target_trackers(@project).detect { |tracker| tracker.core_fields.include? 'fixed_version_id' } %>
-<%= link_to_if_authorized(l(:label_issue_new), {controller: 'issues', action: 'new', project_id: @project, :issue => {tracker_id: new_issue_tracker, fixed_version_id: @version.id}}, :class => 'icon icon-add') %>
-<% end %>
-<% end %>
-<% end %>
 <%= link_to_if_authorized(l(:button_edit_associated_wikipage, :page_title => @version.wiki_page_title), {:controller => 'wiki', :action => 'edit', :project_id => @version.project, :id => Wiki.titleize(@version.wiki_page_title)}, :class => 'icon icon-edit') unless @version.wiki_page_title.blank? || @version.project.wiki.nil? %>
 <%= delete_link version_path(@version, :back_url => url_for(:controller => 'versions', :action => 'index', :project_id => @version.project)) if User.current.allowed_to?(:manage_versions, @version.project) %>
 <%= call_hook(:view_versions_show_contextual, { :version => @version, :project => @project }) %>
