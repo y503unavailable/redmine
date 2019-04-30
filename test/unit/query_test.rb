@@ -1490,6 +1490,12 @@ class QueryTest < ActiveSupport::TestCase
     assert_equal [['id', 'desc']], q.sort_criteria
   end
 
+  def test_sort_criteria_should_remove_blank_keys
+    q = IssueQuery.new
+    q.sort_criteria = [['priority', 'desc'], [nil, 'desc'], ['', 'asc'], ['project', 'asc']]
+    assert_equal [['priority', 'desc'], ['project', 'asc']], q.sort_criteria
+  end
+
   def test_set_sort_criteria_with_hash
     q = IssueQuery.new
     q.sort_criteria = {'0' => ['priority', 'desc'], '2' => ['tracker']}
@@ -2155,5 +2161,20 @@ class QueryTest < ActiveSupport::TestCase
     WorkflowTransition.create(:role_id => 1, :tracker_id => 2, :old_status_id => 1, :new_status_id => 3)
 
     assert_equal ['1','2','3','4','5','6'], query.available_filters['status_id'][:values].map(&:second)
+  end
+
+  def test_as_params_should_serialize_query
+    query = IssueQuery.new(name: "_")
+    query.add_filter('subject', '!~', ['asdf'])
+    query.group_by = 'tracker'
+    query.totalable_names = %w(estimated_hours)
+    query.column_names = %w(id subject estimated_hours)
+    assert hsh = query.as_params
+
+    new_query = IssueQuery.build_from_params(hsh)
+    assert_equal query.filters, new_query.filters
+    assert_equal query.group_by, new_query.group_by
+    assert_equal query.column_names, new_query.column_names
+    assert_equal query.totalable_names, new_query.totalable_names
   end
 end

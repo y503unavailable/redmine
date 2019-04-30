@@ -54,7 +54,7 @@ class MailHandler < ActionMailer::Base
   def self.safe_receive(*args)
     receive(*args)
   rescue Exception => e
-    logger.error "MailHandler: an unexpected error occurred when receiving email: #{e.message}" if logger
+    Rails.logger.error "MailHandler: an unexpected error occurred when receiving email: #{e.message}"
     return false
   end
 
@@ -250,8 +250,8 @@ class MailHandler < ActionMailer::Base
 
     # add To and Cc as watchers before saving so the watchers can reply to Redmine
     add_watchers(issue)
-    add_attachments(issue)
     issue.save!
+    add_attachments(issue)
     if logger
       logger.info "MailHandler: issue ##{issue.id} updated by #{user}"
     end
