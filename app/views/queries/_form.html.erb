@@ -7,7 +7,7 @@
 <p><label for="query_name"><%=l(:field_name)%></label>
 <%= text_field 'query', 'name', :size => 80 %></p>
 
-<% if User.current.admin? || User.current.allowed_to?(:manage_public_queries, @query.project) %>
+<% if User.current.admin? || User.current.allowed_to?(:manage_public_queries, @query.project) || @query.user == User.current %>
 <p><label><%=l(:field_visible)%></label>
   <label class="block"><%= radio_button 'query', 'visibility', Query::VISIBILITY_PRIVATE %> <%= l(:label_visibility_private) %></label>
   <label class="block"><%= radio_button 'query', 'visibility', Query::VISIBILITY_PUBLIC %> <%= l(:label_visibility_public) %></label>
@@ -20,7 +20,7 @@
 <% end %>
 
 <p><label for="query_is_for_all"><%=l(:field_is_for_all)%></label>
-<%= check_box_tag 'query_is_for_all', 1, @query.project.nil?, :class => (User.current.admin? ? '' : 'disable-unless-private') %></p>
+<%= check_box_tag 'query_is_for_all', 1, @query.project.nil?, :class => (true ? '' : 'disable-unless-private') %></p>
 
 <% unless params[:gantt] %>
 <fieldset id="options"><legend><%= l(:label_options) %></legend>
