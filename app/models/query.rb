@@ -445,7 +445,7 @@ class Query < ActiveRecord::Base
   def editable_by?(user)
     return false unless user
     # Admin can edit them all and regular users can edit their private queries
-    return true if user.admin? || (is_private? && self.user_id == user.id)
+    return true if user.admin? || (self.user_id == user.id)
     # Members can not edit public queries that are for all project (only admin is allowed to)
     is_public? && !@is_for_all && user.allowed_to?(:manage_public_queries, project)
   end
