@@ -61,23 +61,24 @@ class IssueCategoriesController < ApplicationController
     end
      
     if request.post?
-     if @category.save
-       respond_to do |format|
-         format.html do
-           flash[:notice] = l(:notice_successful_create)
-           redirect_back_or_default settings_project_path(@project, :tab => 'categories')
-         end
-         format.js
-         format.api do
-           render :action => 'show', :status => :created, :location => issue_category_path(@category)
-         end
-       end
-     else
-       respond_to do |format|
-         format.html { render :action => 'new' }
-         format.js   { render :action => 'new' }
-         format.api  { render_validation_errors(@category) }
-       end
+      if @category.save
+        respond_to do |format|
+          format.html do
+            flash[:notice] = l(:notice_successful_create)
+            redirect_back_or_default settings_project_path(@project, :tab => 'categories')
+          end
+          format.js
+          format.api do
+            render :action => 'show', :status => :created, :location => issue_category_path(@category)
+          end
+        end
+      else
+        respond_to do |format|
+          format.html { render :action => 'new' }
+          format.js   { render :action => 'new' }
+          format.api  { render_validation_errors(@category) }
+        end
+      end
     end
   end
 
