@@ -1,4 +1,4 @@
-ass AddIssueCategoriesSharing < ActiveRecord::Migration[5.2]
+class AddIssueCategoriesSharing < ActiveRecord::Migration[5.2]
   def self.up
     unless column_exists?(:issue_categories, :sharing, :string)
       add_column :issue_categories, :sharing, :string, :default => 'none', :null => false
