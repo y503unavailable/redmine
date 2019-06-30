@@ -82,6 +82,21 @@ module ProjectsHelper
     end
   end
 
+  # Returns a set of options for a select field, grouped by project.
+  def category_options_for_select(categories, selected=nil)
+    grouped = Hash.new {|h,k| h[k] = []}
+    categories.each do |category|
+      grouped[category.project.name] << [category.name, category.id]
+    end
+
+     selected = selected.is_a?(IssueCategory) ? selected.id : selected
+    if grouped.keys.size > 1
+      grouped_options_for_select(grouped, selected)
+    else
+      options_for_select((grouped.values.first || []), selected)
+    end
+  end
+
   def project_default_version_options(project)
     versions = project.shared_versions.open.to_a
     if project.default_version && !versions.include?(project.default_version)
@@ -98,6 +113,11 @@ module ProjectsHelper
   def format_version_sharing(sharing)
     sharing = 'none' unless Version::VERSION_SHARINGS.include?(sharing)
     l("label_version_sharing_#{sharing}")
+  end
+
+  def format_category_sharing(sharing)
+    sharing = 'none' unless IssueCategory::CATEGORY_SHARINGS.include?(sharing)
+    l("label_category_sharing_#{sharing}")
   end
 
   def render_boards_tree(boards, parent=nil, level=0, &block)
