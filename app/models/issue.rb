@@ -970,13 +970,12 @@ class Issue < ActiveRecord::Base
   def assignable_categories
     return @assignable_categories if @assignable_categories
 
-# category not status=open
     categories = project.shared_categories.to_a
     if category
       if category_id_changed?
         # nothing to do
       elsif project_id_changed?
-        if project.shared_categories.include?(fixed_version)
+        if project.shared_categories.include?(category)
           categories << category
         end
       else
