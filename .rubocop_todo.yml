@@ -25,7 +25,6 @@ Layout/AccessModifierIndentation:
     - 'app/models/role.rb'
     - 'app/models/setting.rb'
     - 'app/models/tracker.rb'
-    - 'lib/redmine/scm/adapters/abstract_adapter.rb'
     - 'lib/redmine/wiki_formatting/textile/formatter.rb'
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
@@ -41,8 +40,6 @@ Layout/AlignArray:
     - 'app/models/setting.rb'
     - 'lib/redmine/default_data/loader.rb'
     - 'test/functional/issues_controller_test.rb'
-    - 'test/unit/lib/redmine/scm/adapters/mercurial_adapter_test.rb'
-    - 'test/unit/repository_bazaar_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AllowMultipleStyles, EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle.
@@ -62,11 +59,8 @@ Layout/BlockAlignment:
     - 'app/models/project.rb'
     - 'app/models/time_entry.rb'
     - 'test/functional/issues_controller_test.rb'
-    - 'test/functional/repositories_git_controller_test.rb'
-    - 'test/functional/repositories_mercurial_controller_test.rb'
     - 'test/unit/lib/redmine/menu_manager/mapper_test.rb'
     - 'test/unit/lib/redmine/menu_manager/menu_helper_test.rb'
-    - 'test/unit/lib/redmine/scm/adapters/mercurial_adapter_test.rb'
 
 # Cop supports --auto-correct.
 Layout/BlockEndNewline:
@@ -90,7 +84,6 @@ Layout/CaseIndentation:
     - 'lib/redmine/menu_manager.rb'
     - 'lib/redmine/views/builders.rb'
     - 'test/test_helper.rb'
-    - 'test/unit/lib/redmine/scm/adapters/mercurial_adapter_test.rb'
 
 # Cop supports --auto-correct.
 Layout/ClosingHeredocIndentation:
@@ -119,15 +112,6 @@ Layout/CommentIndentation:
     - 'test/unit/issue_test.rb'
     - 'test/unit/lib/redmine/wiki_formatting/markdown_formatter_test.rb'
     - 'test/unit/lib/redmine/wiki_formatting/textile_formatter_test.rb'
-    - 'test/unit/repository_cvs_test.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, AutoCorrect, Severity.
-# SupportedStylesAlignWith: start_of_line, def
-Layout/DefEndAlignment:
-  Exclude:
-    - 'test/functional/documents_controller_test.rb'
-    - 'test/unit/repository_cvs_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -188,11 +172,8 @@ Layout/EmptyLinesAroundAccessModifier:
     - 'app/controllers/timelog_controller.rb'
     - 'app/models/tracker.rb'
     - 'config/initializers/10-patches.rb'
-    - 'lib/redmine/scm/adapters/abstract_adapter.rb'
-    - 'lib/redmine/scm/adapters/cvs_adapter.rb'
     - 'lib/redmine/syntax_highlighting.rb'
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-    - 'test/functional/repositories_git_controller_test.rb'
 
 # Cop supports --auto-correct.
 Layout/EmptyLinesAroundArguments:
@@ -325,7 +306,6 @@ Layout/IndentationConsistency:
     - 'test/integration/api_test/custom_fields_attribute_test.rb'
     - 'test/integration/api_test/issues_test.rb'
     - 'test/mocks/open_id_authentication_mock.rb'
-    - 'test/unit/repository_cvs_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: Width, IgnoredPatterns.
@@ -550,12 +530,6 @@ Layout/TrailingBlankLines:
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
     - 'test/integration/api_test/my_test.rb'
     - 'test/unit/lib/redmine/hook_test.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: AllowInHeredoc.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'test/unit/lib/redmine/unified_diff_test.rb'
 
 Lint/AmbiguousBlockAssociation:
   Enabled: false
@@ -1838,7 +1812,6 @@ Style/UnneededCondition:
 # Cop supports --auto-correct.
 Style/UnneededInterpolation:
   Exclude:
-    - 'app/helpers/calendars_helper.rb'
     - 'app/helpers/my_helper.rb'
     - 'app/helpers/queries_helper.rb'
     - 'app/models/query.rb'
@@ -1892,13 +1865,6 @@ Style/WhileUntilModifier:
 # SupportedStyles: percent, brackets
 Style/WordArray:
   Enabled: false
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: forbid_for_all_comparison_operators, forbid_for_equality_operators_only, require_for_all_comparison_operators, require_for_equality_operators_only
-Style/YodaCondition:
-  Exclude:
-    - 'lib/redmine/scm/adapters/abstract_adapter.rb'
 
 # Cop supports --auto-correct.
 Style/ZeroLengthPredicate:

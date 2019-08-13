@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem "bundler", ">= 1.5.0"
 
 gem "rails", "5.2.3"
-gem "rouge", "~> 3.5.1"
+gem "rouge", "~> 3.7.0"
 gem "request_store", "1.0.5"
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
@@ -13,7 +13,7 @@ gem "mail", "~> 2.7.1"
 gem "csv", "~> 3.1.1"
 gem "nokogiri", "~> 1.10.0"
 gem "i18n", "~> 1.6.0"
-gem "rbpdf", "~> 1.19.6"
+gem "rbpdf", "~> 1.20.0"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
@@ -36,7 +36,7 @@ end
 
 # Optional Markdown support, not for JRuby
 group :markdown do
-  gem "redcarpet", "~> 3.4.0"
+  gem "redcarpet", "~> 3.5.0"
 end
 
 # Include database gems for the adapters found in the database
@@ -81,7 +81,7 @@ group :test do
   gem "ffi", platforms: [:mingw, :x64_mingw, :mswin]
   # For running system tests
   gem 'puma', '~> 3.7'
-  gem "capybara", '~> 2.13'
+  gem "capybara", (RUBY_VERSION < "2.4" ? "~> 3.15.1" : "~> 3.25.0")
   gem "selenium-webdriver"
   # RuboCop
   gem 'rubocop', '~> 0.72.0'
