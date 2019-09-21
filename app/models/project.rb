@@ -93,14 +93,8 @@ class Project < ActiveRecord::Base
   scope :all_public, lambda { where(:is_public => true) }
   scope :visible, lambda {|*args| where(Project.visible_condition(args.shift || User.current, *args)) }
   scope :allowed_to, lambda {|*args|
-    user = User.current
-    permission = nil
-    if args.first.is_a?(Symbol)
-      permission = args.shift
-    else
-      user = args.shift
-      permission = args.shift
-    end
+    user = args.first.is_a?(Symbol) ? User.current : args.shift
+    permission = args.shift
     where(Project.allowed_to_condition(user, permission, *args))
   }
   scope :like, lambda {|arg|
@@ -304,7 +298,7 @@ class Project < ActiveRecord::Base
       self.create_time_entry_activity_if_needed(activity_hash)
     else
       activity = project.time_entry_activities.find_by_id(id.to_i)
-      activity.update_attributes(activity_hash) if activity
+      activity.update(activity_hash) if activity
     end
   end
 
@@ -846,6 +840,18 @@ class Project < ActiveRecord::Base
       end
     end
 
+    # Reject custom fields values not visible by the user
+    if attrs['custom_field_values'].present?
+      editable_custom_field_ids = editable_custom_field_values(user).map {|v| v.custom_field_id.to_s}
+      attrs['custom_field_values'].reject! {|k, v| !editable_custom_field_ids.include?(k.to_s)}
+    end
+
+    # Reject custom fields not visible by the user
+    if attrs['custom_fields'].present?
+      editable_custom_field_ids = editable_custom_field_values(user).map {|v| v.custom_field_id.to_s}
+      attrs['custom_fields'].reject! {|c| !editable_custom_field_ids.include?(c['id'].to_s)}
+    end
+
     super(attrs, user)
   end
 
@@ -920,6 +926,18 @@ class Project < ActiveRecord::Base
       end
       yield project, ancestors.size
       ancestors << project
+    end
+  end
+
+  # Returns the custom_field_values that can be edited by the given user
+  def editable_custom_field_values(user=nil)
+    visible_custom_field_values(user)
+  end
+
+  def visible_custom_field_values(user = nil)
+    user ||= User.current
+    custom_field_values.select do |value|
+      value.custom_field.visible_by?(project, user)
     end
   end
 

@@ -189,6 +189,10 @@
         earlier_than_minimum_start_date: "不能早於 %{date} 因為有前置議題"
         not_a_regexp: "is not a valid regular expression"
         open_issue_with_closed_parent: "An open issue cannot be attached to a closed parent task"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
       # You can define own errors for models or model attributes.
       # The values :model, :attribute and :value are always available for interpolation.
@@ -1217,7 +1221,7 @@
   text_default_administrator_account_changed: 已變更預設管理員帳號內容
   text_file_repository_writable: 可寫入附加檔案目錄
   text_plugin_assets_writable: 可寫入外掛程式目錄
-  text_rmagick_available: 可使用 RMagick (選配)
+  text_minimagick_available: 可使用 MiniMagick (選配)
   text_convert_available: 可使用 ImageMagick 轉換圖片格式 (選配)
   text_destroy_time_entries_question: 您即將刪除的議題已報工 %{hours} 小時. 您的選擇是？
   text_destroy_time_entries: 刪除已報工的時數
@@ -1351,3 +1355,10 @@
   label_issue_history_notes: 筆記
   label_last_tab_visited: 上次瀏覽的分頁
   field_unique_id: 唯一識別碼
+  text_no_subject: 沒有主旨
+  setting_password_required_char_classes: 密碼必要的字元類別
+  label_password_char_class_uppercase: 大寫字母
+  label_password_char_class_lowercase: 小寫字母
+  label_password_char_class_digits: 數字
+  label_password_char_class_special_chars: 特殊字元
+  text_characters_must_contain: 必須包含 %{character_classes}.

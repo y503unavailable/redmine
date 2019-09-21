@@ -65,7 +65,7 @@ module IssuesHelper
       "<strong>#{@cached_label_status}</strong>: #{h(issue.status.name) + (" (#{format_date(issue.closed_on)})" if issue.closed?)}<br />".html_safe +
       "<strong>#{@cached_label_start_date}</strong>: #{format_date(issue.start_date)}<br />".html_safe +
       "<strong>#{@cached_label_due_date}</strong>: #{format_date(issue.due_date)}<br />".html_safe +
-      "<strong>#{@cached_label_assigned_to}</strong>: #{avatar(issue.assigned_to, :size => "13", :title => l(:field_assigned_to)) if issue.assigned_to} #{h(issue.assigned_to)}<br />".html_safe +
+      "<strong>#{@cached_label_assigned_to}</strong>: #{avatar(issue.assigned_to, :size => '13', :title => l(:field_assigned_to)) if issue.assigned_to} #{h(issue.assigned_to)}<br />".html_safe +
       "<strong>#{@cached_label_priority}</strong>: #{h(issue.priority.name)}".html_safe
   end
 
@@ -95,13 +95,19 @@ module IssuesHelper
     issue_list(issue.descendants.visible.preload(:status, :priority, :tracker, :assigned_to).sort_by(&:lft)) do |child, level|
       css = +"issue issue-#{child.id} hascontextmenu #{child.css_classes}"
       css << " idnt idnt-#{level}" if level > 0
-      buttons = manage_relations ? link_to(l(:label_delete_link_to_subtask),
-                                  issue_path({:id => child.id, :issue => {:parent_issue_id => ''}, :back_url => issue_path(issue.id), :no_flash => '1'}),
+      buttons =
+        if manage_relations
+          link_to(l(:label_delete_link_to_subtask),
+                  issue_path({:id => child.id, :issue => {:parent_issue_id => ''},
+                              :back_url => issue_path(issue.id), :no_flash => '1'}),
                                   :method => :put,
                                   :data => {:confirm => l(:text_are_you_sure)},
                                   :title => l(:label_delete_link_to_subtask),
                                   :class => 'icon-only icon-link-break'
-                                  ) : "".html_safe
+                                  )
+        else
+          "".html_safe
+        end
       buttons << link_to_context_menu
 
       s << content_tag('tr',
@@ -125,14 +131,19 @@ module IssuesHelper
     relations.each do |relation|
       other_issue = relation.other_issue(issue)
       css = "issue hascontextmenu #{other_issue.css_classes}"
-      buttons = manage_relations ? link_to(l(:label_relation_delete),
+      buttons =
+        if manage_relations
+          link_to(l(:label_relation_delete),
                                   relation_path(relation),
                                   :remote => true,
                                   :method => :delete,
                                   :data => {:confirm => l(:text_are_you_sure)},
                                   :title => l(:label_relation_delete),
                                   :class => 'icon-only icon-link-break'
-                                 ) :"".html_safe
+                                 )
+        else
+          "".html_safe
+        end
       buttons << link_to_context_menu
 
       s << content_tag('tr',
@@ -264,16 +275,14 @@ module IssuesHelper
   def render_full_width_custom_fields_rows(issue)
     values = issue.visible_custom_field_values.select {|value| value.custom_field.full_width_layout?}
     return if values.empty?
-
     s = ''.html_safe
     values.each_with_index do |value, i|
       attr_value_tag = custom_field_value_tag(value)
       next if attr_value_tag.blank?
-
       content =
-          content_tag('hr') +
-          content_tag('p', content_tag('strong', custom_field_name_tag(value.custom_field) )) +
-          content_tag('div', attr_value_tag, class: 'value')
+        content_tag('hr') +
+        content_tag('p', content_tag('strong', custom_field_name_tag(value.custom_field) )) +
+        content_tag('div', attr_value_tag, class: 'value')
       s << content_tag('div', content, class: "#{value.custom_field.css_classes} attribute")
     end
     s
@@ -452,12 +461,20 @@ module IssuesHelper
     when 'relation'
       if detail.value && !detail.old_value
         rel_issue = Issue.visible.find_by_id(detail.value)
-        value = rel_issue.nil? ? "#{l(:label_issue)} ##{detail.value}" :
-                  (no_html ? rel_issue : link_to_issue(rel_issue, :only_path => options[:only_path]))
+        value =
+          if rel_issue.nil?
+            "#{l(:label_issue)} ##{detail.value}"
+          else
+            (no_html ? rel_issue : link_to_issue(rel_issue, :only_path => options[:only_path]))
+          end
       elsif detail.old_value && !detail.value
         rel_issue = Issue.visible.find_by_id(detail.old_value)
-        old_value = rel_issue.nil? ? "#{l(:label_issue)} ##{detail.old_value}" :
-                          (no_html ? rel_issue : link_to_issue(rel_issue, :only_path => options[:only_path]))
+        old_value =
+          if rel_issue.nil?
+            "#{l(:label_issue)} ##{detail.old_value}"
+          else
+            (no_html ? rel_issue : link_to_issue(rel_issue, :only_path => options[:only_path]))
+          end
       end
       relation_type = IssueRelation::TYPES[detail.prop_key]
       label = l(relation_type[:name]) if relation_type
@@ -519,9 +536,7 @@ module IssuesHelper
 
   # Find the name of an associated record stored in the field attribute
   def find_name_by_reflection(field, id)
-    unless id.present?
-      return nil
-    end
+    return nil if id.blank?
     @detail_value_name_by_reflection ||= Hash.new do |hash, key|
       association = Issue.reflect_on_association(key.first.to_sym)
       name = nil

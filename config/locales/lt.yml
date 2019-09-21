@@ -137,6 +137,10 @@ lt:
         earlier_than_minimum_start_date: "negali būti anksčiau už %{date} dėl ankstesnių darbų"
         not_a_regexp: "neteisingas reguliarusis reiškinys"
         open_issue_with_closed_parent: "Atviras darbas negali būti pridėtas prie uždarytos tėvinės užduoties"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: Prašom parinkti
 
@@ -1095,7 +1099,7 @@ lt:
   text_default_administrator_account_changed: Administratoriaus numatytoji paskyra pakeista
   text_file_repository_writable: Į failų saugyklą saugoti galima (RW)
   text_plugin_assets_writable: Į įskiepių katalogą įrašyti galima
-  text_rmagick_available: RMagick pasiekiamas (pasirinktinai)
+  text_minimagick_available: MiniMagick pasiekiamas (pasirinktinai)
   text_convert_available: ImageMagick konvertavimas galimas (pasirinktinai)
   text_destroy_time_entries_question: "Naikinamam darbui priskirta %{hours} valandų. Ką norite su jomis daryti?"
   text_destroy_time_entries: Ištrinti įrašytas valandas
@@ -1285,3 +1289,10 @@ lt:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

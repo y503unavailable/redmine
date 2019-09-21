@@ -137,6 +137,10 @@ he:
         earlier_than_minimum_start_date: "cannot be earlier than %{date} because of preceding issues"
         not_a_regexp: "is not a valid regular expression"
         open_issue_with_closed_parent: "An open issue cannot be attached to a closed parent task"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: בחר בבקשה
 
@@ -861,7 +865,7 @@ he:
   text_default_administrator_account_changed: מנהל המערכת ברירת המחדל שונה
   text_file_repository_writable: מאגר הקבצים ניתן לכתיבה
   text_plugin_assets_writable: ספרית נכסי תוספים ניתנת לכתיבה
-  text_rmagick_available: RMagick זמין (רשות)
+  text_minimagick_available: MiniMagick זמין (רשות)
   text_destroy_time_entries_question: "%{hours} שעות דווחו על הנושאים שאתה עומד למחוק. מה ברצונך לעשות?"
   text_destroy_time_entries: מחק שעות שדווחו
   text_assign_time_entries_to_project: הצב שעות שדווחו לפרויקט הזה
@@ -1300,3 +1304,10 @@ he:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

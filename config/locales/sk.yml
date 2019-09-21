@@ -131,6 +131,10 @@ sk:
         earlier_than_minimum_start_date: "nemôže byť skorší ako %{date} z dôvodu nadväznosti na predchádzajúce úlohy"
         not_a_regexp: "is not a valid regular expression"
         open_issue_with_closed_parent: "An open issue cannot be attached to a closed parent task"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: Vyberte
 
@@ -667,7 +671,7 @@ sk:
   text_select_project_modules: 'Vybrať moduly povolené v tomto projekte:'
   text_default_administrator_account_changed: Predvolené nastavenie administrátorského účtu bolo zmenené
   text_file_repository_writable: Povolený zápis do priečinka s prílohami
-  text_rmagick_available: RMagick k dispozícii (voliteľné)
+  text_minimagick_available: MiniMagick k dispozícii (voliteľné)
   text_destroy_time_entries_question: Pri úlohách, ktoré chcete odstrániť, je zaznamenaných %{hours} hodín práce. Čo si želáte urobiť?
   text_destroy_time_entries: Odstrániť zaznamenané hodiny
   text_assign_time_entries_to_project: Priradiť zaznamenané hodiny k projektu
@@ -1284,3 +1288,10 @@ sk:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

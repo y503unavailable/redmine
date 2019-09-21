@@ -146,6 +146,10 @@ uk:
         earlier_than_minimum_start_date: "не може бути раніше ніж %{date} через попередні задачі"
         not_a_regexp: "недопустимий регулярний вираз"
         open_issue_with_closed_parent: "Відкрите завдання не може бути приєднано до закритого батьківського завдання"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: Оберіть
 
@@ -686,7 +690,7 @@ uk:
   project_module_time_tracking: Відстеження часу
   text_file_repository_writable: Сховище файлів доступне для записів
   text_default_administrator_account_changed: Обліковий запис адміністратора по замовчуванню змінений
-  text_rmagick_available: Доступно використання RMagick (опційно)
+  text_minimagick_available: Доступно використання MiniMagick (опційно)
   button_configure: Налаштування
   label_plugins: Модулі
   label_ldap_authentication: Авторизація за допомогою LDAP
@@ -1283,3 +1287,10 @@ uk:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

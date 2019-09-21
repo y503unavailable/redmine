@@ -204,7 +204,7 @@ class ActiveSupport::TestCase
     saved = object.save
     message = "#{object.class} could not be saved"
     errors = object.errors.full_messages.map {|m| "- #{m}"}
-    message << ":\n#{errors.join("\n")}" if errors.any?
+    message += ":\n#{errors.join("\n")}" if errors.any?
     assert_equal true, saved, message
   end
 
@@ -250,7 +250,7 @@ class ActiveSupport::TestCase
   end
 
   def mail_body(mail)
-    mail.parts.first.body.encoded
+    (mail.multipart? ? mail.parts.first : mail).body.encoded
   end
 
   # Returns the lft value for a new root issue

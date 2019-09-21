@@ -137,6 +137,10 @@ it:
         earlier_than_minimum_start_date: "non può essere precedente a %{date} a causa di una precedente segnalazione"
         not_a_regexp: "is not a valid regular expression"
         open_issue_with_closed_parent: "An open issue cannot be attached to a closed parent task"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: Scegli
 
@@ -675,7 +679,7 @@ it:
   project_module_time_tracking: Time tracking
   text_file_repository_writable: Repository dei file scrivibile
   text_default_administrator_account_changed: L'account amministrativo predefinito è stato modificato
-  text_rmagick_available: RMagick disponibile (opzionale)
+  text_minimagick_available: MiniMagick disponibile (opzionale)
   button_configure: Configura
   label_plugins: Plugin
   label_ldap_authentication: Autenticazione LDAP
@@ -1290,3 +1294,10 @@ it:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

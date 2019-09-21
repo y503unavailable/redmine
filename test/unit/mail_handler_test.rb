@@ -738,12 +738,14 @@ class MailHandlerTest < ActiveSupport::TestCase
   end
 
   def test_add_issue_with_no_subject_header
-    issue = submit_email(
-              'no_subject_header.eml',
-              :issue => {:project => 'ecookbook'}
-            )
-    assert_kind_of Issue, issue
-    assert_equal '(no subject)', issue.subject
+    with_settings :default_language => 'en' do
+      issue = submit_email(
+                'no_subject_header.eml',
+                :issue => {:project => 'ecookbook'}
+              )
+      assert_kind_of Issue, issue
+      assert_equal "(no subject)", issue.subject
+    end
   end
 
   def test_add_issue_with_mixed_japanese_subject
@@ -983,6 +985,29 @@ class MailHandlerTest < ActiveSupport::TestCase
     end
   end
 
+  def test_reply_to_a_nonexistent_issue
+    Issue.find(2).destroy
+    assert_no_difference 'Issue.count' do
+      assert_no_difference 'Journal.count' do
+        journal = submit_email('ticket_reply_with_status.eml')
+        assert_nil journal
+      end
+    end
+  end
+
+  def test_reply_to_a_nonexitent_journal
+    journal_id = Issue.find(2).journals.last.id
+    Journal.destroy(journal_id)
+    assert_no_difference 'Issue.count' do
+      assert_no_difference 'Journal.count' do
+        journal = submit_email('ticket_reply.eml') do |email|
+          email.sub! %r{^In-Reply-To:.*$}, "In-Reply-To: <redmine.journal-#{journal_id}.20060719210421@osiris>"
+        end
+        assert_nil journal
+      end
+    end
+  end
+
   def test_reply_to_a_message
     m = submit_email('message_reply.eml')
     assert m.is_a?(Message)
@@ -1010,6 +1035,14 @@ class MailHandlerTest < ActiveSupport::TestCase
     assert_no_difference('topic.replies_count') do
       m = submit_email('message_reply_by_subject.eml')
       assert_not_kind_of Message, m
+    end
+  end
+
+  def test_reply_to_a_nonexistent_topic
+    Message.find(2).destroy
+    assert_no_difference('Message.count') do
+      m = submit_email('message_reply_by_subject.eml')
+      assert_nil m
     end
   end
 
@@ -1114,7 +1147,7 @@ class MailHandlerTest < ActiveSupport::TestCase
   end
 
   def test_attachments_that_match_mail_handler_excluded_filenames_should_be_ignored
-    with_settings :mail_handler_excluded_filenames => '*.vcf, *.jpg' do
+    with_settings :mail_handler_excluded_filenames => "*.vcf,\n *.jpg" do
       issue = submit_email('ticket_with_attachment.eml', :issue => {:project => 'onlinestore'})
       assert issue.is_a?(Issue)
       assert !issue.new_record?

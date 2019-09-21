@@ -17,6 +17,7 @@ AllCops:
 # Enable extensions
 
 require:
+  - rubocop-performance
   - rubocop-rails
 
 # Rules for Redmine
@@ -24,10 +25,19 @@ require:
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
+
 Layout/TrailingWhitespace:
   AllowInHeredoc: true
 
+Lint/HandleExceptions:
+  AllowComments: true
+
 Metrics:
+  Enabled: false
+
+Naming/PredicateName:
   Enabled: false
 
 Rails/BulkChangeTable:

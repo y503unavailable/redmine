@@ -171,7 +171,7 @@ class MailHandler < ActionMailer::Base
     logger&.error "MailHandler: missing information from #{user}: #{e.message}"
     false
   rescue UnauthorizedAction => e
-    logger&.error "MailHandler: unauthorized attempt from #{user}"
+    logger&.error "MailHandler: unauthorized attempt from #{user}: #{e.message}"
     false
   end
 
@@ -184,7 +184,7 @@ class MailHandler < ActionMailer::Base
     project = target_project
     # check permission
     unless handler_options[:no_permission_check]
-      raise UnauthorizedAction unless user.allowed_to?(:add_issues, project)
+      raise UnauthorizedAction, "not allowed to add issues to project [#{project.name}]" unless user.allowed_to?(:add_issues, project)
     end
 
     issue = Issue.new(:author => user, :project => project)
@@ -199,7 +199,7 @@ class MailHandler < ActionMailer::Base
     issue.safe_attributes = {'custom_field_values' => custom_field_values_from_keywords(issue)}
     issue.subject = cleaned_up_subject
     if issue.subject.blank?
-      issue.subject = '(no subject)'
+      issue.subject = "(#{ll(Setting.default_language, :text_no_subject)})"
     end
     issue.description = cleaned_up_text_body
     issue.start_date ||= User.current.today if Setting.default_issue_start_date_to_creation_date?
@@ -217,13 +217,17 @@ class MailHandler < ActionMailer::Base
 
   # Adds a note to an existing issue
   def receive_issue_reply(issue_id, from_journal=nil)
-    issue = Issue.find_by_id(issue_id)
-    return unless issue
+    issue = Issue.find_by(:id => issue_id)
+    if issue.nil?
+      logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a nonexistent issue"
+      return nil
+    end
+
     # check permission
     unless handler_options[:no_permission_check]
       unless user.allowed_to?(:add_issue_notes, issue.project) ||
                user.allowed_to?(:edit_issues, issue.project)
-        raise UnauthorizedAction
+        raise UnauthorizedAction, "not allowed to add notes on issues to project [#{project.name}]"
       end
     end
 
@@ -249,33 +253,42 @@ class MailHandler < ActionMailer::Base
 
   # Reply will be added to the issue
   def receive_journal_reply(journal_id)
-    journal = Journal.find_by_id(journal_id)
-    if journal && journal.journalized_type == 'Issue'
+    journal = Journal.find_by(:id => journal_id)
+    if journal.nil?
+      logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a nonexistent journal"
+      return nil
+    end
+
+    if journal.journalized_type == 'Issue'
       receive_issue_reply(journal.journalized_id, journal)
+    else
+      logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a journal whose journalized_type is not Issue"
+      return nil
     end
   end
 
   # Receives a reply to a forum message
   def receive_message_reply(message_id)
-    message = Message.find_by_id(message_id)
-    if message
-      message = message.root
+    message = Message.find_by(:id => message_id)&.root
+    if message.nil?
+      logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a nonexistent message"
+      return nil
+    end
 
-      unless handler_options[:no_permission_check]
-        raise UnauthorizedAction unless user.allowed_to?(:add_messages, message.project)
-      end
+    unless handler_options[:no_permission_check]
+      raise UnauthorizedAction, "not allowed to add messages to project [#{project.name}]" unless user.allowed_to?(:add_messages, message.project)
+    end
 
-      if !message.locked?
-        reply = Message.new(:subject => cleaned_up_subject.gsub(%r{^.*msg\d+\]}, '').strip,
-                            :content => cleaned_up_text_body)
-        reply.author = user
-        reply.board = message.board
-        message.children << reply
-        add_attachments(reply)
-        reply
-      else
-        logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a locked topic"
-      end
+    if !message.locked?
+      reply = Message.new(:subject => cleaned_up_subject.gsub(%r{^.*msg\d+\]}, '').strip,
+                          :content => cleaned_up_text_body)
+      reply.author = user
+      reply.board = message.board
+      message.children << reply
+      add_attachments(reply)
+      reply
+    else
+      logger&.info "MailHandler: ignoring reply from [#{email.from.first}] to a locked topic"
     end
   end
 
@@ -400,7 +413,7 @@ class MailHandler < ActionMailer::Base
         target = Project.find_by_identifier(default_project)
       end
     end
-    raise MissingInformation.new('Unable to determine target project') if target.nil?
+    raise MissingInformation, 'Unable to determine target project' if target.nil?
     target
   end
 

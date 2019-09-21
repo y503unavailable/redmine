@@ -143,6 +143,10 @@ bs:
         earlier_than_minimum_start_date: "cannot be earlier than %{date} because of preceding issues"
         not_a_regexp: "is not a valid regular expression"
         open_issue_with_closed_parent: "An open issue cannot be attached to a closed parent task"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: Molimo odaberite
 
@@ -762,7 +766,7 @@ bs:
   text_default_administrator_account_changed: Tekući administratorski račun je promjenjen
   text_file_repository_writable: U direktorij sa fajlovima koji su prilozi se može pisati
   text_plugin_assets_writable: U direktorij plugin-ova se može pisati
-  text_rmagick_available: RMagick je dostupan (opciono)
+  text_minimagick_available: MiniMagick je dostupan (opciono)
   text_destroy_time_entries_question: "%{hours} sahata je prijavljeno na aktivnostima koje želite brisati. Želite li to učiniti ?"
   text_destroy_time_entries: Izbriši prijavljeno vrijeme
   text_assign_time_entries_to_project: Dodaj prijavljenoo vrijeme projektu
@@ -1308,3 +1312,10 @@ bs:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

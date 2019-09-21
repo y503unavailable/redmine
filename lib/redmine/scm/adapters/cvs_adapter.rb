@@ -182,9 +182,9 @@ module Redmine
                   entry_name = normalize_path(File.basename($1))
                   logger.debug("Path #{entry_path} <=> Name #{entry_name}")
                 elsif /^head: (.+)$/ =~ line
-                  entry_headRev = $1 #unless entry.nil?
+                  entry_headRev = $1
                 elsif /^symbolic names:/.match?(line)
-                  state = "symbolic" #unless entry.nil?
+                  state = "symbolic"
                 elsif /^#{STARTLOG}/.match?(line)
                   commit_log = ""
                   state      = "revision"
@@ -243,15 +243,14 @@ module Redmine
                 elsif /^revision (\d+(?:\.\d+)+).*$/ =~ line
                   revision = $1
                 elsif /^date:\s+(\d+.\d+.\d+\s+\d+:\d+:\d+)/ =~ line
-                  date       = Time.parse($1)
+                  date         = Time.parse($1)
                   line_utf8    = scm_iconv('UTF-8', options[:log_encoding], line)
                   author_utf8  = /author: ([^;]+)/.match(line_utf8)[1]
                   author       = scm_iconv(options[:log_encoding], 'UTF-8', author_utf8)
                   file_state   = /state: ([^;]+)/.match(line)[1]
-                  # TODO:
-                  #    linechanges only available in CVS....
-                  #    maybe a feature our SVN implementation.
-                  #    I'm sure, they are useful for stats or something else
+                  # TODO: linechanges only available in CVS....
+                  #       maybe a feature our SVN implementation.
+                  #       I'm sure, they are useful for stats or something else
                   #                linechanges =/lines: \+(\d+) -(\d+)/.match(line)
                   #                unless linechanges.nil?
                   #                  version.line_plus  = linechanges[1]
@@ -340,9 +339,8 @@ module Redmine
         # convert a date/time into the CVS-format
         def time_to_cvstime(time)
           return nil if time.nil?
-          time = Time.now if (time.kind_of?(String) && time == 'HEAD')
-
-          unless time.kind_of? Time
+          time = Time.now if (time.is_a?(String) && time == 'HEAD')
+          unless time.is_a?(Time)
             time = Time.parse(time)
           end
           return time_to_cvstime_rlog(time)
@@ -399,10 +397,6 @@ module Redmine
         def initialize(complete_rev)
           @complete_rev = complete_rev
           parseRevision()
-        end
-
-        def branchPoint
-          return @base
         end
 
         def branchVersion

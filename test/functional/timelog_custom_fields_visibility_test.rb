@@ -26,11 +26,11 @@ class TimelogCustomFieldsVisibilityTest < Redmine::ControllerTest
            :roles,
            :members,
            :member_roles,
-           :issue_statuses,
+           :issues, :issue_statuses,
            :trackers,
            :projects_trackers,
            :enabled_modules,
-           :enumerations,
+           :time_entries, :enumerations,
            :workflows,
            :custom_fields, :custom_values, :custom_fields_trackers
 
@@ -153,7 +153,7 @@ class TimelogCustomFieldsVisibilityTest < Redmine::ControllerTest
     }
 
     Member.where(:project_id => 1).each do |member|
-      member.destroy unless @users_to_test.keys.include?(member.principal)
+      member.destroy unless @users_to_test.key?(member.principal)
     end
   end
 end

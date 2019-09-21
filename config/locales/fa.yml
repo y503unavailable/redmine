@@ -136,6 +136,10 @@ fa:
         earlier_than_minimum_start_date: "به خاطر مسائل مقدم، نمی‌تواند قبل از %{date} باشد"
         not_a_regexp: "یک عبارت منظم معتبر نیست"
         open_issue_with_closed_parent: "یم مسأله باز نمی‌تواند به یک مسأله پدر بسته ضمیمه شود"
+        must_contain_uppercase: "must contain uppercase letters (A-Z)"
+        must_contain_lowercase: "must contain lowercase letters (a-z)"
+        must_contain_digits: "must contain digits (0-9)"
+        must_contain_special_chars: "must contain special characters (!, $, %, ...)"
 
   actionview_instancetag_blank_option: انتخاب کنید
 
@@ -1131,7 +1135,7 @@ fa:
   text_default_administrator_account_changed: حساب راه‌بری پیش‌فرض تغییر کرده است
   text_file_repository_writable: پوشه پیوست‌ها نوشتنی است
   text_plugin_assets_writable: پوشه دارایی‌های افزونه‌ها نوشتنی است
-  text_rmagick_available: RMagick در دست‌رس است (اختیاری)
+  text_minimagick_available: MiniMagick در دست‌رس است (اختیاری)
   text_convert_available: ImageMagick convert در دست‌رس است (اختیاری)
   text_destroy_time_entries_question: "%{hours} ساعت روی مسأله‌هایی که می‌خواهید حذف کنید کار گزارش شده است. می‌خواهید چه کنید؟"
   text_destroy_time_entries: ساعت‌های گزارش شده حذف شوند
@@ -1280,3 +1284,10 @@ fa:
   label_issue_history_notes: Notes
   label_last_tab_visited: Last visited tab
   field_unique_id: Unique ID
+  text_no_subject: no subject
+  setting_password_required_char_classes: Required character classes for passwords
+  label_password_char_class_uppercase: uppercase letters
+  label_password_char_class_lowercase: lowercase letters
+  label_password_char_class_digits: digits
+  label_password_char_class_special_chars: special characters
+  text_characters_must_contain: Must contain %{character_classes}.

@@ -29,8 +29,6 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
   PRJ_ID     = 3
   NUM_REV    = 34
 
-  ruby19_non_utf8_pass = Encoding.default_external.to_s != 'UTF-8'
-
   def setup
     super
     User.current = nil
@@ -44,7 +42,7 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
     @diff_c_support = true
   end
 
-  if ruby19_non_utf8_pass
+  if Encoding.default_external.to_s != 'UTF-8'
     puts "TODO: Mercurial functional test fails " +
          "when Encoding.default_external is not UTF-8. " +
          "Current value is '#{Encoding.default_external.to_s}'"
@@ -214,7 +212,7 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
       @repository.fetch_changesets
       @project.reload
       assert_equal NUM_REV, @repository.changesets.count
-       [
+      [
           'default',
           'branch-Ü-01',
           'branch (1)[2]&,%.-3_4',
@@ -239,7 +237,7 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
       @repository.fetch_changesets
       @project.reload
       assert_equal NUM_REV, @repository.changesets.count
-       [
+      [
         'tag-Ü-00',
         'tag_test.00',
         'tag-init-revision'

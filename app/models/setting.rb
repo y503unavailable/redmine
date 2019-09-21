@@ -19,6 +19,13 @@
 
 class Setting < ActiveRecord::Base
 
+  PASSWORD_CHAR_CLASSES = {
+        'uppercase'     => /[A-Z]/,
+        'lowercase'     => /[a-z]/,
+        'digits'        => /[0-9]/,
+        'special_chars' => /[[:ascii:]&&[:graph:]&&[:^alnum:]]/
+    }
+
   DATE_FORMATS = [
         '%Y-%m-%d',
         '%d/%m/%Y',
@@ -107,13 +114,12 @@ class Setting < ActiveRecord::Base
 
   # Returns the value of the setting named name
   def self.[](name)
-    v = @cached_settings[name]
-    v ? v : (@cached_settings[name] = find_or_default(name).value)
+    @cached_settings[name] ||= find_or_default(name).value
   end
 
   def self.[]=(name, v)
     setting = find_or_default(name)
-    setting.value = (v ? v : "")
+    setting.value = v || ''
     @cached_settings[name] = nil
     setting.save
     setting.value
@@ -166,6 +172,14 @@ class Setting < ActiveRecord::Base
       end
     end
 
+    if settings.key?(:mail_from)
+      begin
+        mail_from = Mail::Address.new(settings[:mail_from])
+        raise unless mail_from.address =~ EmailAddress::EMAIL_REGEXP
+      rescue
+        messages << [:mail_from, l('activerecord.errors.messages.invalid')]
+      end
+    end
     messages
   end
 

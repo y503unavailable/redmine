@@ -177,7 +177,7 @@ function buildFilterRow(field, operator, values) {
   select = tr.find('td.operator select');
   for (i = 0; i < operators.length; i++) {
     var option = $('<option>').val(operators[i]).text(operatorLabels[operators[i]]);
-    if (operators[i] == operator) { option.attr('selected', true); }
+    if (operators[i] == operator) { option.prop('selected', true); }
     select.append(option);
   }
   select.change(function(){ toggleOperator(field); });
@@ -198,7 +198,7 @@ function buildFilterRow(field, operator, values) {
       var option = $('<option>');
       if ($.isArray(filterValue)) {
         option.val(filterValue[1]).text(filterValue[0]);
-        if ($.inArray(filterValue[1], values) > -1) {option.attr('selected', true);}
+        if ($.inArray(filterValue[1], values) > -1) {option.prop('selected', true);}
         if (filterValue.length == 3) {
           var optgroup = select.find('optgroup').filter(function(){return $(this).attr('label') == filterValue[2]});
           if (!optgroup.length) {optgroup = $('<optgroup>').attr('label', filterValue[2]);}
@@ -206,7 +206,7 @@ function buildFilterRow(field, operator, values) {
         }
       } else {
         option.val(filterValue).text(filterValue);
-        if ($.inArray(filterValue, values) > -1) {option.attr('selected', true);}
+        if ($.inArray(filterValue, values) > -1) {option.prop('selected', true);}
       }
       select.append(option);
     }
@@ -240,7 +240,7 @@ function buildFilterRow(field, operator, values) {
       var filterValue = filterValues[i];
       var option = $('<option>');
       option.val(filterValue[1]).text(filterValue[0]);
-      if (values[0] == filterValue[1]) { option.attr('selected', true); }
+      if (values[0] == filterValue[1]) { option.prop('selected', true); }
       select.append(option);
     }
     break;
@@ -490,7 +490,7 @@ function showModal(id, width, title) {
   if (el.length === 0 || el.is(':visible')) {return;}
   if (!title) title = el.find('h3.title').text();
   // moves existing modals behind the transparent background
-  $(".modal").zIndex(99);
+  $(".modal").css('zIndex',99);
   el.dialog({
     width: width,
     modal: true,
@@ -498,7 +498,7 @@ function showModal(id, width, title) {
     dialogClass: 'modal',
     title: title
   }).on('dialogclose', function(){
-    $(".modal").zIndex(101);
+    $(".modal").css('zIndex',101);
   });
   el.find("input[type=text], input[type=submit]").first().focus();
 }
@@ -995,6 +995,7 @@ function setupAttachmentDetail() {
   $(window).resize(setFilecontentContainerHeight);
 }
 
+
 $(function () {
     $('[title]').tooltip({
         show: {
@@ -1006,6 +1007,54 @@ $(function () {
         }
     });
 });
+
+function inlineAutoComplete(element) {
+    'use strict';
+    // do not attach if Tribute is already initialized
+    if (element.dataset.tribute === 'true') {return;}
+
+    const issuesUrl = element.dataset.issuesUrl;
+    const usersUrl = element.dataset.usersUrl;
+
+    const remoteSearch = function(url, cb) {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function ()
+      {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            cb(data);
+          } else if (xhr.status === 403) {
+            cb([]);
+          }
+        }
+      };
+      xhr.open("GET", url, true);
+      xhr.send();
+    };
+
+    const tribute = new Tribute({
+      trigger: '#',
+      values: function (text, cb) {
+        if (event.target.type === 'text' && $(element).attr('autocomplete') != 'off') {
+          $(element).attr('autocomplete', 'off');
+        }
+        remoteSearch(issuesUrl + text, function (issues) {
+          return cb(issues);
+        });
+      },
+      lookup: 'label',
+      fillAttr: 'label',
+      requireLeadingSpace: true,
+      selectTemplate: function (issue) {
+        return '#' + issue.original.id;
+      }
+    });
+
+    tribute.attach(element);
+}
+
+
 $(document).ready(setupAjaxIndicator);
 $(document).ready(hideOnLoad);
 $(document).ready(addFormObserversForDoubleSubmit);
@@ -1013,3 +1062,6 @@ $(document).ready(defaultFocus);
 $(document).ready(setupAttachmentDetail);
 $(document).ready(setupTabs);
 $(document).ready(setupFilePreviewNavigation);
+$(document).on('focus', '[data-auto-complete=true]', function(event) {
+  inlineAutoComplete(event.target);
+});

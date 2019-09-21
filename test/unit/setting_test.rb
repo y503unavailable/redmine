@@ -20,6 +20,7 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class SettingTest < ActiveSupport::TestCase
+  fixtures :users
 
   def setup
     User.current = nil
@@ -131,5 +132,19 @@ YAML
   ensure
     Setting.where(:name => 'commit_update_keywords').delete_all
     Setting.clear_cache
+  end
+
+  def test_mail_from_format_should_be_validated
+    with_locale 'en' do
+      ['[Redmine app] <redmine@example.net>', 'redmine'].each do |invalid_mail_from|
+        errors = Setting.set_all_from_params({:mail_from => invalid_mail_from})
+        assert_includes errors, [:mail_from, 'is invalid']
+      end
+
+      ['Redmine app <redmine@example.net>', 'redmine@example.net', '<redmine@example.net>'].each do |valid_mail_from|
+        errors = Setting.set_all_from_params({:mail_from => valid_mail_from})
+        assert_nil errors
+      end
+    end
   end
 end

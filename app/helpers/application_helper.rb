@@ -562,7 +562,7 @@ module ApplicationHelper
   def principals_check_box_tags(name, principals)
     s = +''
     principals.each do |principal|
-      s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } #{h principal}</label>\n"
+      s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } <span class='name icon icon-#{principal.class.name.downcase}'></span>#{h principal}</label>\n"
     end
     s.html_safe
   end
@@ -1569,9 +1569,9 @@ module ApplicationHelper
 
   # Returns the javascript tags that are included in the html layout head
   def javascript_heads
-    tags = javascript_include_tag('jquery-1.11.1-ui-1.11.0-ujs-5.2.3', 'application', 'responsive')
+    tags = javascript_include_tag('jquery-2.2.4-ui-1.11.0-ujs-5.2.3', 'tribute-3.7.3.min', 'application', 'responsive')
     unless User.current.pref.warn_on_leaving_unsaved == '0'
-      tags << "\n".html_safe + javascript_tag("$(window).load(function(){ warnLeavingUnsaved('#{escape_javascript l(:text_warn_on_leaving_unsaved)}'); });")
+      tags << "\n".html_safe + javascript_tag("$(window).on('load', function(){ warnLeavingUnsaved('#{escape_javascript l(:text_warn_on_leaving_unsaved)}'); });")
     end
     tags
   end
