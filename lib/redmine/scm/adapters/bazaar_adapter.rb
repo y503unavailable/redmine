@@ -255,21 +255,21 @@ module Redmine
         end
 
         def append_revisions_only
-          return @aro if ! @aro.nil?
+          return @aro unless @aro.nil?
           @aro = false
           bcp = self.class.branch_conf_path(url)
           if bcp && File.exist?(bcp)
             begin
-              f = File::open(bcp, "r")
+              f = File.open(bcp, "r")
               cnt = 0
               f.each_line do |line|
                 l = line.chomp.to_s
                 if l =~ /^\s*append_revisions_only\s*=\s*(\w+)\s*$/
                   str_aro = $1
-                  if str_aro.upcase == "TRUE"
+                  if str_aro.casecmp("TRUE") == 0
                     @aro = true
                     cnt += 1
-                  elsif str_aro.upcase == "FALSE"
+                  elsif str_aro.casecmp("FALSE") == 0
                     @aro = false
                     cnt += 1
                   end

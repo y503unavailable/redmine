@@ -215,17 +215,13 @@ class IssuesControllerTest < Redmine::ControllerTest
         '!*' => { :op => '!*', :values => [''] },
         '*' => { :op => '*', :values => [''] }}
     }
-
     default_filter = { 'status_id' => {:operator => 'o', :values => [''] }}
-
     to_test.each do |field, expression_and_expected|
       expression_and_expected.each do |filter_expression, expected|
-
         get :index, :params => {
             :set_filter => 1, field => filter_expression
           }
         assert_response :success
-
         expected_with_default = default_filter.merge({field => {:operator => expected[:op], :values => expected[:values]}})
         assert_query_filters expected_with_default.map {|f, v| [f, v[:operator], v[:values]]}
       end
@@ -348,6 +344,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_index_grouped_by_due_date
+    set_tmp_attachments_directory
     Issue.destroy_all
     Issue.generate!(:due_date => '2018-08-10')
     Issue.generate!(:due_date => '2018-08-10')
@@ -359,10 +356,10 @@ class IssuesControllerTest < Redmine::ControllerTest
       }
     assert_response :success
     assert_select 'tr.group span.name', :value => '2018-08-10' do
-      assert_select '~ span.count', value:'2'
+      assert_select '~ span.count', :value => '2'
     end
     assert_select 'tr.group span.name', :value => '(blank)' do
-      assert_select '~ span.count', value:'1'
+      assert_select '~ span.count', :value => '1'
     end
   end
 
@@ -706,16 +703,13 @@ class IssuesControllerTest < Redmine::ControllerTest
 
   def test_index_csv_with_description
     Issue.generate!(:description => 'test_index_csv_with_description')
-
     with_settings :default_language => 'en' do
       get :index, :params => {
           :format => 'csv',
-          :c => [:tracker,
-          :description]
+          :c => [:tracker, :description]
         }
       assert_response :success
     end
-
     assert_equal 'text/csv', response.content_type
     headers = response.body.chomp.split("\n").first.split(',')
     assert_include 'Description', headers
@@ -908,7 +902,6 @@ class IssuesControllerTest < Redmine::ControllerTest
   def test_index_pdf
     ["en", "zh", "zh-TW", "ja", "ko"].each do |lang|
       with_settings :default_language => lang do
-
         get :index
         assert_response :success
 
@@ -3095,10 +3088,8 @@ class IssuesControllerTest < Redmine::ControllerTest
     @request.session[:user_id] = 2
     t = Tracker.find(3)
     assert !t.disabled_core_fields.include?('parent_issue_id')
-
     get :new, :params => {
-        :project_id => 1, issue: { parent_issue_id: 1
-      }
+        :project_id => 1, :issue => { parent_issue_id: 1 }
       }
     assert_response :success
     assert_select 'option', text: /#{t.name}/, count: 1
@@ -3107,8 +3098,7 @@ class IssuesControllerTest < Redmine::ControllerTest
     t.save!
     assert t.disabled_core_fields.include?('parent_issue_id')
     get :new, :params => {
-        :project_id => 1, issue: { parent_issue_id: 1
-      }
+        :project_id => 1, :issue => { parent_issue_id: 1 }
       }
     assert_response :success
     assert_select 'option', text: /#{t.name}/, count: 0
@@ -4413,6 +4403,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_create_as_copy_with_attachments_should_also_add_new_files
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
     issue = Issue.find(3)
     count = issue.attachments.count
@@ -5094,7 +5085,7 @@ class IssuesControllerTest < Redmine::ControllerTest
     mail = ActionMailer::Base.deliveries.last
     assert_mail_body_match "Status changed from New to Assigned", mail
     # subject should contain the new status
-    assert mail.subject.include?("(#{ IssueStatus.find(2).name })")
+    assert mail.subject.include?("(#{IssueStatus.find(2).name})")
   end
 
   def test_put_update_with_note_only
@@ -6585,7 +6576,7 @@ class IssuesControllerTest < Redmine::ControllerTest
     end
   end
 
-  def test_bulk_copy_should_allow_copying_the_subtasks
+  test "bulk copy should allow copying the subtasks" do
     issue = Issue.generate_with_descendants!
     count = issue.descendants.count
     @request.session[:user_id] = 2
@@ -6605,10 +6596,9 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_equal count, copy.descendants.count
   end
 
-  def test_bulk_copy_should_allow_copying_the_subtasks
+  test "issue bulk copy copy watcher" do
     Watcher.create!(:watchable => Issue.find(1), :user => User.find(3))
     @request.session[:user_id] = 2
-
     assert_difference 'Issue.count' do
       post :bulk_update, :params => {
           :ids => [1],
@@ -6616,7 +6606,6 @@ class IssuesControllerTest < Redmine::ControllerTest
           :copy_watchers => '1',
           :issue => {
             :project_id => ''
-
           }
         }
     end
@@ -6672,6 +6661,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issue_with_no_time_entries_should_delete_the_issues
+    set_tmp_attachments_directory
     assert_nil TimeEntry.find_by_issue_id(2)
     @request.session[:user_id] = 2
 
@@ -6685,6 +6675,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_with_time_entries_should_show_the_reassign_form
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     with_settings :timelog_required_fields => [] do
@@ -6705,18 +6696,19 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_with_time_entries_should_not_show_the_nullify_option_when_issue_is_required_for_time_entries
+    set_tmp_attachments_directory
     with_settings :timelog_required_fields => ['issue_id'] do
       @request.session[:user_id] = 2
 
-    assert_no_difference 'Issue.count' do
-      delete :destroy, :params => {
-          :ids => [1, 3]
-        }
-    end
-    assert_response :success
+      assert_no_difference 'Issue.count' do
+        delete :destroy, :params => {
+            :ids => [1, 3]
+          }
+      end
+      assert_response :success
 
-    assert_select 'form' do
-      assert_select 'input[name=_method][value=delete]'
+      assert_select 'form' do
+        assert_select 'input[name=_method][value=delete]'
         assert_select 'input[name=todo][value=destroy]'
         assert_select 'input[name=todo][value=nullify]', 0
         assert_select 'input[name=todo][value=reassign]'
@@ -6741,6 +6733,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_destroy_time_entries
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     assert_difference 'Issue.count', -2 do
@@ -6757,6 +6750,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_assign_time_entries_to_project
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     with_settings :timelog_required_fields => [] do
@@ -6776,6 +6770,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_reassign_time_entries_to_another_issue
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     assert_difference 'Issue.count', -2 do
@@ -6816,6 +6811,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_reassign_time_entries_to_an_invalid_issue_should_fail
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     assert_no_difference 'Issue.count' do
@@ -6832,6 +6828,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_reassign_time_entries_to_an_issue_to_delete_should_fail
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     assert_no_difference 'Issue.count' do
@@ -6848,6 +6845,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_and_nullify_time_entries_should_fail_when_issue_is_required_for_time_entries
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     with_settings :timelog_required_fields => ['issue_id'] do
@@ -6865,6 +6863,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_destroy_issues_from_different_projects
+    set_tmp_attachments_directory
     @request.session[:user_id] = 2
 
     assert_difference 'Issue.count', -3 do

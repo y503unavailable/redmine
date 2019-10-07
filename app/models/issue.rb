@@ -77,7 +77,7 @@ class Issue < ActiveRecord::Base
   }
 
   scope :open, lambda {|*args|
-    is_closed = args.size > 0 ? !args.first : false
+    is_closed = !args.empty? ? !args.first : false
     joins(:status).
     where(:issue_statuses => {:is_closed => is_closed})
   }
@@ -120,22 +120,23 @@ class Issue < ActiveRecord::Base
   # Returns a SQL conditions string used to find all issues visible by the specified user
   def self.visible_condition(user, options={})
     Project.allowed_to_condition(user, :view_issues, options) do |role, user|
-      sql = if user.id && user.logged?
-        case role.issues_visibility
-        when 'all'
-          '1=1'
-        when 'default'
-          user_ids = [user.id] + user.groups.pluck(:id).compact
-          "(#{table_name}.is_private = #{connection.quoted_false} OR #{table_name}.author_id = #{user.id} OR #{table_name}.assigned_to_id IN (#{user_ids.join(',')}))"
-        when 'own'
-          user_ids = [user.id] + user.groups.pluck(:id).compact
-          "(#{table_name}.author_id = #{user.id} OR #{table_name}.assigned_to_id IN (#{user_ids.join(',')}))"
+      sql =
+        if user.id && user.logged?
+          case role.issues_visibility
+          when 'all'
+              '1=1'
+          when 'default'
+            user_ids = [user.id] + user.groups.pluck(:id).compact
+            "(#{table_name}.is_private = #{connection.quoted_false} OR #{table_name}.author_id = #{user.id} OR #{table_name}.assigned_to_id IN (#{user_ids.join(',')}))"
+          when 'own'
+            user_ids = [user.id] + user.groups.pluck(:id).compact
+            "(#{table_name}.author_id = #{user.id} OR #{table_name}.assigned_to_id IN (#{user_ids.join(',')}))"
+          else
+              '1=0'
+          end
         else
-          '1=0'
+          "(#{table_name}.is_private = #{connection.quoted_false})"
         end
-      else
-        "(#{table_name}.is_private = #{connection.quoted_false})"
-      end
       unless role.permissions_all_trackers?(:view_issues)
         tracker_ids = role.permissions_tracker_ids(:view_issues)
         if tracker_ids.any?
@@ -151,20 +152,21 @@ class Issue < ActiveRecord::Base
   # Returns true if usr or current user is allowed to view the issue
   def visible?(usr=nil)
     (usr || User.current).allowed_to?(:view_issues, self.project) do |role, user|
-      visible = if user.logged?
-        case role.issues_visibility
-        when 'all'
-          true
-        when 'default'
-          !self.is_private? || (self.author == user || user.is_or_belongs_to?(assigned_to))
-        when 'own'
-          self.author == user || user.is_or_belongs_to?(assigned_to)
+      visible =
+        if user.logged?
+          case role.issues_visibility
+          when 'all'
+            true
+          when 'default'
+            !self.is_private? || (self.author == user || user.is_or_belongs_to?(assigned_to))
+          when 'own'
+            self.author == user || user.is_or_belongs_to?(assigned_to)
+          else
+            false
+          end
         else
-          false
+          !self.is_private?
         end
-      else
-        !self.is_private?
-      end
       unless role.permissions_all_trackers?(:view_issues)
         visible &&= role.permissions_tracker_ids?(:view_issues, tracker_id)
       end
@@ -492,8 +494,10 @@ class Issue < ActiveRecord::Base
     }
 
   safe_attributes 'parent_issue_id',
-    :if => lambda {|issue, user| (issue.new_record? || issue.attributes_editable?(user)) &&
-      user.allowed_to?(:manage_subtasks, issue.project)}
+    :if => lambda {|issue, user|
+      (issue.new_record? || issue.attributes_editable?(user)) &&
+        user.allowed_to?(:manage_subtasks, issue.project)
+    }
 
   safe_attributes 'deleted_attachment_ids',
     :if => lambda {|issue, user| issue.attachments_deletable?(user)}
@@ -1089,11 +1093,12 @@ class Issue < ActiveRecord::Base
 
   # Returns the total number of hours spent on this issue and its descendants
   def total_spent_hours
-    @total_spent_hours ||= if leaf?
-      spent_hours
-    else
-      self_and_descendants.joins(:time_entries).sum("#{TimeEntry.table_name}.hours").to_f || 0.0
-    end
+    @total_spent_hours ||=
+      if leaf?
+        spent_hours
+      else
+        self_and_descendants.joins(:time_entries).sum("#{TimeEntry.table_name}.hours").to_f || 0.0
+      end
   end
 
   def total_estimated_hours

@@ -149,8 +149,6 @@ class IssuesTest < ApplicationSystemTestCase
     end
     assert_equal 1, issue.attachments.count
     assert_equal 'Some description', issue.attachments.first.description
-  ensure
-    set_fixtures_attachments_directory
   end
 
   def test_create_issue_with_new_target_version
@@ -218,6 +216,14 @@ class IssuesTest < ApplicationSystemTestCase
 
     issue = Issue.find(1)
     assert_equal 'CF value', issue.custom_field_value(field)
+  end
+
+  test "removing issue shows confirm dialog" do
+    log_user('jsmith', 'jsmith')
+    visit '/issues/1'
+    page.accept_confirm /Are you sure/ do
+      page.first('#content a.icon-del').click
+    end
   end
 
   def test_remove_issue_watcher_from_sidebar
@@ -335,7 +341,9 @@ class IssuesTest < ApplicationSystemTestCase
     click_on 'CSV'
     click_on 'Export'
 
-    csv = CSV.read(downloaded_file)
+    # https://github.com/SeleniumHQ/selenium/issues/5292
+    # if issues.csv exists, Chrome creates issues (1).csv, issues (2).csv ...
+    csv = CSV.read(downloaded_file("issues*.csv"))
     subject_index = csv.shift.index('Subject')
     subjects = csv.map {|row| row[subject_index]}
     assert_equal subjects.sort, subjects

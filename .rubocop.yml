@@ -28,13 +28,25 @@ Layout/SpaceBeforeBlockBraces:
 Layout/SpaceInsideBlockBraces:
   Enabled: false
 
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
 Layout/TrailingWhitespace:
   AllowInHeredoc: true
 
 Lint/HandleExceptions:
   AllowComments: true
 
+Lint/IneffectiveAccessModifier:
+  Enabled: false
+
 Metrics:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/BinaryOperatorParameterName:
   Enabled: false
 
 Naming/PredicateName:
@@ -44,6 +56,12 @@ Rails/BulkChangeTable:
   Exclude:
     - 'db/migrate/20120714122200_add_workflows_rule_fields.rb'
     - 'db/migrate/20131214094309_remove_custom_fields_min_max_length_default_values.rb'
+
+Rails/HelperInstanceVariable:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
 
 Style/FrozenStringLiteralComment:
   Enabled: true

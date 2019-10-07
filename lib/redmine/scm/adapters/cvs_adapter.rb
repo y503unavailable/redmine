@@ -63,7 +63,7 @@ module Redmine
         #  password -> unnecessary too
         def initialize(url, root_url=nil, login=nil, password=nil,
                        path_encoding=nil)
-          @path_encoding = path_encoding.blank? ? 'UTF-8' : path_encoding
+          @path_encoding = path_encoding.presence || 'UTF-8'
           @url      = url
           # TODO: better Exception here (IllegalArgumentException)
           raise CommandFailed if root_url.blank?
@@ -176,7 +176,7 @@ module Redmine
                 state      = "entry_start"
               end
               if state == "entry_start"
-                branch_map = Hash.new
+                branch_map = {}
                 if /^RCS file: #{Regexp.escape(root_url_path)}\/#{Regexp.escape(path_with_project_locale)}(.+),v$/ =~ line
                   entry_path = normalize_cvs_path($1)
                   entry_name = normalize_path(File.basename($1))

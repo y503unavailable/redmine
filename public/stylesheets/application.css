@@ -54,11 +54,13 @@ div#wrapper, div#wrapper2, div#wrapper3 { min-height: inherit; }
   font-weight: bold;
   margin: 0;
   padding: 4px 10px 4px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
-#main-menu li a:hover {background: #759FCF; color: #fff; border-top-left-radius: 3px; border-top-right-radius: 3px;}
+#main-menu li a:hover {background: #759FCF; color: #fff; }
 #main-menu li:hover ul.menu-children, #main-menu li ul.menu-children.visible {display: block;}
-#main-menu li a.selected, #main-menu li a.selected:hover {background: #fff; color: #555; border-top-left-radius: 3px; border-top-right-radius: 3px;}
-#main-menu li a.new-object {background-color: #759FCF; border-top-left-radius: 3px; border-top-right-radius: 3px;}
+#main-menu li a.selected, #main-menu li a.selected:hover {background: #fff; color: #555; }
+#main-menu li a.new-object {background-color: #759FCF; }
 
 #main-menu .menu-children {
   display: none;
@@ -71,7 +73,7 @@ div#wrapper, div#wrapper2, div#wrapper3 { min-height: inherit; }
   border-left: 1px solid #759FCF;
 }
 #main-menu .menu-children li {float:left; clear:both; width:100%;}
-#main-menu .menu-children li a {color: #555; background-color:#fff; font-weight:normal;}
+#main-menu .menu-children li a {color: #555; background-color:#fff; font-weight:normal; border-radius: 0;}
 #main-menu .menu-children li a:hover {color: #fff; background-color: #759FCF;}
 
 #main-menu .tabs-buttons {
@@ -229,7 +231,7 @@ div + .drdn-items {border-top:1px solid #ccc;}
 #project-jump .drdn-items>a:hover {background-color:#759FCF; color:#fff !important;}
 
 /***** Tables *****/
-table.list, .table-list { border: 1px solid #e4e4e4;  border-collapse: collapse; width: 100%; margin-bottom: 4px; }
+table.list, .table-list { border: 1px solid #e4e4e4; width: 100%; margin-bottom: 4px; border-radius: 3px; border-spacing: 0; overflow: hidden;}
 table.list th, .table-list-header { background-color:#EEEEEE; padding: 4px; white-space:nowrap; font-weight:bold; }
 table.list td {text-align:center; vertical-align:middle; padding-right:10px;}
 table.list td.id { width: 2%; text-align: center;}
@@ -421,6 +423,11 @@ span.search_for_watchers {display:block;}
 span.search_for_watchers, span.add_attachment {font-size:80%; line-height:2.5em;}
 span.add_attachment a {padding-left:16px; background: url(../images/bullet_add.png) no-repeat 0 50%; }
 
+input:disabled, select:disabled, textarea:disabled {
+  cursor: not-allowed;
+  color: graytext;
+}
+
 
 .highlight { background-color: #FCFD8D;}
 .highlight.token-1 { background-color: #faa;}
@@ -484,6 +491,17 @@ input[type="submit"] {
 input[type="submit"]:hover {
   background-color: #ddd;
 }
+
+input[type="text"]:focus, input[type="text"]:active,
+input[type="password"]:focus, input[type="password"]:active,
+input[type="date"]:focus, input[type="date"]:active,
+input[type="number"]:focus, input[type="number"]:active,
+select:focus, select:active,
+textarea:focus, textarea:active {
+  border: 1px solid #5ad;
+  outline: none;
+}
+
 select[multiple=multiple] {background: #fff; padding-right: initial; height: auto;}
 fieldset {border: 1px solid #e4e4e4; margin:0; min-width: inherit;}
 legend {color: #333;}
@@ -1009,12 +1027,12 @@ vertical-align: bottom;
 }
 
 /***** Calendar *****/
-table.cal {border-collapse: collapse; width: 100%; margin: 0px 0 6px 0;border: 1px solid #d7d7d7;}
+table.cal {width: 100%; margin: 0 0 6px 0; border: 1px solid #c0c0c0; border-spacing: 0; border-radius: 3px;}
 table.cal thead th {width: 14%; background-color:#EEEEEE; padding: 4px; }
 table.cal thead th.week-number {width: auto;}
 table.cal tbody tr {height: 100px;}
 table.cal td .icon {padding-top: 2px; padding-bottom: 3px;}
-table.cal td {border: 1px solid #d7d7d7; vertical-align: top; font-size: 0.9em;}
+table.cal td {border: 1px solid #d7d7d7; vertical-align: top; font-size: 0.9em; border-bottom: 0; border-right: 0;}
 table.cal td.week-number { background-color:#EEEEEE; padding: 4px; border:none; font-size: 1em;}
 table.cal td p.day-num {font-size: 1.1em; text-align:right;}
 table.cal td.odd p.day-num {color: #bbb;}
@@ -1259,6 +1277,7 @@ div.wiki img {vertical-align:middle; max-width:100%;}
   margin:0 0 20px 0;
   color:#505050;
   line-height:1.5em;
+  border-radius: 3px;
 }
 
 .mypage-box>.contextual {opacity:0.001; transition: opacity 0.2s;}
@@ -1719,6 +1738,13 @@ img {
   position: absolute;
   max-height: 100%;
   max-width: 100%;
+}
+
+.filecontent-container > .filecontent.wiki {
+  position: relative;
+  padding: 1em;
+  border: 1px solid #e4e4e4;
+  border-radius: 3px;
 }
 
 /* Fixes for IE 11 */

@@ -338,7 +338,7 @@ class Redmine::ApiTest::IssuesTest < Redmine::ApiTest::Base
 
     json = ActiveSupport::JSON.decode(response.body)
     assert_equal 2, json['issue']['children'].size
-    assert_equal 1, json['issue']['children'].select {|child| child.key?('children')}.size
+    assert_equal 1, json['issue']['children'].count {|child| child.key?('children')}
   end
 
   test "GET /issues/:id.json with no spent time should return floats" do
@@ -405,9 +405,7 @@ class Redmine::ApiTest::IssuesTest < Redmine::ApiTest::Base
     parent = Issue.find(3)
     parent.update_columns :estimated_hours => 2.0
     child = Issue.generate!(:parent_issue_id => parent.id, :estimated_hours => 3.0)
-    # remove permission!
     Role.anonymous.remove_permission! :view_time_entries
-    #Role.all.each { |role| role.remove_permission! :view_time_entries }
     get '/issues/3.xml'
 
     assert_equal 'application/xml', response.content_type
@@ -456,9 +454,7 @@ class Redmine::ApiTest::IssuesTest < Redmine::ApiTest::Base
     parent = Issue.find(3)
     parent.update_columns :estimated_hours => 2.0
     child = Issue.generate!(:parent_issue_id => parent.id, :estimated_hours => 3.0)
-    # remove permission!
     Role.anonymous.remove_permission! :view_time_entries
-    #Role.all.each { |role| role.remove_permission! :view_time_entries }
     get '/issues/3.json'
 
     assert_equal 'application/json', response.content_type
@@ -486,18 +482,16 @@ class Redmine::ApiTest::IssuesTest < Redmine::ApiTest::Base
   end
 
   test "POST /issues.xml should create an issue with the attributes" do
-
-payload = <<-XML
-<?xml version="1.0" encoding="UTF-8" ?>
-<issue>
-  <project_id>1</project_id>
-  <tracker_id>2</tracker_id>
-  <status_id>3</status_id>
-  <category_id>2</category_id>
-  <subject>API test</subject>
-</issue>
-XML
-
+    payload = <<~XML
+      <?xml version="1.0" encoding="UTF-8" ?>
+        <issue>
+          <project_id>1</project_id>
+          <tracker_id>2</tracker_id>
+          <status_id>3</status_id>
+          <category_id>2</category_id>
+         <subject>API test</subject>
+      </issue>
+    XML
     assert_difference('Issue.count') do
       post '/issues.xml',
         :params => payload,
@@ -543,19 +537,17 @@ XML
   end
 
   test "POST /issues.json should create an issue with the attributes" do
-
-payload = <<-JSON
-{
-  "issue": {
-    "project_id": "1",
-    "tracker_id": "2",
-    "status_id": "3",
-    "category_id": "2",
-    "subject": "API test"
-  }
-}
-JSON
-
+    payload = <<~JSON
+      {
+        "issue": {
+        "project_id": "1",
+        "tracker_id": "2",
+        "status_id": "3",
+        "category_id": "2",
+        "subject": "API test"
+        }
+      }
+    JSON
     assert_difference('Issue.count') do
       post '/issues.json',
         :params => payload,
@@ -589,23 +581,20 @@ JSON
       :is_for_all => true,
       :trackers => Tracker.all.to_a
     )
-
-payload = <<-JSON
-{
-  "issue": {
-    "project_id": "1",
-    "subject": "Multivalued custom field",
-    "custom_field_values":{"#{field.id}":["V1","V3"]}
-  }
-}
-JSON
-
+    payload = <<~JSON
+      {
+        "issue": {
+          "project_id": "1",
+          "subject": "Multivalued custom field",
+          "custom_field_values":{"#{field.id}":["V1","V3"]}
+        }
+      }
+    JSON
     assert_difference('Issue.count') do
       post '/issues.json',
         :params => payload,
         :headers => {"CONTENT_TYPE" => 'application/json'}.merge(credentials('jsmith'))
     end
-
     assert_response :created
     issue = Issue.order('id DESC').first
     assert_equal ["V1", "V3"], issue.custom_field_value(field).sort
@@ -905,26 +894,24 @@ JSON
   def test_create_issue_with_multiple_uploaded_files_as_xml
     token1 = xml_upload('File content 1', credentials('jsmith'))
     token2 = xml_upload('File content 2', credentials('jsmith'))
-
-    payload = <<-XML
-<?xml version="1.0" encoding="UTF-8" ?>
-<issue>
-  <project_id>1</project_id>
-  <tracker_id>1</tracker_id>
-  <subject>Issue with multiple attachments</subject>
-  <uploads type="array">
-    <upload>
-      <token>#{token1}</token>
-      <filename>test1.txt</filename>
-    </upload>
-    <upload>
-      <token>#{token2}</token>
-      <filename>test1.txt</filename>
-    </upload>
-  </uploads>
-</issue>
-XML
-
+    payload = <<~XML
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <issue>
+        <project_id>1</project_id>
+        <tracker_id>1</tracker_id>
+        <subject>Issue with multiple attachments</subject>
+        <uploads type="array">
+          <upload>
+            <token>#{token1}</token>
+            <filename>test1.txt</filename>
+          </upload>
+          <upload>
+            <token>#{token2}</token>
+            <filename>test1.txt</filename>
+          </upload>
+        </uploads>
+      </issue>
+    XML
     assert_difference 'Issue.count' do
       post '/issues.xml',
         :params => payload,
@@ -938,21 +925,19 @@ XML
   def test_create_issue_with_multiple_uploaded_files_as_json
     token1 = json_upload('File content 1', credentials('jsmith'))
     token2 = json_upload('File content 2', credentials('jsmith'))
-
-    payload = <<-JSON
-{
-  "issue": {
-    "project_id": "1",
-    "tracker_id": "1",
-    "subject": "Issue with multiple attachments",
-    "uploads": [
-      {"token": "#{token1}", "filename": "test1.txt"},
-      {"token": "#{token2}", "filename": "test2.txt"}
-    ]
-  }
-}
-JSON
-
+    payload = <<~JSON
+      {
+        "issue": {
+          "project_id": "1",
+          "tracker_id": "1",
+          "subject": "Issue with multiple attachments",
+          "uploads": [
+            {"token": "#{token1}", "filename": "test1.txt"},
+            {"token": "#{token2}", "filename": "test2.txt"}
+          ]
+        }
+      }
+    JSON
     assert_difference 'Issue.count' do
       post '/issues.json',
         :params => payload,

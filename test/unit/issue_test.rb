@@ -1419,7 +1419,7 @@ class IssueTest < ActiveSupport::TestCase
   end
 
   def test_copy_should_clear_subtasks_target_version_if_locked_or_closed
-    version = Version.new(:project => Project.find(1), :name => '2.1',)
+    version = Version.new(:project => Project.find(1), :name => '2.1')
     version.save!
 
     parent = Issue.generate!
@@ -2231,7 +2231,6 @@ class IssueTest < ActiveSupport::TestCase
     end
   end
 
-
   def test_rescheduling_reschedule_following_issue_earlier_should_consider_other_preceding_issues
     issue1 = Issue.generate!(:start_date => '2012-10-15', :due_date => '2012-10-17')
     issue2 = Issue.generate!(:start_date => '2012-10-15', :due_date => '2012-10-17')
@@ -2500,7 +2499,7 @@ class IssueTest < ActiveSupport::TestCase
     assert_equal 2, assignable_user_ids.length
 
     assignable_user_ids.each do |user_id|
-      assert_equal 1, assignable_user_ids.select {|i| i == user_id}.length,
+      assert_equal 1, assignable_user_ids.count {|i| i == user_id},
                    "User #{user_id} appears more or less than once"
     end
   end
@@ -2850,7 +2849,7 @@ class IssueTest < ActiveSupport::TestCase
   end
 
   def test_recently_updated_scope
-    #should return the last updated issue
+    # should return the last updated issue
     assert_equal Issue.reorder("updated_on DESC").first, Issue.recently_updated.limit(1).first
   end
 
@@ -3225,6 +3224,5 @@ class IssueTest < ActiveSupport::TestCase
     # March 21st and the issue should be marked overdue
     User.current = user_in_asia
     assert issue.overdue?
-
   end
 end

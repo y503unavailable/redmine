@@ -240,6 +240,14 @@ class Attachment < ActiveRecord::Base
     Redmine::MimeType.is_type?('text', filename) || Redmine::SyntaxHighlighting.filename_supported?(filename)
   end
 
+  def is_markdown?
+    Redmine::MimeType.of(filename) == 'text/markdown'
+  end
+
+  def is_textile?
+    Redmine::MimeType.of(filename) == 'text/x-textile'
+  end
+
   def is_image?
     Redmine::MimeType.is_type?('image', filename)
   end
@@ -427,7 +435,6 @@ class Attachment < ActiveRecord::Base
 
   def reuse_existing_file_if_possible
     original_diskfile = nil
-
     reused = with_lock do
       if existing = Attachment
                       .where(digest: self.digest, filesize: self.filesize)
@@ -435,14 +442,11 @@ class Attachment < ActiveRecord::Base
                              self.id, self.disk_filename)
                       .first
         existing.with_lock do
-
           original_diskfile = self.diskfile
           existing_diskfile = existing.diskfile
-
           if File.readable?(original_diskfile) &&
             File.readable?(existing_diskfile) &&
             FileUtils.identical?(original_diskfile, existing_diskfile)
-
             self.update_columns disk_directory: existing.disk_directory,
                                 disk_filename: existing.disk_filename
           end
@@ -458,7 +462,6 @@ class Attachment < ActiveRecord::Base
     # with_lock throws ActiveRecord::RecordNotFound if the record isnt there
     # anymore, thats why this is caught and ignored as well.
   end
-
 
   # Physically deletes the file from the file system
   def delete_from_disk!

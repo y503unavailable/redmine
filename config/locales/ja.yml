@@ -1307,3 +1307,6 @@ ja:
   label_password_char_class_digits: 数字
   label_password_char_class_special_chars: 記号
   text_characters_must_contain: "%{character_classes}を含む必要があります。"
+  label_starts_with: 前方一致
+  label_ends_with: 後方一致
+  label_issue_fixed_version_updated: 対象バージョンの更新

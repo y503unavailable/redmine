@@ -55,6 +55,7 @@ class ProjectCopyTest < ActiveSupport::TestCase
   end
 
   test "#copy should copy project attachments" do
+    set_tmp_attachments_directory
     Attachment.create!(:container => @source_project, :file => uploaded_test_file("testfile.txt", "text/plain"), :author_id => 1)
     assert @project.copy(@source_project)
 
@@ -200,13 +201,14 @@ class ProjectCopyTest < ActiveSupport::TestCase
 
     # Second issue with a cross project relation
     assert_equal 2, copied_second_issue.relations.size, "Relation not copied"
-    copied_relation = copied_second_issue.relations.select {|r| r.relation_type == 'duplicates'}.first
+    copied_relation = copied_second_issue.relations.find {|r| r.relation_type == 'duplicates'}
     assert_equal "duplicates", copied_relation.relation_type
     assert_equal 1, copied_relation.issue_from_id, "Cross project relation not kept"
     assert_not_equal source_relation_cross_project.id, copied_relation.id
   end
 
   test "#copy should copy issue attachments" do
+    set_tmp_attachments_directory
     issue = Issue.generate!(:subject => "copy with attachment", :tracker_id => 1, :project_id => @source_project.id)
     Attachment.create!(:container => issue, :file => uploaded_test_file("testfile.txt", "text/plain"), :author_id => 1)
     @source_project.issues << issue
@@ -296,6 +298,7 @@ class ProjectCopyTest < ActiveSupport::TestCase
   end
 
   test "#copy should copy version attachments" do
+    set_tmp_attachments_directory
     version = Version.generate!(:name => "copy with attachment")
     Attachment.create!(:container => version, :file => uploaded_test_file("testfile.txt", "text/plain"), :author_id => 1)
     @source_project.versions << version
@@ -378,6 +381,7 @@ class ProjectCopyTest < ActiveSupport::TestCase
   end
 
   test "#copy should copy document attachments" do
+    set_tmp_attachments_directory
     document = Document.generate!(:title => "copy with attachment", :category_id => 1, :project_id => @source_project.id)
     Attachment.create!(:container => document, :file => uploaded_test_file("testfile.txt", "text/plain"), :author_id => 1)
     @source_project.documents << document
