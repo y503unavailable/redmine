@@ -277,14 +277,16 @@ class IssuesController < ApplicationController
     end
     @values_by_custom_field.delete_if {|k,v| v.blank?}
 
-    @custom_fields = edited_issues.map{|i|i.editable_custom_fields}.reduce(:&).select {|field| field.format.bulk_edit_supported}
+    @custom_fields = edited_issues.map{|i| i.editable_custom_fields}.reduce(:&).select {|field| field.format.bulk_edit_supported}
     @assignables = target_projects.map(&:assignable_users).reduce(:&)
     @versions = target_projects.map {|p| p.shared_versions.open}.reduce(:&)
     @categories = target_projects.map {|p| p.shared_categories}.reduce(:&)
     if @copy
       @attachments_present = @issues.detect {|i| i.attachments.any?}.present?
       @subtasks_present = @issues.detect {|i| !i.leaf?}.present?
-      @watchers_present = User.current.allowed_to?(:add_issue_watchers, @projects) && Watcher.where(:watchable_type => 'Issue', :watchable_id => @issues.map(&:id)).exists?
+      @watchers_present = User.current.allowed_to?(:add_issue_watchers, @projects) &&
+                            Watcher.where(:watchable_type => 'Issue',
+                                          :watchable_id => @issues.map(&:id)).exists?
     end
 
     @safe_attributes = edited_issues.map(&:safe_attribute_names).reduce(:&)

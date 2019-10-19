@@ -898,19 +898,27 @@ module ApplicationHelper
           anchor = sanitize_anchor_name(anchor) if anchor.present?
           # check if page exists
           wiki_page = link_project.wiki.find_page(page)
-          url = if anchor.present? && wiki_page.present? && (obj.is_a?(WikiContent) || obj.is_a?(WikiContent::Version)) && obj.page == wiki_page
-            "##{anchor}"
-          else
-            case options[:wiki_links]
-            when :local; "#{page.present? ? Wiki.titleize(page) : ''}.html" + (anchor.present? ? "##{anchor}" : '')
-            when :anchor; "##{page.present? ? Wiki.titleize(page) : title}" + (anchor.present? ? "_#{anchor}" : '') # used for single-file wiki export
+          url =
+            if anchor.present? && wiki_page.present? &&
+                 (obj.is_a?(WikiContent) || obj.is_a?(WikiContent::Version)) &&
+                 obj.page == wiki_page
+              "##{anchor}"
             else
-              wiki_page_id = page.present? ? Wiki.titleize(page) : nil
-              parent = wiki_page.nil? && obj.is_a?(WikiContent) && obj.page && project == link_project ? obj.page.title : nil
-              url_for(:only_path => only_path, :controller => 'wiki', :action => 'show', :project_id => link_project,
-               :id => wiki_page_id, :version => nil, :anchor => anchor, :parent => parent)
+              case options[:wiki_links]
+              when :local
+                "#{page.present? ? Wiki.titleize(page) : ''}.html" + (anchor.present? ? "##{anchor}" : '')
+              when :anchor
+                # used for single-file wiki export
+                "##{page.present? ? Wiki.titleize(page) : title}" + (anchor.present? ? "_#{anchor}" : '')
+              else
+                wiki_page_id = page.present? ? Wiki.titleize(page) : nil
+                parent = wiki_page.nil? && obj.is_a?(WikiContent) && obj.page && project == link_project ? obj.page.title : nil
+                url_for(:only_path => only_path, :controller => 'wiki',
+                        :action => 'show', :project_id => link_project,
+                        :id => wiki_page_id, :version => nil, :anchor => anchor,
+                        :parent => parent)
+              end
             end
-          end
           link_to(title.present? ? title.html_safe : h(page), url, :class => ('wiki-page' + (wiki_page ? '' : ' new')))
         else
           # project or wiki doesn't exist
@@ -1023,17 +1031,18 @@ module ApplicationHelper
                 issue = Issue.visible.find_by_id(oid)
                 anchor = comment_id ? "note-#{comment_id}" : nil
                 url = issue_url(issue, :only_path => only_path, :anchor => anchor)
-                link = if sep == '##'
-                  link_to("#{issue.tracker.name} ##{oid}#{comment_suffix}",
-                          url,
-                          :class => issue.css_classes,
-                          :title => "#{issue.tracker.name}: #{issue.subject.truncate(100)} (#{issue.status.name})") + ": #{issue.subject}"
-                else
-                  link_to("##{oid}#{comment_suffix}",
-                          url,
-                          :class => issue.css_classes,
-                          :title => "#{issue.tracker.name}: #{issue.subject.truncate(100)} (#{issue.status.name})")
-                end
+                link =
+                  if sep == '##'
+                    link_to("#{issue.tracker.name} ##{oid}#{comment_suffix}",
+                            url,
+                            :class => issue.css_classes,
+                            :title => "#{issue.tracker.name}: #{issue.subject.truncate(100)} (#{issue.status.name})") + ": #{issue.subject}"
+                  else
+                    link_to("##{oid}#{comment_suffix}",
+                            url,
+                            :class => issue.css_classes,
+                            :title => "#{issue.tracker.name}: #{issue.subject.truncate(100)} (#{issue.status.name})")
+                  end
               elsif identifier == 'note'
                 link = link_to("#note-#{comment_id}", "#note-#{comment_id}")
               end

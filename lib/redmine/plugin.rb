@@ -342,7 +342,7 @@ module Redmine
     #   permission :say_hello, { :example => :say_hello }, :require => :member
     def permission(name, actions, options = {})
       if @project_module
-        Redmine::AccessControl.map {|map| map.project_module(@project_module) {|map|map.permission(name, actions, options)}}
+        Redmine::AccessControl.map {|map| map.project_module(@project_module) {|map| map.permission(name, actions, options)}}
       else
         Redmine::AccessControl.map {|map| map.permission(name, actions, options)}
       end
@@ -501,22 +501,22 @@ module Redmine
 
     class MigrationContext < ActiveRecord::MigrationContext
       def up(target_version = nil)
-        selected_migrations = if block_given?
-          migrations.select { |m| yield m }
-        else
-          migrations
-        end
-
+        selected_migrations =
+          if block_given?
+            migrations.select { |m| yield m }
+          else
+            migrations
+          end
         Migrator.new(:up, selected_migrations, target_version).migrate
       end
 
       def down(target_version = nil)
-        selected_migrations = if block_given?
-          migrations.select { |m| yield m }
-        else
-          migrations
-        end
-
+        selected_migrations =
+          if block_given?
+            migrations.select { |m| yield m }
+          else
+            migrations
+          end
         Migrator.new(:down, selected_migrations, target_version).migrate
       end
 

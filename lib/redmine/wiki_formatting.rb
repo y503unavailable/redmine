@@ -34,13 +34,13 @@ module Redmine
         options = args.last.is_a?(Hash) ? args.pop : {}
         name = name.to_s
         raise ArgumentError, "format name '#{name}' is already taken" if @@formatters[name]
-
-        formatter, helper, parser = args.any? ?
-          args :
-          %w(Formatter Helper HtmlParser).map {|m| "Redmine::WikiFormatting::#{name.classify}::#{m}".constantize rescue nil}
-
+        formatter, helper, parser =
+          if args.any?
+            args
+          else
+            %w(Formatter Helper HtmlParser).map {|m| "Redmine::WikiFormatting::#{name.classify}::#{m}".constantize rescue nil}
+          end
         raise "A formatter class is required" if formatter.nil?
-
         @@formatters[name] = {
           :formatter => formatter,
           :helper => helper,
@@ -81,15 +81,17 @@ module Redmine
       end
 
       def to_html(format, text, options = {})
-        text = if Setting.cache_formatted_text? && text.size > 2.kilobyte && cache_store && cache_key = cache_key_for(format, text, options[:object], options[:attribute])
-          # Text retrieved from the cache store may be frozen
-          # We need to dup it so we can do in-place substitutions with gsub!
-          cache_store.fetch cache_key do
+        text =
+          if Setting.cache_formatted_text? && text.size > 2.kilobyte && cache_store &&
+              cache_key = cache_key_for(format, text, options[:object], options[:attribute])
+            # Text retrieved from the cache store may be frozen
+            # We need to dup it so we can do in-place substitutions with gsub!
+            cache_store.fetch cache_key do
+              formatter_for(format).new(text).to_html
+            end.dup
+          else
             formatter_for(format).new(text).to_html
-          end.dup
-        else
-          formatter_for(format).new(text).to_html
-        end
+          end
         text
       end
 
@@ -142,9 +144,9 @@ module Redmine
           else
             # Idea below : an URL with unbalanced parenthesis and
             # ending by ')' is put into external parenthesis
-            if ( url[-1]==?) and ((url.count("(") - url.count(")")) < 0 ) )
-              url=url[0..-2] # discard closing parenthesis from url
-              post = ")"+post # add closing parenthesis to post
+            if url[-1] == ")" and ((url.count("(") - url.count(")")) < 0)
+              url = url[0..-2] # discard closing parenthesis from url
+              post = ")" + post # add closing parenthesis to post
             end
             content = proto + url
             href = "#{proto=="www."?"http://www.":proto}#{url}"

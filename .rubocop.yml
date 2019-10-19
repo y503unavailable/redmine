@@ -13,6 +13,7 @@ AllCops:
     - '**/lib/generators/**/templates/*'
     - '**/lib/tasks/**/*'
     - '**/files/**/*'
+    - 'db/schema.rb'
 
 # Enable extensions
 
@@ -21,6 +22,9 @@ require:
   - rubocop-rails
 
 # Rules for Redmine
+
+Layout/EmptyLineBetweenDefs:
+  AllowAdjacentOneLineDefs: true
 
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
@@ -36,9 +40,6 @@ Layout/TrailingWhitespace:
 
 Lint/HandleExceptions:
   AllowComments: true
-
-Lint/IneffectiveAccessModifier:
-  Enabled: false
 
 Metrics:
   Enabled: false
@@ -60,6 +61,13 @@ Rails/BulkChangeTable:
 Rails/HelperInstanceVariable:
   Enabled: false
 
+# Configuration parameters: AllowedChars.
+Style/AsciiComments:
+  Exclude:
+    # Copyright credit has non ascii character.
+    # We can not change nor remove it.
+    - 'app/models/repository/git.rb'
+
 Style/FormatStringToken:
   Enabled: false
 
@@ -76,3 +84,11 @@ Style/FrozenStringLiteralComment:
 Style/HashSyntax:
   Enabled: true
   EnforcedStyle: no_mixed_keys
+
+Style/IdenticalConditionalBranches:
+  Exclude:
+    - 'config/initializers/10-patches.rb'
+    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false

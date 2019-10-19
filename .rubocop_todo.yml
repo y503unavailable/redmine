@@ -24,9 +24,6 @@ Layout/AccessModifierIndentation:
     - 'app/controllers/wiki_controller.rb'
     - 'app/models/role.rb'
     - 'app/models/setting.rb'
-    - 'app/models/tracker.rb'
-    - 'lib/redmine/wiki_formatting/textile/formatter.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
@@ -57,8 +54,6 @@ Layout/BlockAlignment:
     - 'app/models/principal.rb'
     - 'app/models/project.rb'
     - 'app/models/time_entry.rb'
-    - 'test/unit/lib/redmine/menu_manager/mapper_test.rb'
-    - 'test/unit/lib/redmine/menu_manager/menu_helper_test.rb'
 
 # Cop supports --auto-correct.
 Layout/BlockEndNewline:
@@ -72,20 +67,11 @@ Layout/BlockEndNewline:
 # SupportedStyles: case, end
 Layout/CaseIndentation:
   Exclude:
-    - 'app/helpers/versions_helper.rb'
-    - 'app/models/issue_import.rb'
-    - 'app/models/issue_priority.rb'
-    - 'app/models/issue_query.rb'
     - 'config/initializers/10-patches.rb'
-    - 'lib/redmine/helpers/gantt.rb'
-    - 'lib/redmine/menu_manager.rb'
-    - 'lib/redmine/views/builders.rb'
-    - 'test/test_helper.rb'
 
 # Cop supports --auto-correct.
 Layout/ClosingHeredocIndentation:
   Exclude:
-    - 'app/models/setting.rb'
     - 'test/helpers/application_helper_test.rb'
     - 'test/integration/lib/redmine/hook_test.rb'
     - 'test/unit/lib/redmine/unified_diff_test.rb'
@@ -101,11 +87,7 @@ Layout/ClosingParenthesisIndentation:
 # Cop supports --auto-correct.
 Layout/CommentIndentation:
   Exclude:
-    - 'app/helpers/versions_helper.rb'
-    - 'app/models/mailer.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
     - 'test/unit/lib/redmine/wiki_formatting/markdown_formatter_test.rb'
-    - 'test/unit/lib/redmine/wiki_formatting/textile_formatter_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -114,56 +96,16 @@ Layout/DotPosition:
   Enabled: false
 
 # Cop supports --auto-correct.
-Layout/ElseAlignment:
-  Exclude:
-    - 'app/helpers/application_helper.rb'
-    - 'app/helpers/attachments_helper.rb'
-    - 'app/helpers/queries_helper.rb'
-    - 'app/models/changeset.rb'
-    - 'app/models/issue_query.rb'
-    - 'lib/redmine/export/pdf/issues_pdf_helper.rb'
-    - 'lib/redmine/i18n.rb'
-    - 'lib/redmine/plugin.rb'
-    - 'lib/redmine/wiki_formatting.rb'
-
-# Cop supports --auto-correct.
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
 # Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
-Layout/EmptyLineBetweenDefs:
-  Exclude:
-    - 'app/models/user.rb'
-    - 'app/models/user_preference.rb'
-    - 'app/models/version.rb'
-    - 'lib/redmine/info.rb'
-    - 'lib/redmine/version.rb'
-    - 'test/functional/email_addresses_controller_test.rb'
-    - 'test/functional/settings_controller_test.rb'
-    - 'test/functional/users_controller_test.rb'
-    - 'test/helpers/sort_helper_test.rb'
-    - 'test/unit/mailer_test.rb'
-    - 'test/unit/project_test.rb'
-
-# Cop supports --auto-correct.
 Layout/EmptyLines:
   Exclude:
-    - 'app/models/issue.rb'
-    - 'app/models/time_entry_import.rb'
     - 'config/routes.rb'
     - 'db/migrate/001_setup.rb'
     - 'lib/redmine/sudo_mode.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-    - 'test/functional/activities_controller_test.rb'
-    - 'test/functional/email_addresses_controller_test.rb'
-    - 'test/functional/project_enumerations_controller_test.rb'
-    - 'test/functional/settings_controller_test.rb'
-    - 'test/functional/users_controller_test.rb'
     - 'test/helpers/application_helper_test.rb'
-    - 'test/unit/lib/redmine/wiki_formatting/textile_formatter_test.rb'
-    - 'test/unit/project_test.rb'
-    - 'test/unit/query_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -174,25 +116,8 @@ Layout/EmptyLinesAroundAccessModifier:
     - 'app/controllers/messages_controller.rb'
     - 'app/controllers/previews_controller.rb'
     - 'app/controllers/timelog_controller.rb'
-    - 'app/models/tracker.rb'
     - 'config/initializers/10-patches.rb'
     - 'lib/redmine/syntax_highlighting.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-
-# Cop supports --auto-correct.
-Layout/EmptyLinesAroundArguments:
-  Exclude:
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'db/schema.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-    - 'test/integration/api_test/attachments_test.rb'
-    - 'test/integration/api_test/my_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -214,7 +139,6 @@ Layout/EmptyLinesAroundMethodBody:
     - 'app/models/query.rb'
     - 'db/migrate/001_setup.rb'
     - 'db/migrate/20111201201315_add_unique_index_to_issue_relations.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
     - 'test/functional/journals_controller_test.rb'
     - 'test/functional/users_controller_test.rb'
     - 'test/integration/account_test.rb'
@@ -230,12 +154,6 @@ Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 
 # Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, AutoCorrect, Severity.
-# SupportedStylesAlignWith: keyword, variable, start_of_line
-Layout/EndAlignment:
-  Enabled: false
-
-# Cop supports --auto-correct.
 # Configuration parameters: AllowForAlignment, AllowBeforeTrailingComments, ForceEqualSignAlignment.
 Layout/ExtraSpacing:
   Enabled: false
@@ -245,7 +163,6 @@ Layout/ExtraSpacing:
 Layout/IndentAssignment:
   Exclude:
     - 'app/helpers/application_helper.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
     - 'test/unit/lib/redmine/helpers/gantt_test.rb'
 
 # Cop supports --auto-correct.
@@ -272,8 +189,6 @@ Layout/IndentFirstHashElement:
 Layout/IndentHeredoc:
   Exclude:
     - 'test/helpers/application_helper_test.rb'
-    - 'test/integration/api_test/custom_fields_attribute_test.rb'
-    - 'test/integration/api_test/files_test.rb'
     - 'test/integration/lib/redmine/hook_test.rb'
     - 'test/unit/lib/redmine/syntax_highlighting/rouge_test.rb'
     - 'test/unit/lib/redmine/unified_diff_test.rb'
@@ -287,26 +202,12 @@ Layout/IndentHeredoc:
 # SupportedStyles: normal, indented_internal_methods
 Layout/IndentationConsistency:
   Exclude:
-    - 'app/models/attachment.rb'
-    - 'test/functional/project_enumerations_controller_test.rb'
-    - 'test/helpers/application_helper_test.rb'
-    - 'test/integration/api_test/custom_fields_attribute_test.rb'
     - 'test/mocks/open_id_authentication_mock.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: Width, IgnoredPatterns.
 Layout/IndentationWidth:
   Enabled: false
-
-# Cop supports --auto-correct.
-# Configuration parameters: AllowDoxygenCommentStyle.
-Layout/LeadingCommentSpace:
-  Exclude:
-    - 'lib/diff.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-    - 'test/unit/project_test.rb'
-    - 'test/unit/query_test.rb'
-    - 'test/unit/user_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -318,7 +219,6 @@ Layout/MultilineArrayBraceLayout:
     - 'app/helpers/users_helper.rb'
     - 'app/models/setting.rb'
     - 'test/unit/lib/redmine/wiki_formatting/markdown_formatter_test.rb'
-    - 'test/unit/lib/redmine/wiki_formatting/textile_formatter_test.rb'
 
 # Cop supports --auto-correct.
 Layout/MultilineBlockLayout:
@@ -365,20 +265,6 @@ Layout/SpaceAfterNot:
   Enabled: false
 
 # Cop supports --auto-correct.
-Layout/SpaceAfterSemicolon:
-  Exclude:
-    - 'app/models/mail_handler.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleInsidePipes.
-# SupportedStylesInsidePipes: space, no_space
-Layout/SpaceAroundBlockParameters:
-  Exclude:
-    - 'app/controllers/issues_controller.rb'
-    - 'lib/redmine/plugin.rb'
-    - 'test/unit/query_test.rb'
-
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: space, no_space
 Layout/SpaceAroundEqualsInParameterDefault:
@@ -395,8 +281,6 @@ Layout/SpaceBeforeComma:
     - 'lib/redmine/export/pdf.rb'
     - 'test/helpers/application_helper_test.rb'
     - 'test/mocks/open_id_authentication_mock.rb'
-    - 'test/unit/lib/redmine/helpers/calendar_test.rb'
-    - 'test/unit/time_entry_test.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AllowForAlignment.
@@ -409,7 +293,6 @@ Layout/SpaceBeforeFirstArg:
 # Cop supports --auto-correct.
 Layout/SpaceBeforeSemicolon:
   Exclude:
-    - 'app/models/issue_query.rb'
     - 'app/models/user_preference.rb'
     - 'config/initializers/10-patches.rb'
 
@@ -457,7 +340,6 @@ Layout/SpaceInsideStringInterpolation:
     - 'app/models/issue_query.rb'
     - 'app/models/mail_handler.rb'
     - 'lib/redmine/core_ext/string/inflections.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
     - 'test/integration/admin_test.rb'
 
 Lint/AmbiguousBlockAssociation:
@@ -583,7 +465,6 @@ Lint/Void:
     - 'app/models/time_entry.rb'
     - 'app/models/wiki_content_version.rb'
     - 'lib/redmine/unified_diff.rb'
-    - 'test/functional/project_enumerations_controller_test.rb'
 
 Naming/ConstantName:
   Exclude:
@@ -988,13 +869,6 @@ Style/Alias:
 Style/AndOr:
   Enabled: false
 
-# Configuration parameters: AllowedChars.
-Style/AsciiComments:
-  Exclude:
-    - 'app/models/repository/git.rb'
-    - 'lib/redmine/search.rb'
-    - 'test/unit/mail_handler_test.rb'
-
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: percent_q, bare_percent
@@ -1021,12 +895,6 @@ Style/BlockDelimiters:
 # SupportedStyles: braces, no_braces, context_dependent
 Style/BracesAroundHashParameters:
   Enabled: false
-
-# Cop supports --auto-correct.
-Style/CharacterLiteral:
-  Exclude:
-    - 'lib/redmine/wiki_formatting.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, EnforcedStyle.
@@ -1143,11 +1011,6 @@ Style/GlobalVars:
 Style/GuardClause:
   Enabled: false
 
-Style/IdenticalConditionalBranches:
-  Exclude:
-    - 'config/initializers/10-patches.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-
 # Configuration parameters: AllowIfModifier.
 Style/IfInsideElse:
   Enabled: false
@@ -1159,10 +1022,6 @@ Style/IfUnlessModifier:
 Style/IfUnlessModifierOfIfUnless:
   Exclude:
     - 'app/models/attachment.rb'
-
-Style/IfWithSemicolon:
-  Exclude:
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: InverseMethods, InverseBlocks.
@@ -1228,8 +1087,6 @@ Style/MultilineTernaryOperator:
     - 'lib/redmine/ciphering.rb'
     - 'lib/redmine/scm/adapters/filesystem_adapter.rb'
     - 'lib/redmine/scm/adapters/git_adapter.rb'
-    - 'lib/redmine/utils.rb'
-    - 'lib/redmine/wiki_formatting.rb'
 
 Style/MultipleComparison:
   Exclude:
@@ -1280,7 +1137,6 @@ Style/NestedParenthesizedCalls:
 Style/NestedTernaryOperator:
   Exclude:
     - 'app/helpers/queries_helper.rb'
-    - 'app/helpers/versions_helper.rb'
     - 'app/models/issue_relation.rb'
     - 'app/models/journal.rb'
 
@@ -1316,11 +1172,6 @@ Style/NumericPredicate:
   Enabled: false
 
 # Cop supports --auto-correct.
-Style/OneLineConditional:
-  Exclude:
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
-
-# Cop supports --auto-correct.
 Style/OrAssignment:
   Exclude:
     - 'app/helpers/sort_helper.rb'
@@ -1336,7 +1187,6 @@ Style/ParallelAssignment:
 # Configuration parameters: AllowSafeAssignment, AllowInMultilineConditions.
 Style/ParenthesesAroundCondition:
   Exclude:
-    - 'app/controllers/context_menus_controller.rb'
     - 'app/helpers/application_helper.rb'
     - 'app/models/project.rb'
     - 'app/models/query.rb'
@@ -1347,8 +1197,6 @@ Style/ParenthesesAroundCondition:
     - 'lib/redmine/helpers/gantt.rb'
     - 'lib/redmine/scm/adapters/cvs_adapter.rb'
     - 'lib/redmine/scm/adapters/git_adapter.rb'
-    - 'lib/redmine/wiki_formatting.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: PreferredDelimiters.
@@ -1387,11 +1235,6 @@ Style/RaiseArgs:
     - 'lib/redmine/scm/adapters/abstract_adapter.rb'
     - 'lib/redmine/scm/adapters/filesystem_adapter.rb'
     - 'lib/redmine/sort_criteria.rb'
-
-# Cop supports --auto-correct.
-Style/RedundantBegin:
-  Exclude:
-    - 'lib/redmine/scm/adapters/git_adapter.rb'
 
 # Cop supports --auto-correct.
 Style/RedundantConditional:
@@ -1531,22 +1374,6 @@ Style/TernaryParentheses:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline.
 # SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInArrayLiteral:
-  Exclude:
-    - 'app/models/time_entry_query.rb'
-    - 'test/functional/repositories_git_controller_test.rb'
-    - 'test/functional/repositories_mercurial_controller_test.rb'
-    - 'test/helpers/application_helper_test.rb'
-    - 'test/unit/attachment_test.rb'
-    - 'test/unit/custom_field_test.rb'
-    - 'test/unit/lib/redmine/menu_manager/menu_helper_test.rb'
-    - 'test/unit/lib/redmine/scm/adapters/git_adapter_test.rb'
-    - 'test/unit/lib/redmine/scm/adapters/mercurial_adapter_test.rb'
-    - 'test/unit/repository_git_test.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline.
-# SupportedStylesForMultiline: comma, consistent_comma, no_comma
 Style/TrailingCommaInHashLiteral:
   Enabled: false
 
@@ -1572,7 +1399,6 @@ Style/UnlessElse:
     - 'app/controllers/trackers_controller.rb'
     - 'lib/redmine/scm/adapters/abstract_adapter.rb'
     - 'lib/redmine/unified_diff.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 Style/UnneededCondition:
@@ -1610,25 +1436,6 @@ Style/UnneededSort:
 Style/VariableInterpolation:
   Exclude:
     - 'lib/redmine/configuration.rb'
-
-# Cop supports --auto-correct.
-Style/WhenThen:
-  Exclude:
-    - 'app/helpers/application_helper.rb'
-    - 'app/models/issue_query.rb'
-    - 'app/models/role.rb'
-    - 'lib/redmine/views/builders.rb'
-
-# Cop supports --auto-correct.
-Style/WhileUntilModifier:
-  Exclude:
-    - 'app/helpers/queries_helper.rb'
-    - 'app/models/attachment.rb'
-    - 'app/models/project.rb'
-    - 'lib/redmine/export/pdf/issues_pdf_helper.rb'
-    - 'lib/redmine/unified_diff.rb'
-    - 'lib/redmine/utils.rb'
-    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, MinSize, WordRegex.

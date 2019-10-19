@@ -106,8 +106,8 @@ class QueryTest < ActiveSupport::TestCase
     project_filter = query.available_filters["project_id"]
     assert_not_nil project_filter
     project_ids = project_filter[:values].map{|p| p[1]}
-    assert project_ids.include?("1")  #public project
-    assert !project_ids.include?("2") #private project user cannot see
+    assert project_ids.include?("1")  # public project
+    assert !project_ids.include?("2") # private project user cannot see
   end
 
   def test_available_filters_should_not_include_fields_disabled_on_all_trackers
@@ -1159,7 +1159,7 @@ class QueryTest < ActiveSupport::TestCase
     IssueRelation.delete_all
     with_settings :cross_project_issue_relations => '1' do
       IssueRelation.create!(:relation_type => "relates", :issue_from => Issue.find(1), :issue_to => Project.find(2).issues.first)
-      #IssueRelation.create!(:relation_type => "relates", :issue_from => Issue.find(2), :issue_to => Project.find(1).issues.first)
+      # IssueRelation.create!(:relation_type => "relates", :issue_from => Issue.find(2), :issue_to => Project.find(1).issues.first)
       IssueRelation.create!(:relation_type => "relates", :issue_from => Issue.find(1), :issue_to => Project.find(3).issues.first)
     end
 
@@ -1267,7 +1267,6 @@ class QueryTest < ActiveSupport::TestCase
     Issue.delete_all
     parent = Issue.generate_with_descendants!
 
-
     query = IssueQuery.new(:name => '_')
     query.filters = {"parent_id" => {:operator => '=', :values => [parent.id.to_s]}}
     assert_equal parent.children.map(&:id).sort, find_issues_with_query(query).map(&:id).sort
@@ -1296,7 +1295,6 @@ class QueryTest < ActiveSupport::TestCase
     parent = Issue.generate_with_descendants!
     child, leaf = parent.children.sort_by(&:id)
     grandchild = child.children.first
-
 
     query = IssueQuery.new(:name => '_')
     query.filters = {"child_id" => {:operator => '=', :values => [grandchild.id.to_s]}}
@@ -1668,7 +1666,6 @@ class QueryTest < ActiveSupport::TestCase
 
     [parent, child, private_child, other].each(&:save!)
 
-
     q = IssueQuery.new(
       :name => '_',
       :filters => { 'issue_id' => {:operator => '=', :values => ['1,7']} },
@@ -2024,7 +2021,7 @@ class QueryTest < ActiveSupport::TestCase
   test "#available_filters should include users of visible projects in cross-project view" do
     users = IssueQuery.new.available_filters["assigned_to_id"]
     assert_not_nil users
-    assert users[:values].map{|u|u[1]}.include?("3")
+    assert users[:values].map{|u| u[1]}.include?("3")
   end
 
   test "#available_filters should include users of subprojects" do
@@ -2032,17 +2029,16 @@ class QueryTest < ActiveSupport::TestCase
     user2 = User.generate!
     project = Project.find(1)
     Member.create!(:principal => user1, :project => project.children.visible.first, :role_ids => [1])
-
     users = IssueQuery.new(:project => project).available_filters["assigned_to_id"]
     assert_not_nil users
-    assert users[:values].map{|u|u[1]}.include?(user1.id.to_s)
-    assert !users[:values].map{|u|u[1]}.include?(user2.id.to_s)
+    assert users[:values].map{|u| u[1]}.include?(user1.id.to_s)
+    assert !users[:values].map{|u| u[1]}.include?(user2.id.to_s)
   end
 
   test "#available_filters should include visible projects in cross-project view" do
     projects = IssueQuery.new.available_filters["project_id"]
     assert_not_nil projects
-    assert projects[:values].map{|u|u[1]}.include?("1")
+    assert projects[:values].map{|u| u[1]}.include?("1")
   end
 
   test "#available_filters should include 'member_of_group' filter" do
@@ -2087,6 +2083,25 @@ class QueryTest < ActiveSupport::TestCase
       assert_include :"cf_#{visible_field.id}", query.available_columns.map(&:name)
       assert_not_include :"cf_#{hidden_field.id}", query.available_columns.map(&:name)
     end
+  end
+
+  def test_available_columns_should_not_include_total_estimated_hours_when_trackers_disabled_estimated_hours
+    Tracker.visible.each do |tracker|
+      tracker.core_fields = tracker.core_fields.reject{|field| field == 'estimated_hours'}
+      tracker.save!
+    end
+    query = IssueQuery.new
+    available_columns = query.available_columns.map(&:name)
+    assert_not_include :estimated_hours, available_columns
+    assert_not_include :total_estimated_hours, available_columns
+
+    tracker = Tracker.visible.first
+    tracker.core_fields = ['estimated_hours']
+    tracker.save!
+    query = IssueQuery.new
+    available_columns = query.available_columns.map(&:name)
+    assert_include :estimated_hours, available_columns
+    assert_include :total_estimated_hours, available_columns
   end
 
   def setup_member_of_group

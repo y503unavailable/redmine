@@ -247,6 +247,7 @@ class IssueQuery < Query
     end
 
     disabled_fields = Tracker.disabled_core_fields(trackers).map {|field| field.sub(/_id$/, '')}
+    disabled_fields << "total_estimated_hours" if disabled_fields.include?("estimated_hours")
     @available_columns.reject! {|column|
       disabled_fields.include?(column.name.to_s)
     }
@@ -416,16 +417,15 @@ class IssueQuery < Query
 
   def sql_for_spent_time_field(field, operator, value)
     first, second = value.first.to_f, value.second.to_f
-
     sql_op =
       case operator
-      when "=", ">=", "<=" ;  "#{operator} #{first}"
-      when "><"            ;  "BETWEEN #{first} AND #{second}"
-      when "*"             ;  "> 0"
-      when "!*"            ;  "= 0"
-      else                 ; return nil
+      when "=", ">=", "<=" then  "#{operator} #{first}"
+      when "><"            then  "BETWEEN #{first} AND #{second}"
+      when "*"             then  "> 0"
+      when "!*"            then  "= 0"
+      else
+        return nil
       end
-
     "COALESCE((" +
       "SELECT ROUND(CAST(SUM(hours) AS DECIMAL(30,3)), 2) " +
       "FROM #{TimeEntry.table_name} " +
@@ -434,25 +434,24 @@ class IssueQuery < Query
 
   def sql_for_watcher_id_field(field, operator, value)
     db_table = Watcher.table_name
-
     me, others = value.partition { |id| ['0', User.current.id.to_s].include?(id) }
-    sql = if others.any?
-      "SELECT #{Issue.table_name}.id FROM #{Issue.table_name} " +
-      "INNER JOIN #{db_table} ON #{Issue.table_name}.id = #{db_table}.watchable_id AND #{db_table}.watchable_type = 'Issue' " +
-      "LEFT OUTER JOIN #{Project.table_name} ON #{Project.table_name}.id = #{Issue.table_name}.project_id " +
-      "WHERE (" +
-        sql_for_field(field, '=', me, db_table, 'user_id') +
-      ') OR (' +
-        Project.allowed_to_condition(User.current, :view_issue_watchers) +
-        ' AND ' +
-        sql_for_field(field, '=', others, db_table, 'user_id') +
-      ')'
-    else
-      "SELECT #{db_table}.watchable_id FROM #{db_table} " +
-      "WHERE #{db_table}.watchable_type='Issue' AND " +
-      sql_for_field(field, '=', me, db_table, 'user_id')
-    end
-
+    sql =
+      if others.any?
+        "SELECT #{Issue.table_name}.id FROM #{Issue.table_name} " +
+        "INNER JOIN #{db_table} ON #{Issue.table_name}.id = #{db_table}.watchable_id AND #{db_table}.watchable_type = 'Issue' " +
+        "LEFT OUTER JOIN #{Project.table_name} ON #{Project.table_name}.id = #{Issue.table_name}.project_id " +
+        "WHERE (" +
+          sql_for_field(field, '=', me, db_table, 'user_id') +
+        ') OR (' +
+          Project.allowed_to_condition(User.current, :view_issue_watchers) +
+          ' AND ' +
+          sql_for_field(field, '=', others, db_table, 'user_id') +
+        ')'
+      else
+        "SELECT #{db_table}.watchable_id FROM #{db_table} " +
+        "WHERE #{db_table}.watchable_type='Issue' AND " +
+        sql_for_field(field, '=', me, db_table, 'user_id')
+      end
     "#{Issue.table_name}.id #{ operator == '=' ? 'IN' : 'NOT IN' } (#{sql})"
   end
 
@@ -616,8 +615,8 @@ class IssueQuery < Query
       relation_type = relation_options[:reverse] || relation_type
       join_column, target_join_column = target_join_column, join_column
     end
-
-    sql = case operator
+    sql =
+      case operator
       when "*", "!*"
         op = (operator == "*" ? 'IN' : 'NOT IN')
         "#{Issue.table_name}.id #{op} (SELECT DISTINCT #{IssueRelation.table_name}.#{join_column} FROM #{IssueRelation.table_name} WHERE #{IssueRelation.table_name}.relation_type = '#{self.class.connection.quote_string(relation_type)}')"
@@ -632,7 +631,6 @@ class IssueQuery < Query
         op = (operator == "!o" ? 'NOT IN' : 'IN')
         "#{Issue.table_name}.id #{op} (SELECT DISTINCT #{IssueRelation.table_name}.#{join_column} FROM #{IssueRelation.table_name}, #{Issue.table_name} relissues WHERE #{IssueRelation.table_name}.relation_type = '#{self.class.connection.quote_string(relation_type)}' AND #{IssueRelation.table_name}.#{target_join_column} = relissues.id AND relissues.status_id IN (SELECT id FROM #{IssueStatus.table_name} WHERE is_closed=#{self.class.connection.quoted_false}))"
       end
-
     if relation_options[:sym] == field && !options[:reverse]
       sqls = [sql, sql_for_relations(field, operator, value, :reverse => true)]
       sql = sqls.join(["!", "!*", "!p", '!o'].include?(operator) ? " AND " : " OR ")

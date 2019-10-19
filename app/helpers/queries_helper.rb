@@ -120,6 +120,15 @@ module QueriesHelper
     render :partial => 'queries/columns', :locals => {:query => query, :tag_name => tag_name}
   end
 
+  def available_display_types_tags(query)
+    tags = ''.html_safe
+    query.available_display_types.each do |t|
+      tags << radio_button_tag('display_type', t, @query.display_type == t, :id => "display_type_#{t}") +
+        content_tag('label', l(:"label_display_type_#{t}"), :for => "display_type_#{t}")
+    end
+    tags
+  end
+
   def grouped_query_results(items, query, &block)
     result_count_by_group = query.result_count_by_group
     previous_group, first = false, true
@@ -157,11 +166,12 @@ module QueriesHelper
 
   def total_tag(column, value)
     label = content_tag('span', "#{column.caption}:")
-    value = if [:hours, :spent_hours, :total_spent_hours, :estimated_hours].include? column.name
-      format_hours(value)
-    else
-      format_object(value)
-    end
+    value =
+      if [:hours, :spent_hours, :total_spent_hours, :estimated_hours].include? column.name
+        format_hours(value)
+      else
+        format_object(value)
+      end
     value = content_tag('span', value, :class => 'value')
     content_tag('span', label + " " + value, :class => "total-for-#{column.name.to_s.dasherize}")
   end
@@ -179,10 +189,8 @@ module QueriesHelper
         end
       end
       param_key = options[:sort_param] || :sort
-      sort_param = { param_key => query.sort_criteria.add(column.name, order).to_param }
-      while sort_param.keys.first.to_s =~ /^(.+)\[(.+)\]$/
-        sort_param = {$1 => {$2 => sort_param.values.first}}
-      end
+      sort_param = {param_key => query.sort_criteria.add(column.name, order).to_param}
+      sort_param = {$1 => {$2 => sort_param.values.first}} while sort_param.keys.first.to_s =~ /^(.+)\[(.+)\]$/
       link_options = {
           :title => l(:label_sort_by, "\"#{column.caption}\""),
           :class => css

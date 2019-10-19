@@ -33,6 +33,9 @@ class ProjectsController < ApplicationController
   helper :custom_fields
   helper :issues
   helper :queries
+  include QueriesHelper
+  helper :projects_queries
+  include ProjectsQueriesHelper
   helper :repositories
   helper :members
   helper :trackers
@@ -44,14 +47,14 @@ class ProjectsController < ApplicationController
       return
     end
 
-    scope = Project.visible.sorted
+    retrieve_project_query
+    scope = project_scope
 
     respond_to do |format|
       format.html {
-        unless params[:closed]
-          scope = scope.active
-        end
-        @projects = scope.to_a
+        @entry_count = scope.count
+        @entry_pages = Paginator.new @entry_count, per_page_option, params['page']
+        @entries = scope.offset(@entry_pages.offset).limit(@entry_pages.per_page).to_a
       }
       format.api  {
         @offset, @limit = api_offset_and_limit
@@ -61,6 +64,11 @@ class ProjectsController < ApplicationController
       format.atom {
         projects = scope.reorder(:created_on => :desc).limit(Setting.feeds_limit.to_i).to_a
         render_feed(projects, :title => "#{Setting.app_title}: #{l(:label_project_latest)}")
+      }
+      format.csv {
+        # Export all entries
+        @entries = scope.to_a
+        send_data(query_to_csv(@entries, @query, params), :type => 'text/csv; header=present', :filename => 'projects.csv')
       }
     end
   end
@@ -256,5 +264,16 @@ class ProjectsController < ApplicationController
     end
     # hide project in layout
     @project = nil
+  end
+
+  private
+
+  # Returns the ProjectEntry scope for index
+  def project_scope(options={})
+    @query.results_scope(options)
+  end
+
+  def retrieve_project_query
+    retrieve_query(ProjectQuery, false, :defaults => @default_columns_names)
   end
 end

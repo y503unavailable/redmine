@@ -87,14 +87,14 @@ class Attachment < ActiveRecord::Base
   def file=(incoming_file)
     unless incoming_file.nil?
       @temp_file = incoming_file
-        if @temp_file.respond_to?(:original_filename)
-          self.filename = @temp_file.original_filename
-          self.filename.force_encoding("UTF-8")
-        end
-        if @temp_file.respond_to?(:content_type)
-          self.content_type = @temp_file.content_type.to_s.chomp
-        end
-        self.filesize = @temp_file.size
+      if @temp_file.respond_to?(:original_filename)
+        self.filename = @temp_file.original_filename
+        self.filename.force_encoding("UTF-8")
+      end
+      if @temp_file.respond_to?(:content_type)
+        self.content_type = @temp_file.content_type.to_s.chomp
+      end
+      self.filesize = @temp_file.size
     end
   end
 
@@ -492,21 +492,25 @@ class Attachment < ActiveRecord::Base
     time.strftime("%Y/%m")
   end
 
-  # Returns an ASCII or hashed filename that do not
-  # exists yet in the given subdirectory
-  def self.disk_filename(filename, directory=nil)
-    timestamp = DateTime.now.strftime("%y%m%d%H%M%S")
-    ascii = ''
-    if %r{^[a-zA-Z0-9_\.\-]*$}.match?(filename) && filename.length <= 50
-      ascii = filename
-    else
-      ascii = Digest::MD5.hexdigest(filename)
-      # keep the extension if any
-      ascii << $1 if filename =~ %r{(\.[a-zA-Z0-9]+)$}
+  # Singleton class method is public
+  class << self
+    # Returns an ASCII or hashed filename that do not
+    # exists yet in the given subdirectory
+    def disk_filename(filename, directory=nil)
+      timestamp = DateTime.now.strftime("%y%m%d%H%M%S")
+      ascii = ''
+      if %r{^[a-zA-Z0-9_\.\-]*$}.match?(filename) && filename.length <= 50
+        ascii = filename
+      else
+        ascii = Digest::MD5.hexdigest(filename)
+        # keep the extension if any
+        ascii << $1 if filename =~ %r{(\.[a-zA-Z0-9]+)$}
+      end
+      while File.exist?(File.join(storage_path, directory.to_s,
+                                  "#{timestamp}_#{ascii}"))
+        timestamp.succ!
+      end
+      "#{timestamp}_#{ascii}"
     end
-    while File.exist?(File.join(storage_path, directory.to_s, "#{timestamp}_#{ascii}"))
-      timestamp.succ!
-    end
-    "#{timestamp}_#{ascii}"
   end
 end

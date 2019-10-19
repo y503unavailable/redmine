@@ -189,7 +189,7 @@ class IssuesTest < ApplicationSystemTestCase
     assert_equal 'new issue description', issue.description
   end
 
-  def test_update_issue_with_form_update
+  test "update issue with form update" do
     field = IssueCustomField.create!(
       :field_format => 'string',
       :name => 'Form update CF',
@@ -205,17 +205,32 @@ class IssuesTest < ApplicationSystemTestCase
     assert page.has_no_content?('Form update CF')
 
     page.first(:link, 'Edit').click
+    assert page.has_no_select?("issue_status_id")
     # the custom field should show up when changing tracker
     select 'Feature request', :from => 'Tracker'
     assert page.has_content?('Form update CF')
 
-    fill_in 'Form update', :with => 'CF value'
+    fill_in 'Form update CF', :with => 'CF value'
     assert_no_difference 'Issue.count' do
       page.first(:button, 'Submit').click
     end
-
+    assert page.has_css?('#flash_notice')
     issue = Issue.find(1)
     assert_equal 'CF value', issue.custom_field_value(field)
+  end
+
+  test "update issue status" do
+    issue = Issue.generate!
+    log_user('jsmith', 'jsmith')
+    visit "/issues/#{issue.id}"
+    page.first(:link, 'Edit').click
+    assert page.has_select?("issue_status_id", {:selected => "New"})
+    page.find("#issue_status_id").select("Closed")
+    assert_no_difference 'Issue.count' do
+      page.first(:button, 'Submit').click
+    end
+    assert page.has_css?('#flash_notice')
+    assert_equal 5, issue.reload.status.id
   end
 
   test "removing issue shows confirm dialog" do
@@ -328,7 +343,7 @@ class IssuesTest < ApplicationSystemTestCase
     # Save
     click_on 'Save'
 
-    sleep 1
+    sleep 0.2
     assert_equal 'Updated notes', Journal.find(2).notes
   end
 

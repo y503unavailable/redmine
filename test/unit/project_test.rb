@@ -711,28 +711,28 @@ class ProjectTest < ActiveSupport::TestCase
     @project.enabled_module_names = []
     @project.reload
     assert_equal [], @project.enabled_module_names
-    #with string
+    # with string
     @project.enable_module!("issue_tracking")
     assert_equal ["issue_tracking"], @project.enabled_module_names
-    #with symbol
+    # with symbol
     @project.enable_module!(:gantt)
     assert_equal ["issue_tracking", "gantt"], @project.enabled_module_names
-    #don't add a module twice
+    # don't add a module twice
     @project.enable_module!("issue_tracking")
     assert_equal ["issue_tracking", "gantt"], @project.enabled_module_names
   end
 
   test "enabled_modules should disable a module" do
     @project = Project.find(1)
-    #with string
+    # with string
     assert @project.enabled_module_names.include?("issue_tracking")
     @project.disable_module!("issue_tracking")
     assert ! @project.reload.enabled_module_names.include?("issue_tracking")
-    #with symbol
+    # with symbol
     assert @project.enabled_module_names.include?("gantt")
     @project.disable_module!(:gantt)
     assert ! @project.reload.enabled_module_names.include?("gantt")
-    #with EnabledModule object
+    # with EnabledModule object
     first_module = @project.enabled_modules.first
     @project.disable_module!(first_module)
     assert ! @project.reload.enabled_module_names.include?(first_module.name)
@@ -789,7 +789,6 @@ class ProjectTest < ActiveSupport::TestCase
     assert_kind_of ActiveRecord::Relation, project.activities
   end
 
-
   def test_activities_should_use_the_project_specific_activities
     project = Project.find(1)
     overridden_activity = TimeEntryActivity.new({:name => "Project", :project => project})
@@ -801,9 +800,11 @@ class ProjectTest < ActiveSupport::TestCase
 
   def test_activities_should_not_include_the_inactive_project_specific_activities
     project = Project.find(1)
-    overridden_activity = TimeEntryActivity.new({:name => "Project", :project => project, :parent => TimeEntryActivity.first, :active => false})
+    overridden_activity = TimeEntryActivity.new({:name => "Project",
+                                                 :project => project,
+                                                 :parent => TimeEntryActivity.first,
+                                                 :active => false})
     assert overridden_activity.save!
-
     assert !project.activities.include?(overridden_activity), "Inactive Project specific Activity found"
   end
 

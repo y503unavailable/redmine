@@ -667,23 +667,26 @@ module Redmine
         start_date + (end_date - start_date + 1) * (progress / 100.0)
       end
 
-      def self.sort_issues!(issues)
-        issues.sort_by! {|issue| sort_issue_logic(issue)}
-      end
+      # Singleton class method is public
+      class << self
+        def sort_issues!(issues)
+          issues.sort_by! {|issue| sort_issue_logic(issue)}
+        end
 
-      def self.sort_issue_logic(issue)
-        julian_date = Date.new()
-        ancesters_start_date = []
-        current_issue = issue
-        begin
-          ancesters_start_date.unshift([current_issue.start_date || julian_date, current_issue.id])
-          current_issue = current_issue.parent
-        end while (current_issue)
-        ancesters_start_date
-      end
+        def sort_issue_logic(issue)
+          julian_date = Date.new()
+          ancesters_start_date = []
+          current_issue = issue
+          begin
+            ancesters_start_date.unshift([current_issue.start_date || julian_date, current_issue.id])
+            current_issue = current_issue.parent
+          end while (current_issue)
+          ancesters_start_date
+        end
 
-      def self.sort_versions!(versions)
-        versions.sort!
+        def sort_versions!(versions)
+          versions.sort!
+        end
       end
 
       def pdf_new_page?(options)
@@ -820,8 +823,8 @@ module Redmine
         output = +''
         data_options = {}
         data_options[:collapse_expand] = "#{object.class}-#{object.id}".downcase if object
-
-        css = "task " + case object
+        css = "task " +
+          case object
           when Project
             "project"
           when Version
@@ -831,7 +834,6 @@ module Redmine
           else
             ""
           end
-
         # Renders the task bar, with progress and late
         if coords[:bar_start] && coords[:bar_end]
           width = coords[:bar_end] - coords[:bar_start] - 2

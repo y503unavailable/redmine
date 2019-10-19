@@ -484,6 +484,7 @@ en:
   setting_timelog_max_hours_per_day: Maximum hours that can be logged per day and user
   setting_timelog_accept_future_dates: Accept time logs on future dates
   setting_show_status_changes_in_mail_subject: Show status changes in issue mail notifications subject
+  setting_project_list_defaults: Projects list defaults
 
   permission_add_project: Create project
   permission_add_subprojects: Create subprojects
@@ -983,7 +984,6 @@ en:
   label_completed_versions: Completed versions
   label_search_for_watchers: Search for watchers to add
   label_session_expiration: Session expiration
-  label_show_closed_projects: View closed projects
   label_status_transitions: Status transitions
   label_fields_permissions: Fields permissions
   label_readonly: Read-only
@@ -1078,6 +1078,9 @@ en:
   label_password_char_class_lowercase: lowercase letters
   label_password_char_class_digits: digits
   label_password_char_class_special_chars: special characters
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board  
 
   button_login: Login
   button_submit: Submit

@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem "bundler", ">= 1.5.0"
 
 gem "rails", "5.2.3"
-gem "rouge", "~> 3.11.0"
+gem "rouge", "~> 3.12.0"
 gem "request_store", "1.0.5"
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
@@ -15,6 +15,9 @@ gem "nokogiri", "~> 1.10.0"
 gem "i18n", "~> 1.6.0"
 gem "rbpdf", "~> 1.20.0"
 
+# TODO: Remove the following line when #32223 is fixed
+gem "sprockets", "~> 3.7.2"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
 
@@ -25,7 +28,7 @@ end
 
 # Optional gem for OpenID authentication
 group :openid do
-  gem "ruby-openid", "~> 2.3.0", :require => "openid"
+  gem "ruby-openid", "~> 2.9.2", :require => "openid"
   gem "rack-openid"
 end
 

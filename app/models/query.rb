@@ -409,6 +409,7 @@ class Query < ActiveRecord::Base
     self.column_names = params[:c] || query_params[:column_names] || self.column_names
     self.totalable_names = params[:t] || query_params[:totalable_names] || self.totalable_names
     self.sort_criteria = params[:sort] || query_params[:sort_criteria] || self.sort_criteria
+    self.display_type = params[:display_type] || query_params[:display_type] || self.display_type
     self
   end
 
@@ -609,6 +610,11 @@ class Query < ActiveRecord::Base
     end
   end
 
+  # Returns a scope of project custom fields that are available as columns or filters
+  def project_custom_fields
+    ProjectCustomField.all
+  end
+
   # Returns a scope of project statuses that are available as columns or filters
   def project_statuses_values
     [
@@ -717,6 +723,7 @@ class Query < ActiveRecord::Base
   end
 
   def columns
+    return [] if available_columns.empty?
     # preserve the column_names order
     cols = (has_default_columns? ? default_columns_names : column_names).collect do |name|
        available_columns.find { |col| col.name == name }
@@ -904,7 +911,7 @@ class Query < ActiveRecord::Base
         end
       end
 
-      if field == 'project_id'
+      if field == 'project_id' || (self.type == 'ProjectQuery' && field == 'id')
         if v.delete('mine')
           v += User.current.memberships.map(&:project_id).map(&:to_s)
         end
@@ -975,6 +982,21 @@ class Query < ActiveRecord::Base
       key, asc = s
       "sort-by-#{key.to_s.dasherize} sort-#{asc}"
     end
+  end
+
+  def display_type
+    options[:display_type] || self.available_display_types.first
+  end
+
+  def display_type=(type)
+    unless type || self.available_display_types.include?(type)
+      type = self.available_display_types.first
+    end
+    options[:display_type] = type
+  end
+
+  def available_display_types
+    ['list']
   end
 
   private
