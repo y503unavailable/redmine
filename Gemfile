@@ -15,9 +15,6 @@ gem "nokogiri", "~> 1.10.0"
 gem "i18n", "~> 1.6.0"
 gem "rbpdf", "~> 1.20.0"
 
-# TODO: Remove the following line when #32223 is fixed
-gem "sprockets", "~> 3.7.2"
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
 
@@ -87,7 +84,7 @@ group :test do
   gem "capybara", (RUBY_VERSION < "2.4" ? "~> 3.15.1" : "~> 3.25.0")
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 0.75.0'
+  gem 'rubocop', '~> 0.76.0'
   gem 'rubocop-performance', '~> 1.5.0'
   gem 'rubocop-rails', '~> 2.3.0'
 end

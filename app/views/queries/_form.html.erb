@@ -40,7 +40,7 @@
       :data => {:disables => "#columns, .block_columns input"} %></p>
 
 <% unless params[:gantt] %>
-  <p id="group_by"><label id="group_by" for="query_group_by"><%= l(:field_group_by) %></label>
+  <p id="group_by"><label for="query_group_by"><%= l(:field_group_by) %></label>
   <%= select 'query', 'group_by', @query.groupable_columns.collect {|c| [c.caption, c.name.to_s]}, :include_blank => true %></p>
 
   <% unless @query.available_block_columns.empty? %>
@@ -107,13 +107,13 @@ $(document).ready(function(){
 });
 
 $(function ($) {
-  $('#display_type').change(function (e) {
-    var option = $(e.target).val()
+  $('input[name=display_type]').change(function () {
+    var option = $('input[name=display_type]:checked').val();
     if (option == 'board') {
       $('fieldset#columns, fieldset#sort, p#default_columns, p#group_by').hide();
     } else {
       $('fieldset#columns, fieldset#sort, p#default_columns, p#group_by').show();
     }
-  }).change()
+  }).change();
 });
 <% end %>

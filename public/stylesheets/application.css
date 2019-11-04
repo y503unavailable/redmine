@@ -551,6 +551,7 @@ fieldset#filters td.values select {min-width:130px;}
 #issue_is_private_wrap {float:right; margin-right:1em;}
 .toggle-multiselect { margin-right:5px; cursor:pointer;}
 .buttons { font-size: 0.9em; margin-bottom: 1.4em; margin-top: 1em; }
+.buttons .icon {paddin-bottom:3px; padding-top:1px;}
 
 div#issue-changesets {float:right; width:45%; margin-left: 1em; margin-bottom: 1em; background: #fff; padding-left: 1em; font-size: 90%;}
 div#issue-changesets div.changeset { padding: 4px;}
@@ -892,11 +893,8 @@ p.other-formats { text-align: right; font-size:0.9em; color: #666; }
 
 a.atom { background: url(../images/feed.png) no-repeat 1px 50%; padding: 2px 0px 3px 16px; }
 
-.info {font-size:90%;color:#888;}
-em.info {font-style:normal;display:block;}
+em.info {font-style:normal;display:block;font-size:90%;color:#888;}
 em.info.error {padding-left:20px; background:url(../images/exclamation.png) no-repeat 0 50%;}
-
-form.edit_membership p {margin:0.9em 0;}
 
 textarea.text_cf {width:95%; resize:vertical;}
 input.string_cf, input.link_cf {width:95%;}

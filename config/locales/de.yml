@@ -176,7 +176,6 @@ de:
   button_delete: Löschen
   button_delete_my_account: Mein Benutzerkonto löschen
   button_download: Herunterladen
-  button_duplicate: Duplizieren
   button_edit: Bearbeiten
   button_edit_associated_wikipage: "Zugehörige Wikiseite bearbeiten: %{page_title}"
   button_edit_section: Diesen Bereich bearbeiten
@@ -744,7 +743,6 @@ de:
   label_send_test_email: Test-E-Mail senden
   label_session_expiration: Ende einer Sitzung
   label_settings: Konfiguration
-  label_show_closed_projects: Geschlossene Projekte anzeigen
   label_show_completed_versions: Abgeschlossene Versionen anzeigen
   label_sort: Sortierung
   label_sort_by: "Sortiert nach %{value}"
@@ -1277,7 +1275,7 @@ de:
   text_avatar_server_config_html: Der aktuelle Avatar-Server ist <a href="%{url}">%{url}</a>.
     Die URL kann in config/configuration.yml angepasst werden.
   setting_gantt_months_limit: Maximal anzeigbare Monate im Gantt-Diagramm
-  label_import_time_entries: Zeitbuchungen importieren
+  permission_import_time_entries: Zeitbuchungen importieren
   label_import_notifications: Versende E-Mail-Benachrichtigungen während des Imports
   field_recently_used_projects: Anzahl kürzlich verwendeter Projekte in der Projekt-Jump-Box
   label_optgroup_bookmarks: Lesezeichen
@@ -1299,3 +1297,9 @@ de:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Zeitbuchungen importieren

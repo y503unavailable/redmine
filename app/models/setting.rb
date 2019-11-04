@@ -43,7 +43,7 @@ class Setting < ActiveRecord::Base
     '%I:%M %p'
     ]
 
-  ENCODINGS = %w(US-ASCII
+  ENCODINGS =  %w(US-ASCII
                   windows-1250
                   windows-1251
                   windows-1252
@@ -150,7 +150,8 @@ class Setting < ActiveRecord::Base
 
   def self.validate_all_from_params(settings)
     messages = []
-    [[:mail_handler_enable_regex_delimiters,         :mail_handler_body_delimiters,    /[\r\n]+/],
+    [
+     [:mail_handler_enable_regex_delimiters,         :mail_handler_body_delimiters,    /[\r\n]+/],
      [:mail_handler_enable_regex_excluded_filenames, :mail_handler_excluded_filenames, /\s*,\s*/]
     ].each do |enable_regex, regex_field, delimiter|
       if settings.key?(regex_field) || settings.key?(enable_regex)
@@ -302,7 +303,7 @@ class Setting < ActiveRecord::Base
   load_available_settings
   load_plugin_settings
 
-private
+  private
 
   def force_utf8_strings(arg)
     if arg.is_a?(String)

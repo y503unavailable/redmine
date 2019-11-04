@@ -486,6 +486,7 @@ bg:
   setting_timelog_max_hours_per_day: Максимум часове, които могат да бъдат записани за ден и за потребител
   setting_timelog_accept_future_dates: Разрешено отчитане на изразходвано време на дата в бъдещето
   setting_show_status_changes_in_mail_subject: Показване на промените на състоянието на задачите в поле Относно на имейлите
+  setting_project_list_defaults: Проектен списък
 
   permission_add_project: Създаване на проект
   permission_add_subprojects: Създаване на подпроекти
@@ -590,6 +591,7 @@ bg:
   label_issue_status_updated: Обновено състояние
   label_issue_assigned_to_updated: Задачата е с назначен нов изпълнител
   label_issue_priority_updated: Обновен приоритет
+  label_issue_fixed_version_updated: Променена версия
   label_document: Документ
   label_document_new: Нов документ
   label_document_plural: Документи
@@ -979,7 +981,6 @@ bg:
   label_completed_versions: Завършени версии
   label_search_for_watchers: Търсене на потребители за наблюдатели
   label_session_expiration: Изтичане на сесиите
-  label_show_closed_projects: Разглеждане на затворени проекти
   label_status_transitions: Преходи между състоянията
   label_fields_permissions: Видимост на полетата
   label_readonly: Само за четене
@@ -1034,7 +1035,7 @@ bg:
   label_member_management_all_roles: Всички роли
   label_member_management_selected_roles_only: Само тези роли
   label_import_issues: Импорт на задачи
-  label_import_time_entries: Импортиране на записи за използвано време
+  permission_import_time_entries: Импортиране на записи за използвано време
   label_select_file_to_import: Файл за импортиране
   label_fields_separator: Разделител между полетата
   label_fields_wrapper: Разделител в полетата (wrapper)
@@ -1074,6 +1075,10 @@ bg:
   label_password_char_class_lowercase: малки букви
   label_password_char_class_digits: цифри
   label_password_char_class_special_chars: специални символи
+  label_display_type: Показване на резултатите като
+  label_display_type_list: Списък
+  label_display_type_board: Таблица
+  label_my_bookmarks: Моите отметки
 
   button_login: Вход
   button_submit: Изпращане
@@ -1119,7 +1124,6 @@ bg:
   button_update: Обновяване
   button_configure: Конфигуриране
   button_quote: Цитат
-  button_duplicate: Дублиране
   button_show: Показване
   button_hide: Скриване
   button_edit_section: Редактиране на тази секция
@@ -1282,4 +1286,4 @@ bg:
   label_login_required_no: Не, разрешаване на анонимен достъп до публичните проекти.
   text_project_is_public_non_member: Публичните проекти са достъпни за всички влезли в Redmine потребители.
   text_project_is_public_anonymous: Публичните проекти са достъпнии тяхното съдържание са видими без ограничения в мрежата.
-  label_issue_fixed_version_updated: Target version updated
+  label_import_time_entries: Импортиране на записи за използвано време

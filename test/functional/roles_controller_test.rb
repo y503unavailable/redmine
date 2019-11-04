@@ -228,7 +228,7 @@ class RolesControllerTest < Redmine::ControllerTest
     assert_not_nil Role.find_by_id(1)
   end
 
-  def test_get_permissions
+  def test_permissions
     get :permissions
     assert_response :success
 
@@ -236,10 +236,20 @@ class RolesControllerTest < Redmine::ControllerTest
     assert_select 'input[name=?][type=checkbox][value=delete_issues]:not([checked])', 'permissions[3][]'
   end
 
-  def test_post_permissions
-    post :permissions, :params => {
+  def test_permissions_with_filter
+    get :permissions, :params => {
+        :ids => ['2', '3']
+      }
+    assert_response :success
+
+    assert_select 'table.permissions thead th', 3
+    assert_select 'input[name=?][type=checkbox][value=add_issues][checked=checked]', 'permissions[3][]'
+    assert_select 'input[name=?][type=checkbox][value=delete_issues]:not([checked])', 'permissions[3][]'
+  end
+
+  def test_update_permissions
+    post :update_permissions, :params => {
       :permissions => {
-        '0' => '',
         '1' => ['edit_issues'],
         '3' => ['add_issues', 'delete_issues']
       }
@@ -248,13 +258,18 @@ class RolesControllerTest < Redmine::ControllerTest
 
     assert_equal [:edit_issues], Role.find(1).permissions
     assert_equal [:add_issues, :delete_issues], Role.find(3).permissions
-    assert Role.find(2).permissions.empty?
   end
 
-  def test_clear_all_permissions
-    post :permissions, :params => {:permissions => { '0' => '' }}
-    assert_redirected_to '/roles'
-    assert Role.find(1).permissions.empty?
+  def test_update_permissions_should_not_update_other_roles
+    assert_no_changes -> { Role.find(2).permissions } do
+      assert_changes -> { Role.find(1).permissions } do
+        post :update_permissions, :params => {
+            :permissions => {
+              '1' => ['edit_issues']
+            }
+          }
+      end
+    end
   end
 
   def test_move_highest

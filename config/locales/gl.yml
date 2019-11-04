@@ -860,7 +860,6 @@ gl:
   label_version_sharing_tree: "Coa árbore de proxectos"
   label_version_sharing_none: "Non compartir"
   error_can_not_archive_project: "Non é posíbel arquivar este proxecto."
-  button_duplicate: "Duplicado"
   button_copy_and_follow: "Copiar e seguir"
   label_copy_source: "Fonte"
   setting_issue_done_ratio: "Calcular a proporción de peticións completadas mediante"
@@ -1029,7 +1028,6 @@ gl:
   setting_session_timeout: "Tempo de inactividade máximo das sesións"
   label_session_expiration: "Caducidade das sesións"
   permission_close_project: "Pechar ou volver abrir o proxecto"
-  label_show_closed_projects: "Ver os proxectos pechados"
   button_close: "Pechar"
   button_reopen: "Volver abrir"
   project_status_active: "activo"
@@ -1292,7 +1290,7 @@ gl:
   text_avatar_server_config_html: O servidor de avatares é actualmente <a href="%{url}">%{url}</a>.
     Vostede o pode configurar en config/configuration.yml.
   setting_gantt_months_limit: Máximo número de meses amosados no diagrama de gantt
-  label_import_time_entries: Importar tempos dedicados
+  permission_import_time_entries: Importar tempos dedicados
   label_import_notifications: Enviar notificacións de correo durante a importación
   text_gs_available: Soporte de PDF ImageMagick dispoñible (opcional)
   field_recently_used_projects: Número de proxectos recentemente usados no despregable de proxectos
@@ -1316,3 +1314,9 @@ gl:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Importar tempos dedicados

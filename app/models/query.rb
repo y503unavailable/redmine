@@ -528,8 +528,9 @@ class Query < ActiveRecord::Base
 
   def project_values
     project_values = []
-    if User.current.logged? && User.current.memberships.any?
-      project_values << ["<< #{l(:label_my_projects).downcase} >>", "mine"]
+    if User.current.logged?
+      project_values << ["<< #{l(:label_my_projects).downcase} >>", "mine"] if User.current.memberships.any?
+      project_values << ["<< #{l(:label_my_bookmarks).downcase} >>", "bookmarks"] if User.current.bookmarked_project_ids.any?
     end
     project_values += all_projects_values
     project_values
@@ -915,6 +916,9 @@ class Query < ActiveRecord::Base
         if v.delete('mine')
           v += User.current.memberships.map(&:project_id).map(&:to_s)
         end
+        if v.delete('bookmarks')
+          v += User.current.bookmarked_project_ids
+        end
       end
 
       if field =~ /^cf_(\d+)\.cf_(\d+)$/
@@ -1171,7 +1175,7 @@ class Query < ActiveRecord::Base
       end
     when "!*"
       sql = "#{db_table}.#{db_field} IS NULL"
-      sql += " OR #{db_table}.#{db_field} = ''" if (is_custom_filter || [:text, :string].include?(type_for(field)))
+      sql += " OR #{db_table}.#{db_field} = ''" if is_custom_filter || [:text, :string].include?(type_for(field))
     when "*"
       sql = "#{db_table}.#{db_field} IS NOT NULL"
       sql += " AND #{db_table}.#{db_field} <> ''" if is_custom_filter

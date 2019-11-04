@@ -17,19 +17,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-require File.expand_path('../../../test_helper', __FILE__)
+require File.expand_path('../../test_helper', __FILE__)
 
-class RoutingRolesTest < Redmine::RoutingTest
-  def test_roles
-    should_route 'GET /roles' => 'roles#index'
-    should_route 'GET /roles/new' => 'roles#new'
-    should_route 'POST /roles' => 'roles#create'
+class ProjectsQueriesHelperTest < Redmine::HelperTest
+  include ProjectsQueriesHelper
 
-    should_route 'GET /roles/2/edit' => 'roles#edit', :id => '2'
-    should_route 'PUT /roles/2' => 'roles#update', :id => '2'
-    should_route 'DELETE /roles/2' => 'roles#destroy', :id => '2'
+  fixtures :projects, :enabled_modules,
+           :custom_fields, :custom_values
 
-    should_route 'GET /roles/permissions' => 'roles#permissions'
-    should_route 'POST /roles/permissions' => 'roles#update_permissions'
+  def test_csv_value
+    c_status = QueryColumn.new(:status)
+    c_parent_id = QueryColumn.new(:parent_id)
+
+    assert_equal "active", csv_value(c_status, Project.find(1), 1)
+    assert_equal "eCookbook", csv_value(c_parent_id, Project.find(4), 1)
   end
 end

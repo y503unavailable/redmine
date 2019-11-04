@@ -825,7 +825,6 @@ cs:
   button_update: Aktualizovat
   button_configure: Konfigurovat
   button_quote: Citovat
-  button_duplicate: Duplikovat
   button_show: Zobrazit
 
   status_active: aktivní
@@ -1021,7 +1020,6 @@ cs:
   setting_session_timeout: Vypršení sezení bez aktivity
   label_session_expiration: Vypršení sezení
   permission_close_project: Zavřít / Otevřít projekt
-  label_show_closed_projects: Zobrazit zavřené projekty
   button_close: Zavřít
   button_reopen: Znovu otevřít
   project_status_active: aktivní
@@ -1275,7 +1273,7 @@ cs:
   text_avatar_server_config_html: Aktuální avatar server je <a href="%{url}">%{url}</a>.
     Nastavení lze změnit v config/configuration.yml.
   setting_gantt_months_limit: Maximální počet měsíců zobrazených v ganttově diagramu
-  label_import_time_entries: Import stráveného času
+  permission_import_time_entries: Import stráveného času
   label_import_notifications: Odeslat emailové notifikace během importu
   text_gs_available: ImageMagick PDF podpora k dispozici (volitelné)
   field_recently_used_projects: Počet nedávno použitých projektů v rychlém výběru
@@ -1284,18 +1282,24 @@ cs:
   label_optgroup_recents: Nedávno použité
   button_project_bookmark: Přidat záložku
   button_project_bookmark_delete: Odstranit záložku
-  field_history_default_tab: Issue's history default tab
-  label_issue_history_properties: Property changes
-  label_issue_history_notes: Notes
-  label_last_tab_visited: Last visited tab
-  field_unique_id: Unique ID
-  text_no_subject: no subject
-  setting_password_required_char_classes: Required character classes for passwords
-  label_password_char_class_uppercase: uppercase letters
-  label_password_char_class_lowercase: lowercase letters
-  label_password_char_class_digits: digits
-  label_password_char_class_special_chars: special characters
-  text_characters_must_contain: Must contain %{character_classes}.
-  label_starts_with: starts with
-  label_ends_with: ends with
-  label_issue_fixed_version_updated: Target version updated
+  field_history_default_tab: Výchozí karta historie úkolů
+  label_issue_history_properties: Změny vlastností
+  label_issue_history_notes: Poznámky
+  label_last_tab_visited: Poslední zobrazená karta
+  field_unique_id: Unikátní ID
+  text_no_subject: bez předmětu
+  setting_password_required_char_classes: Vyžadované třídy znaků pro hesla
+  label_password_char_class_uppercase: velká písmena
+  label_password_char_class_lowercase: malá písmena
+  label_password_char_class_digits: číslice
+  label_password_char_class_special_chars: speciální znaky
+  text_characters_must_contain: Musí obsahovat %{character_classes}.
+  label_starts_with: začíná
+  label_ends_with: končí
+  label_issue_fixed_version_updated: Cílová verze aktualizována
+  setting_project_list_defaults: Výchozí nastavení seznamu projektů
+  label_display_type: Zobrazit výsledky jako
+  label_display_type_list: Seznam
+  label_display_type_board: Fórum
+  label_my_bookmarks: Moje záložky
+  label_import_time_entries: Import stráveného času

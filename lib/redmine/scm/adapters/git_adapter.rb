@@ -199,7 +199,7 @@ module Redmine
           cmd_args = %w|log --no-color --encoding=UTF-8 --raw --date=iso --pretty=fuller --parents --stdin|
           cmd_args << '--no-renames' if self.class.client_version_above?([2, 9])
           cmd_args << "--reverse" if options[:reverse]
-          cmd_args << "-n" << "#{options[:limit].to_i}" if options[:limit]
+          cmd_args << "-n" << options[:limit].to_i.to_s if options[:limit]
           cmd_args << "--" << scm_iconv(@path_encoding, 'UTF-8', path) if path && !path.empty?
           revisions = []
           if identifier_from || identifier_to
@@ -210,7 +210,7 @@ module Redmine
             end
             if identifier_to
               git_identifier_to = scm_iconv(@path_encoding, 'UTF-8', identifier_to)
-              revisions[0] << "#{git_identifier_to}" if identifier_to
+              revisions[0] << git_identifier_to.to_s if identifier_to
             end
           else
             unless options[:includes].blank?
@@ -235,7 +235,7 @@ module Redmine
                 key = "commit"
                 value = $1
                 parents_str = $2
-                if (parsing_descr == 1 || parsing_descr == 2)
+                if [1, 2].include?(parsing_descr)
                   parsing_descr = 0
                   revision = Revision.new({
                     :identifier => changeset[:commit],
@@ -269,15 +269,15 @@ module Redmine
               elsif (parsing_descr == 0) && line.chomp.to_s == ""
                 parsing_descr = 1
                 changeset[:description] = +""
-              elsif (parsing_descr == 1 || parsing_descr == 2) \
-                  && line =~ /^:\d+\s+\d+\s+[0-9a-f.]+\s+[0-9a-f.]+\s+(\w)\t(.+)$/
+              elsif [1, 2].include?(parsing_descr) &&
+                      line =~ /^:\d+\s+\d+\s+[0-9a-f.]+\s+[0-9a-f.]+\s+(\w)\t(.+)$/
                 parsing_descr = 2
                 fileaction    = $1
                 filepath      = $2
                 p = scm_iconv('UTF-8', @path_encoding, filepath)
                 files << {:action => fileaction, :path => p}
-              elsif (parsing_descr == 1 || parsing_descr == 2) \
-                  && line =~ /^:\d+\s+\d+\s+[0-9a-f.]+\s+[0-9a-f.]+\s+(\w)\d+\s+(\S+)\t(.+)$/
+              elsif [1, 2].include?(parsing_descr) &&
+                      line =~ /^:\d+\s+\d+\s+[0-9a-f.]+\s+[0-9a-f.]+\s+(\w)\d+\s+(\S+)\t(.+)$/
                 parsing_descr = 2
                 fileaction    = $1
                 filepath      = $3

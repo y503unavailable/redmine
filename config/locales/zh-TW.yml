@@ -1032,7 +1032,6 @@
   label_completed_versions: 已完成版本
   label_search_for_watchers: 搜尋可供加入的監看者
   label_session_expiration: 工作階段逾期
-  label_show_closed_projects: 檢視已關閉的專案
   label_status_transitions: 狀態轉換
   label_fields_permissions: 欄位權限
   label_readonly: 唯讀
@@ -1154,7 +1153,6 @@
   button_update: 更新
   button_configure: 設定
   button_quote: 引用
-  button_duplicate: 重製
   button_show: 顯示
   button_hide: 隱藏
   button_edit_section: 編輯此區塊
@@ -1341,7 +1339,7 @@
   label_updated_issues: 已更新之議題
   text_avatar_server_config_html: 目前使用的大頭像(虛擬人偶)伺服器是 <a href="%{url}">%{url}</a>。 您可於 config/configuration.yml 中進行設定。
   setting_gantt_months_limit: 甘特圖中月份顯示數量的最大值
-  label_import_time_entries: 匯入工時項目紀錄
+  permission_import_time_entries: 匯入工時項目紀錄
   label_import_notifications: 匯入過程中傳送通知郵件
   text_gs_available: 可使用 ImageMagick 轉換 PDF 格式 (選配)
   field_recently_used_projects: 跳轉下拉方塊中最近用過的專案數目
@@ -1365,3 +1363,9 @@
   label_starts_with: 開頭是
   label_ends_with: 結尾是
   label_issue_fixed_version_updated: 目標版本已更新
+  setting_project_list_defaults: 專案清單預設值
+  label_display_type: 篩選結果顯示為
+  label_display_type_list: 清單
+  label_display_type_board: 面板
+  label_my_bookmarks: 我的書籤
+  label_import_time_entries: 匯入工時項目紀錄

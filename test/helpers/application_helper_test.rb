@@ -130,14 +130,13 @@ class ApplicationHelperTest < Redmine::HelperTest
   end
 
   def test_inline_images_inside_tags
-    raw = <<-RAW
-h1. !foo.png! Heading
+    raw = <<~RAW
+      h1. !foo.png! Heading
 
-Centered image:
+      Centered image:
 
-p=. !bar.gif!
-RAW
-
+      p=. !bar.gif!
+    RAW
     assert textilizable(raw).include?('<img src="foo.png" alt="" />')
     assert textilizable(raw).include?('<img src="bar.gif" alt="" />')
   end
@@ -692,7 +691,7 @@ RAW
                                      :action     => 'revision',
                                      :id         => 'subproject1',
                                      :repository_id => r.id,
-                                     :rev        => '123' ,
+                                     :rev        => '123',
                                   },
                               :class => 'changeset', :title => 'test commit')
     changeset_link_commit = link_to('abcd',
@@ -701,7 +700,7 @@ RAW
                                     :action     => 'revision',
                                     :id         => 'subproject1',
                                     :repository_id => r.id,
-                                    :rev        => 'abcd' ,
+                                    :rev        => 'abcd',
                                   },
                               :class => 'changeset', :title => 'test commit')
     to_test = {
@@ -741,7 +740,7 @@ RAW
 
     with_settings :text_formatting => 'markdown' do
       raw = "attachment:image@2x.png should not be parsed in image@2x.png"
-      assert_match %r{<p><a class="attachment" href="/attachments/#{attachment.id}">image@2x.png</a> should not be parsed in image@2x.png</p>} ,
+      assert_match %r{<p><a class="attachment" href="/attachments/#{attachment.id}">image@2x.png</a> should not be parsed in image@2x.png</p>},
         textilizable(raw, :attachments => [attachment])
     end
   end
@@ -1079,40 +1078,37 @@ RAW
   end
 
   def test_pre_tags
-    raw = <<-RAW
-Before
+    raw = <<~RAW
+      Before
 
-<pre>
-<prepared-statement-cache-size>32</prepared-statement-cache-size>
-</pre>
+      <pre>
+      <prepared-statement-cache-size>32</prepared-statement-cache-size>
+      </pre>
 
-After
-RAW
-
-    expected = <<-EXPECTED
-<p>Before</p>
-<pre>
-&lt;prepared-statement-cache-size&gt;32&lt;/prepared-statement-cache-size&gt;
-</pre>
-<p>After</p>
-EXPECTED
-
+      After
+    RAW
+    expected = <<~EXPECTED
+      <p>Before</p>
+      <pre>
+      &lt;prepared-statement-cache-size&gt;32&lt;/prepared-statement-cache-size&gt;
+      </pre>
+      <p>After</p>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
   end
 
   def test_pre_content_should_not_parse_wiki_and_redmine_links
-    raw = <<-RAW
-[[CookBook documentation]]
+    raw = <<~RAW
+      [[CookBook documentation]]
 
-#1
+      #1
 
-<pre>
-[[CookBook documentation]]
+      <pre>
+      [[CookBook documentation]]
 
-#1
-</pre>
-RAW
-
+      #1
+      </pre>
+    RAW
     result1 = link_to("CookBook documentation",
                       "/projects/ecookbook/wiki/CookBook_documentation",
                       :class => "wiki-page")
@@ -1120,31 +1116,27 @@ RAW
                       "/issues/1",
                       :class => Issue.find(1).css_classes,
                       :title => "Bug: Cannot print recipes (New)")
+    expected = <<~EXPECTED
+      <p>#{result1}</p>
+      <p>#{result2}</p>
+      <pre>
+      [[CookBook documentation]]
 
-    expected = <<-EXPECTED
-<p>#{result1}</p>
-<p>#{result2}</p>
-<pre>
-[[CookBook documentation]]
-
-#1
-</pre>
-EXPECTED
-
+      #1
+      </pre>
+    EXPECTED
     @project = Project.find(1)
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
   end
 
   def test_non_closing_pre_blocks_should_be_closed
-    raw = <<-RAW
-<pre><code>
-RAW
-
-    expected = <<-EXPECTED
-<pre><code>
-</code></pre>
-EXPECTED
-
+    raw = <<~RAW
+      <pre><code>
+    RAW
+    expected = <<~EXPECTED
+      <pre><code>
+      </code></pre>
+    EXPECTED
     @project = Project.find(1)
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
   end
@@ -1156,31 +1148,27 @@ EXPECTED
   end
 
   def test_syntax_highlight
-    raw = <<-RAW
-<pre><code class="ECMA_script">
-/* Hello */
-document.write("Hello World!");
-</code></pre>
-RAW
-
-    expected = <<-EXPECTED
-<pre><code class="ECMA_script syntaxhl"><span class="cm">/* Hello */</span><span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">);</span></code></pre>
-EXPECTED
-
+    raw = <<~RAW
+      <pre><code class="ECMA_script">
+      /* Hello */
+      document.write("Hello World!");
+      </code></pre>
+    RAW
+    expected = <<~EXPECTED
+      <pre><code class="ECMA_script syntaxhl"><span class="cm">/* Hello */</span><span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">);</span></code></pre>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
   end
 
   def test_syntax_highlight_ampersand_in_textile
-    raw = <<-RAW
-<pre><code class="ruby">
-x = a & b
-</code></pre>
-RAW
-
-    expected = <<-EXPECTED
-<pre><code class=\"ruby syntaxhl\"><span class=\"n\">x</span> <span class=\"o\">=</span> <span class=\"n\">a</span> <span class=\"o\">&amp;</span> <span class=\"n\">b</span></code></pre>
-EXPECTED
-
+    raw = <<~RAW
+      <pre><code class="ruby">
+      x = a & b
+      </code></pre>
+    RAW
+    expected = <<~EXPECTED
+      <pre><code class=\"ruby syntaxhl\"><span class=\"n\">x</span> <span class=\"o\">=</span> <span class=\"n\">a</span> <span class=\"o\">&amp;</span> <span class=\"n\">b</span></code></pre>
+    EXPECTED
     with_settings :text_formatting => 'textile' do
       assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(raw).gsub(%r{[\r\n\t]}, '')
     end
@@ -1252,38 +1240,36 @@ EXPECTED
 
   def test_table_of_content
     set_language_if_valid 'en'
+    raw = <<~RAW
+      {{toc}}
 
-    raw = <<-RAW
-{{toc}}
+      h1. Title
 
-h1. Title
+      Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
+      h2. Subtitle with a [[Wiki]] link
 
-h2. Subtitle with a [[Wiki]] link
+      Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
 
-Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
+      h2. Subtitle with [[Wiki|another Wiki]] link
 
-h2. Subtitle with [[Wiki|another Wiki]] link
+      h2. Subtitle with %{color:red}red text%
 
-h2. Subtitle with %{color:red}red text%
+      <pre>
+      some code
+      </pre>
 
-<pre>
-some code
-</pre>
+      h3. Subtitle with *some* _modifiers_
 
-h3. Subtitle with *some* _modifiers_
+      h3. Subtitle with @inline code@
 
-h3. Subtitle with @inline code@
+      h1. Another title
 
-h1. Another title
+      h3. An "Internet link":http://www.redmine.org/ inside subtitle
 
-h3. An "Internet link":http://www.redmine.org/ inside subtitle
+      h2. "Project Name !/attachments/1234/logo_small.gif! !/attachments/5678/logo_2.png!":/projects/projectname/issues
 
-h2. "Project Name !/attachments/1234/logo_small.gif! !/attachments/5678/logo_2.png!":/projects/projectname/issues
-
-RAW
-
+    RAW
     expected =  '<ul class="toc">' +
                   '<li><strong>Table of contents</strong></li>' +
                   '<li><a href="#Title">Title</a>' +
@@ -1316,17 +1302,15 @@ RAW
 
   def test_table_of_content_should_generate_unique_anchors
     set_language_if_valid 'en'
+    raw = <<~RAW
+      {{toc}}
 
-    raw = <<-RAW
-{{toc}}
+      h1. Title
 
-h1. Title
+      h2. Subtitle
 
-h2. Subtitle
-
-h2. Subtitle
-RAW
-
+      h2. Subtitle
+    RAW
     expected =  '<ul class="toc">' +
                   '<li><strong>Table of contents</strong></li>' +
                   '<li><a href="#Title">Title</a>' +
@@ -1336,7 +1320,6 @@ RAW
                     '</ul>' +
                   '</li>' +
                 '</ul>'
-
     @project = Project.find(1)
     result = textilizable(raw).gsub("\n", "")
     assert_include expected, result
@@ -1346,21 +1329,18 @@ RAW
 
   def test_table_of_content_should_contain_included_page_headings
     set_language_if_valid 'en'
+    raw = <<~RAW
+      {{toc}}
 
-    raw = <<-RAW
-{{toc}}
+      h1. Included
 
-h1. Included
-
-{{include(Child_1)}}
-RAW
-
+      {{include(Child_1)}}
+    RAW
     expected = '<ul class="toc">' +
                '<li><strong>Table of contents</strong></li>' +
                '<li><a href="#Included">Included</a></li>' +
                '<li><a href="#Child-page-1">Child page 1</a></li>' +
                '</ul>'
-
     @project = Project.find(1)
     assert textilizable(raw).gsub("\n", "").include?(expected)
   end
@@ -1384,28 +1364,27 @@ RAW
   end
 
   def test_section_edit_links
-    raw = <<-RAW
-h1. Title
+    raw = <<~RAW
+      h1. Title
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
+      Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
 
-h2. Subtitle with a [[Wiki]] link
+      h2. Subtitle with a [[Wiki]] link
 
-h2. Subtitle with *some* _modifiers_
+      h2. Subtitle with *some* _modifiers_
 
-h2. Subtitle with @inline code@
+      h2. Subtitle with @inline code@
 
-<pre>
-some code
+      <pre>
+      some code
 
-h2. heading inside pre
+      h2. heading inside pre
 
-<h2>html heading inside pre</h2>
-</pre>
+      <h2>html heading inside pre</h2>
+      </pre>
 
-h2. Subtitle after pre tag
-RAW
-
+      h2. Subtitle after pre tag
+    RAW
     @project = Project.find(1)
     set_language_if_valid 'en'
     result = textilizable(raw, :edit_section_links => {:controller => 'wiki', :action => 'edit', :project_id => '1', :id => 'Test'}).gsub("\n", "")

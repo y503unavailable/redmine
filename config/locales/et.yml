@@ -894,7 +894,6 @@ et:
   button_update: "Muuda"
   button_configure: "Konfigureeri"
   button_quote: "Tsiteeri"
-  button_duplicate: "Duplitseeri"
   button_show: "Näita"
   button_edit_section: "Muuda seda sektsiooni"
   button_export: "Ekspordi"
@@ -1031,7 +1030,6 @@ et:
   setting_session_timeout: "Sessiooni aegumine jõudeoleku tõttu"
   label_session_expiration: "Sessiooni aegumine"
   permission_close_project: "Sule projekt/ava projekt uuesti"
-  label_show_closed_projects: "Näita ka suletud projekte"
   button_close: "Sulge"
   button_reopen: "Ava uuesti"
   project_status_active: "Aktiivne"
@@ -1290,7 +1288,7 @@ et:
   text_avatar_server_config_html: The current avatar server is <a href="%{url}">%{url}</a>.
     You can configure it in config/configuration.yml.
   setting_gantt_months_limit: Maximum number of months displayed on the gantt chart
-  label_import_time_entries: Import time entries
+  permission_import_time_entries: Import time entries
   label_import_notifications: Send email notifications during the import
   text_gs_available: ImageMagick PDF support available (optional)
   field_recently_used_projects: Number of recently used projects in jump box
@@ -1314,3 +1312,9 @@ et:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Import time entries

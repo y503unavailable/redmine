@@ -15,7 +15,6 @@
     <p class="nodata"><%= l(:label_no_data) %></p>
   <% else %>
     <%= render :partial => @query.display_type, :locals => { :entries => @entries }%>
-    <span class="pagination"><%= pagination_links_full @entry_pages, @entry_count %></span>
   <% end %>
 <% end %>
 
@@ -31,6 +30,9 @@
 
 <% other_formats_links do |f| %>
   <%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+  <% if @query.display_type == 'list' %>
+    <%= f.link_to_with_query_parameters 'CSV', {}, :onclick => "showModal('csv-export-options', '350px'); return false;" %>
+  <% end %>
 <% end %>
 
 <% html_title(l(:label_project_plural)) -%>

@@ -873,7 +873,6 @@ ja:
   button_update: 更新
   button_configure: 設定
   button_quote: 引用
-  button_duplicate: 複製
   button_show: 表示
 
   status_active: 有効
@@ -1054,7 +1053,6 @@ ja:
   setting_session_timeout: 無操作タイムアウト
   label_session_expiration: セッション有効期間
   permission_close_project: プロジェクトの終了/再開
-  label_show_closed_projects: 終了したプロジェクトを表示
   button_close: 終了
   button_reopen: 再開
   project_status_active: 有効
@@ -1286,7 +1284,7 @@ ja:
   label_updated_issues: 更新したチケット
   text_avatar_server_config_html: 現在のアバターサーバーは <a href="%{url}">%{url}</a> です。サーバーは config/configuration.yml で変更できます。
   setting_gantt_months_limit: ガントチャート最大表示月数
-  label_import_time_entries: 作業時間のインポート
+  permission_import_time_entries: 作業時間のインポート
   label_import_notifications: インポート中のメール通知
   text_gs_available: ImageMagickのPDFサポートが利用可能 (オプション)
   field_recently_used_projects: 最近使用したプロジェクトの表示件数
@@ -1310,3 +1308,9 @@ ja:
   label_starts_with: 前方一致
   label_ends_with: 後方一致
   label_issue_fixed_version_updated: 対象バージョンの更新
+  setting_project_list_defaults: プロジェクトの一覧で表示する項目
+  label_display_type: 表示形式
+  label_display_type_list: リスト
+  label_display_type_board: ボード
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: 作業時間のインポート

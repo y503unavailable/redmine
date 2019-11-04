@@ -920,7 +920,6 @@ lt:
   label_completed_versions: Užbaigtos versijos
   label_search_for_watchers: Ieškoti vartotojų kuriuos įtraukti kaip stebėtojus
   label_session_expiration: Baigėsi sujungimo sesija
-  label_show_closed_projects: Matyti uždarytus projektus
   label_status_transitions: Darbų eiga
   label_fields_permissions: Leidimai
   label_readonly: Tik peržiūra
@@ -1033,7 +1032,6 @@ lt:
   button_update: Atnaujinti
   button_configure: Konfigūruoti
   button_quote: Cituoti
-  button_duplicate: Dubliuoti
   button_show: Rodyti
   button_hide: Slėpti
   button_edit_section: Redaguoti šį skirsnį
@@ -1275,7 +1273,7 @@ lt:
   text_avatar_server_config_html: The current avatar server is <a href="%{url}">%{url}</a>.
     You can configure it in config/configuration.yml.
   setting_gantt_months_limit: Maximum number of months displayed on the gantt chart
-  label_import_time_entries: Import time entries
+  permission_import_time_entries: Import time entries
   label_import_notifications: Send email notifications during the import
   text_gs_available: ImageMagick PDF support available (optional)
   field_recently_used_projects: Number of recently used projects in jump box
@@ -1299,3 +1297,9 @@ lt:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Import time entries

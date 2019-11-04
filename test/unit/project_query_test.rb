@@ -24,7 +24,10 @@ class ProjectQueryTest < ActiveSupport::TestCase
            :members, :roles, :member_roles,
            :issue_categories, :enumerations,
            :groups_users,
-           :enabled_modules
+           :enabled_modules,
+           :custom_fields, :custom_values
+
+  include Redmine::I18n
 
   def test_filter_values_be_arrays
     q = ProjectQuery.new
@@ -33,14 +36,14 @@ class ProjectQueryTest < ActiveSupport::TestCase
     q.available_filters.each do |name, filter|
       values = filter.values
       assert (values.nil? || values.is_a?(Array)),
-        "#values for #{name} filter returned a #{values.class.name}"
+             "#values for #{name} filter returned a #{values.class.name}"
     end
   end
 
   def test_project_statuses_filter_should_return_project_statuses
+    set_language_if_valid 'en'
     query = ProjectQuery.new(:name => '_')
     query.filters = {'status' => {:operator => '=', :values => []}}
-
     values = query.available_filters['status'][:values]
     assert_equal ['active', 'closed'], values.map(&:first)
     assert_equal ['1', '5'], values.map(&:second)

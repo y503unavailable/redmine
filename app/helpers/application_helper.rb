@@ -67,7 +67,7 @@ module ApplicationHelper
   def link_to_group(group, options={})
     if group.is_a?(Group)
       name = h(group.name)
-      if (User.current.admin?)
+      if User.current.admin?
         only_path = options[:only_path].nil? ? true : options[:only_path]
         link_to name, edit_group_path(group, :only_path => only_path)
       else
@@ -377,12 +377,12 @@ module ApplicationHelper
       projects.sort_by(&:lft).each do |project|
         # set the project environment to please macros.
         @project = project
-        if (ancestors.empty? || project.is_descendant_of?(ancestors.last))
+        if ancestors.empty? || project.is_descendant_of?(ancestors.last)
           s << "<ul class='projects #{ ancestors.empty? ? 'root' : nil}'>\n"
         else
           ancestors.pop
           s << "</li>"
-          while (ancestors.any? && !project.is_descendant_of?(ancestors.last))
+          while ancestors.any? && !project.is_descendant_of?(ancestors.last)
             ancestors.pop
             s << "</ul></li>\n"
           end
@@ -1426,9 +1426,9 @@ module ApplicationHelper
 
   def toggle_checkboxes_link(selector)
     link_to_function '',
-      "toggleCheckboxesBySelector('#{selector}')",
-      :title => "#{l(:button_check_all)} / #{l(:button_uncheck_all)}",
-      :class => 'icon icon-checked'
+                     "toggleCheckboxesBySelector('#{selector}')",
+                     :title => "#{l(:button_check_all)} / #{l(:button_uncheck_all)}",
+                     :class => 'icon icon-checked'
   end
 
   def progress_bar(pcts, options={})
@@ -1439,8 +1439,10 @@ module ApplicationHelper
     titles = options[:titles].to_a
     titles[0] = "#{pcts[0]}%" if titles[0].blank?
     legend = options[:legend] || ''
-    content_tag('table',
-      content_tag('tr',
+    content_tag(
+      'table',
+      content_tag(
+        'tr',
         (pcts[0] > 0 ? content_tag('td', '', :style => "width: #{pcts[0]}%;", :class => 'closed', :title => titles[0]) : ''.html_safe) +
         (pcts[1] > 0 ? content_tag('td', '', :style => "width: #{pcts[1]}%;", :class => 'done', :title => titles[1]) : ''.html_safe) +
         (pcts[2] > 0 ? content_tag('td', '', :style => "width: #{pcts[2]}%;", :class => 'todo', :title => titles[2]) : ''.html_safe)

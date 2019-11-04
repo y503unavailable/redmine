@@ -21,14 +21,15 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class UserTest < ActiveSupport::TestCase
   fixtures :users, :email_addresses, :members, :projects, :roles, :member_roles, :auth_sources,
-            :trackers, :issue_statuses,
-            :projects_trackers,
-            :watchers,
-            :issue_categories, :enumerations, :issues,
-            :journals, :journal_details,
-            :groups_users,
-            :enabled_modules,
-            :tokens
+           :trackers, :issue_statuses,
+           :projects_trackers,
+           :watchers,
+           :issue_categories, :enumerations, :issues,
+           :journals, :journal_details,
+           :groups_users,
+           :enabled_modules,
+           :tokens,
+           :user_preferences
 
   include Redmine::I18n
 
@@ -1278,6 +1279,13 @@ class UserTest < ActiveSupport::TestCase
     # Password still valid
     assert user.check_password?("unsalted")
     assert_equal user, User.try_to_login(user.login, "unsalted")
+  end
+
+  def test_bookmarked_project_ids
+    # User with bookmarked projects
+    assert_equal [1, 5], User.find(1).bookmarked_project_ids
+    # User without bookmarked projects
+    assert_equal [], User.find(2).bookmarked_project_ids
   end
 
   if Object.const_defined?(:OpenID)

@@ -886,7 +886,6 @@ es:
   label_version_sharing_descendants: Con proyectos hijo
   label_version_sharing_system: Con todos los proyectos
   label_version_sharing_none: No compartir
-  button_duplicate: Duplicar
   error_can_not_archive_project: Este proyecto no puede ser archivado
   label_copy_source: Fuente
   setting_issue_done_ratio: Calcular el ratio de tareas realizadas con
@@ -1057,7 +1056,6 @@ es:
   setting_session_timeout: Tiempo máximo de inactividad de las sesiones
   label_session_expiration: Expiración de sesiones
   permission_close_project: Cerrar / reabrir el proyecto
-  label_show_closed_projects: Ver proyectos cerrados
   button_close: Cerrar
   button_reopen: Reabrir
   project_status_active: activo
@@ -1313,7 +1311,7 @@ es:
   text_avatar_server_config_html: The current avatar server is <a href="%{url}">%{url}</a>.
     You can configure it in config/configuration.yml.
   setting_gantt_months_limit: Maximum number of months displayed on the gantt chart
-  label_import_time_entries: Import time entries
+  permission_import_time_entries: Import time entries
   label_import_notifications: Send email notifications during the import
   text_gs_available: ImageMagick PDF support available (optional)
   field_recently_used_projects: Number of recently used projects in jump box
@@ -1337,3 +1335,9 @@ es:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Import time entries

@@ -280,14 +280,17 @@ class Role < ActiveRecord::Base
     find_or_create_system_role(BUILTIN_ANONYMOUS, 'Anonymous')
   end
 
-private
+  private
 
   def allowed_permissions
     @allowed_permissions ||= permissions + Redmine::AccessControl.public_permissions.collect {|p| p.name}
   end
 
   def allowed_actions
-    @actions_allowed ||= allowed_permissions.inject([]) { |actions, permission| actions += Redmine::AccessControl.allowed_actions(permission) }.flatten
+    @actions_allowed ||=
+      allowed_permissions.inject([]) {|actions, permission|
+        actions += Redmine::AccessControl.allowed_actions(permission)
+      }.flatten
   end
 
   def check_deletable

@@ -960,7 +960,6 @@ az:
   label_version_sharing_tree: Layihələrin iyerarxiyası ilə
   label_version_sharing_none: Birgə istifadə olmadan
   error_can_not_archive_project: Bu layihə arxivləşdirilə bilməz
-  button_duplicate: Təkrarlamaq
   button_copy_and_follow: Surətini çıxarmaq və davam etmək
   label_copy_source: Mənbə
   setting_issue_done_ratio: Sahənin köməyi ilə tapşırığın hazırlığını nəzərə almaq
@@ -1111,7 +1110,6 @@ az:
   setting_session_timeout: Sessiyanın qeyri aktivlik müddəti
   label_session_expiration: Sessiyanın bitməsi
   permission_close_project: Layihəni bağla / yenidən aç
-  label_show_closed_projects: Bağlı layihələrə baxmaq
   button_close: Bağla
   button_reopen: Yenidən aç
   project_status_active: aktiv
@@ -1377,7 +1375,7 @@ az:
   text_avatar_server_config_html: The current avatar server is <a href="%{url}">%{url}</a>.
     You can configure it in config/configuration.yml.
   setting_gantt_months_limit: Maximum number of months displayed on the gantt chart
-  label_import_time_entries: Import time entries
+  permission_import_time_entries: Import time entries
   label_import_notifications: Send email notifications during the import
   text_gs_available: ImageMagick PDF support available (optional)
   field_recently_used_projects: Number of recently used projects in jump box
@@ -1401,3 +1399,9 @@ az:
   label_starts_with: starts with
   label_ends_with: ends with
   label_issue_fixed_version_updated: Target version updated
+  setting_project_list_defaults: Projects list defaults
+  label_display_type: Display results as
+  label_display_type_list: List
+  label_display_type_board: Board
+  label_my_bookmarks: My bookmarks
+  label_import_time_entries: Import time entries

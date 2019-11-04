@@ -23,7 +23,7 @@ class TimeEntryImport < Import
   end
 
   def self.authorized?(user)
-    user.allowed_to?(:log_time, nil, :global => true)
+    user.allowed_to?(:import_time_entries, nil, :global => true)
   end
 
   # Returns the objects that were imported
@@ -43,6 +43,16 @@ class TimeEntryImport < Import
     project.activities
   end
 
+  def allowed_target_users
+    users = []
+    if project
+      users = project.members.active.preload(:user)
+      users = users.map(&:user).select{ |u| u.allowed_to?(:log_time, project) }
+    end
+    users << User.current if User.current.logged? && !users.include?(User.current)
+    users
+  end
+
   def project
     project_id = mapping['project_id'].to_i
     allowed_target_projects.find_by_id(project_id) || allowed_target_projects.first
@@ -55,11 +65,17 @@ class TimeEntryImport < Import
     end
   end
 
+  def user_value
+    if mapping['user_id'].to_s =~ /\Avalue:(\d+)\z/
+      $1.to_i
+    end
+  end
+
   private
 
   def build_object(row, item)
     object = TimeEntry.new
-    object.user = user
+    object.author = user
 
     activity_id = nil
     if activity
@@ -68,9 +84,21 @@ class TimeEntryImport < Import
       activity_id = allowed_target_activities.named(activity_name).first.try(:id)
     end
 
+    user_id = nil
+    if User.current.allowed_to?(:log_time_for_other_users, project)
+      if user_value
+        user_id = user_value
+      elsif user_name = row_value(row, 'user_id')
+        user_id = Principal.detect_by_keyword(allowed_target_users, user_name).try(:id)
+      end
+    else
+      user_id = user.id
+    end
+
     attributes = {
       :project_id  => project.id,
       :activity_id => activity_id,
+      :user_id     => user_id,
 
       :issue_id    => row_value(row, 'issue_id'),
       :spent_on    => row_date(row, 'spent_on'),
