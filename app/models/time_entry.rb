@@ -28,11 +28,12 @@ class TimeEntry < ActiveRecord::Base
   belongs_to :activity, :class_name => 'TimeEntryActivity'
 
   acts_as_customizable
-  acts_as_event :title => Proc.new { |o|
-                  related   = o.issue if o.issue && o.issue.visible?
-                  related ||= o.project
-                  "#{l_hours(o.hours)} (#{related.event_title})"
-                },
+  acts_as_event :title =>
+                  Proc.new {|o|
+                    related   = o.issue if o.issue && o.issue.visible?
+                    related ||= o.project
+                    "#{l_hours(o.hours)} (#{related.event_title})"
+                  },
                 :url => Proc.new {|o| {:controller => 'timelog', :action => 'index', :project_id => o.project, :issue_id => o.issue}},
                 :author => :user,
                 :group => :issue,
@@ -136,8 +137,11 @@ class TimeEntry < ActiveRecord::Base
       if hours_changed? && max_hours > 0.0
         logged_hours = other_hours_with_same_user_and_day
         if logged_hours + hours > max_hours
-          errors.add :base, I18n.t(:error_exceeds_maximum_hours_per_day,
-            :logged_hours => format_hours(logged_hours), :max_hours => format_hours(max_hours))
+          errors.add(
+            :base,
+            I18n.t(:error_exceeds_maximum_hours_per_day,
+                   :logged_hours => format_hours(logged_hours),
+                   :max_hours => format_hours(max_hours)))
         end
       end
     end

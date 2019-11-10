@@ -23,8 +23,9 @@ require 'digest/sha1'
 class Repository::Cvs < Repository
   validates_presence_of :url, :root_url, :log_encoding
 
-  safe_attributes 'root_url',
-    :if => lambda {|repository, user| repository.new_record?}
+  safe_attributes(
+    'root_url',
+    :if => lambda {|repository, user| repository.new_record?})
 
   def self.human_attribute_name(attribute_key_name, *args)
     attr_name = attribute_key_name.to_s
@@ -57,7 +58,7 @@ class Repository::Cvs < Repository
     end
     entries = scm.entries(path, rev.nil? ? nil : rev.committed_on)
     if entries
-      entries.each() do |entry|
+      entries.each do |entry|
         if ( ! entry.lastrev.nil? ) && ( ! entry.lastrev.revision.nil? )
           change = filechanges.where(
                        :revision => entry.lastrev.revision,
@@ -100,7 +101,7 @@ class Repository::Cvs < Repository
     if rev_to.to_i > 0
       changeset_to = changesets.find_by_revision(rev_to)
     end
-    changeset_from.filechanges.each() do |change_from|
+    changeset_from.filechanges.each do |change_from|
       revision_from = nil
       revision_to   = nil
       if path.nil? || (change_from.path.starts_with? scm.with_leading_slash(path))
@@ -108,7 +109,7 @@ class Repository::Cvs < Repository
       end
       if revision_from
         if changeset_to
-          changeset_to.filechanges.each() do |change_to|
+          changeset_to.filechanges.each do |change_to|
             revision_to = change_to.revision if change_to.path == change_from.path
           end
         end

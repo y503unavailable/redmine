@@ -39,7 +39,8 @@ class IssueQuery < Query
     QueryColumn.new(:start_date, :sortable => "#{Issue.table_name}.start_date", :groupable => true),
     QueryColumn.new(:due_date, :sortable => "#{Issue.table_name}.due_date", :groupable => true),
     QueryColumn.new(:estimated_hours, :sortable => "#{Issue.table_name}.estimated_hours", :totalable => true),
-    QueryColumn.new(:total_estimated_hours,
+    QueryColumn.new(
+      :total_estimated_hours,
       :sortable => -> {
                      "COALESCE((SELECT SUM(estimated_hours) FROM #{Issue.table_name} subtasks" +
         " WHERE #{Issue.visible_condition(User.current).gsub(/\bissues\b/, 'subtasks')} AND subtasks.root_id = #{Issue.table_name}.root_id AND subtasks.lft >= #{Issue.table_name}.lft AND subtasks.rgt <= #{Issue.table_name}.rgt), 0)"
@@ -96,51 +97,58 @@ class IssueQuery < Query
   end
 
   def initialize_available_filters
-    add_available_filter "status_id",
+    add_available_filter(
+      "status_id",
       :type => :list_status, :values => lambda { issue_statuses_values }
-
-    add_available_filter("project_id",
+    )
+    add_available_filter(
+      "project_id",
       :type => :list, :values => lambda { project_values }
     ) if project.nil?
-
-    add_available_filter "tracker_id",
+    add_available_filter(
+      "tracker_id",
       :type => :list, :values => trackers.collect{|s| [s.name, s.id.to_s] }
-
-    add_available_filter "priority_id",
+    )
+    add_available_filter(
+      "priority_id",
       :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
-
-    add_available_filter("author_id",
+    )
+    add_available_filter(
+      "author_id",
       :type => :list, :values => lambda { author_values }
     )
-
-    add_available_filter("assigned_to_id",
+    add_available_filter(
+      "assigned_to_id",
       :type => :list_optional, :values => lambda { assigned_to_values }
     )
-
-    add_available_filter("member_of_group",
+    add_available_filter(
+      "member_of_group",
       :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
     )
-
-    add_available_filter("assigned_to_role",
+    add_available_filter(
+      "assigned_to_role",
       :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
     )
-
-    add_available_filter "fixed_version_id",
+    add_available_filter(
+      "fixed_version_id",
       :type => :list_optional, :values => lambda { fixed_version_values }
-
-    add_available_filter "fixed_version.due_date",
+    )
+    add_available_filter(
+      "fixed_version.due_date",
       :type => :date,
       :name => l(:label_attribute_of_fixed_version, :name => l(:field_effective_date))
-
-    add_available_filter "fixed_version.status",
+    )
+    add_available_filter(
+      "fixed_version.status",
       :type => :list,
       :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
       :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
-
-    add_available_filter "category_id",
+    )
+    add_available_filter(
+      "category_id",
       :type => :list_optional,
-      :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } } if project
-
+      :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } }
+    ) if project
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
     add_available_filter "created_on", :type => :date_past
@@ -158,34 +166,40 @@ class IssueQuery < Query
 
     if User.current.allowed_to?(:set_issues_private, nil, :global => true) ||
       User.current.allowed_to?(:set_own_issues_private, nil, :global => true)
-      add_available_filter "is_private",
+      add_available_filter(
+        "is_private",
         :type => :list,
         :values => [[l(:general_text_yes), "1"], [l(:general_text_no), "0"]]
+      )
     end
-
-    add_available_filter "attachment",
+    add_available_filter(
+      "attachment",
       :type => :text, :name => l(:label_attachment)
-
+    )
     if User.current.logged?
-      add_available_filter "watcher_id",
+      add_available_filter(
+        "watcher_id",
         :type => :list, :values => lambda { watcher_values }
+      )
     end
-
-    add_available_filter("updated_by",
+    add_available_filter(
+      "updated_by",
       :type => :list, :values => lambda { author_values }
     )
-
-    add_available_filter("last_updated_by",
+    add_available_filter(
+      "last_updated_by",
       :type => :list, :values => lambda { author_values }
     )
-
     if project && !project.leaf?
-      add_available_filter "subproject_id",
+      add_available_filter(
+        "subproject_id",
         :type => :list_subprojects,
         :values => lambda { subproject_values }
+      )
     end
 
-    add_available_filter("project.status",
+    add_available_filter(
+      "project.status",
       :type => :list,
       :name => l(:label_attribute_of_project, :name => l(:field_status)),
       :values => lambda { project_statuses_values }
@@ -221,11 +235,13 @@ class IssueQuery < Query
         " JOIN #{Project.table_name} ON #{Project.table_name}.id = #{TimeEntry.table_name}.project_id" +
         " WHERE (#{TimeEntry.visible_condition(User.current)}) AND #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id"
 
-      @available_columns.insert index, QueryColumn.new(:spent_hours,
-        :sortable => "COALESCE((#{subselect}), 0)",
-        :default_order => 'desc',
-        :caption => :label_spent_time,
-        :totalable => true
+      @available_columns.insert(
+        index,
+        QueryColumn.new(:spent_hours,
+                        :sortable => "COALESCE((#{subselect}), 0)",
+                        :default_order => 'desc',
+                        :caption => :label_spent_time,
+                        :totalable => true)
       )
 
       subselect = "SELECT SUM(hours) FROM #{TimeEntry.table_name}" +
@@ -234,10 +250,12 @@ class IssueQuery < Query
         " WHERE (#{TimeEntry.visible_condition(User.current)})" +
         " AND subtasks.root_id = #{Issue.table_name}.root_id AND subtasks.lft >= #{Issue.table_name}.lft AND subtasks.rgt <= #{Issue.table_name}.rgt"
 
-      @available_columns.insert index+1, QueryColumn.new(:total_spent_hours,
-        :sortable => "COALESCE((#{subselect}), 0)",
-        :default_order => 'desc',
-        :caption => :label_total_spent_time
+      @available_columns.insert(
+        index + 1,
+        QueryColumn.new(:total_spent_hours,
+                        :sortable => "COALESCE((#{subselect}), 0)",
+                        :default_order => 'desc',
+                        :caption => :label_total_spent_time)
       )
     end
 

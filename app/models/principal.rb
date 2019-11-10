@@ -58,7 +58,8 @@ class Principal < ActiveRecord::Base
         active
       else
         # self and members of visible projects
-        active.where("#{table_name}.id = ? OR #{table_name}.id IN (SELECT user_id FROM #{Member.table_name} WHERE project_id IN (?))",
+        active.where(
+          "#{table_name}.id = ? OR #{table_name}.id IN (SELECT user_id FROM #{Member.table_name} WHERE project_id IN (?))",
           user.id, user.visible_project_ids
         )
       end
@@ -178,11 +179,12 @@ class Principal < ActiveRecord::Base
 
     if principal.nil? && / /.match?(keyword)
       firstname, lastname = *(keyword.split) # "First Last Throwaway"
-      principal ||= principals.detect {|a|
-                                 a.is_a?(User) &&
-                                   firstname.casecmp(a.firstname.to_s) == 0 &&
-                                   lastname.casecmp(a.lastname.to_s) == 0
-                               }
+      principal ||=
+        principals.detect {|a|
+          a.is_a?(User) &&
+            firstname.casecmp(a.firstname.to_s) == 0 &&
+              lastname.casecmp(a.lastname.to_s) == 0
+        }
     end
     if principal.nil?
       principal ||= principals.detect {|a| keyword.casecmp(a.name) == 0}

@@ -28,12 +28,12 @@ class Redmine::WikiFormatting::MacrosTest < Redmine::HelperTest
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
 
   fixtures :projects, :roles, :enabled_modules, :users,
-                      :repositories, :changesets,
-                      :trackers, :issue_statuses, :issues,
-                      :versions, :documents,
-                      :wikis, :wiki_pages, :wiki_contents,
-                      :boards, :messages,
-                      :attachments
+           :repositories, :changesets,
+           :trackers, :issue_statuses, :issues,
+           :versions, :documents,
+           :wikis, :wiki_pages, :wiki_contents,
+           :boards, :messages,
+           :attachments
 
   def setup
     super
@@ -243,15 +243,15 @@ class Redmine::WikiFormatting::MacrosTest < Redmine::HelperTest
   def test_macro_collapse_should_not_break_toc
     set_language_if_valid 'en'
 
-    text =  <<-RAW
-{{toc}}
+    text = <<~RAW
+      {{toc}}
 
-h1. Title
+      h1. Title
 
-{{collapse(Show example, Hide example)
-h2. Heading
-}}"
-RAW
+      {{collapse(Show example, Hide example)
+      h2. Heading
+      }}"
+    RAW
 
     expected_toc = '<ul class="toc"><li><strong>Table of contents</strong></li><li><a href="#Title">Title</a><ul><li><a href="#Heading">Heading</a></li></ul></li></ul>'
 
@@ -346,32 +346,30 @@ RAW
 
   def test_macro_thumbnail_with_invalid_filename_should_fail
     assert_include 'test.png not found',
-      textilizable("{{thumbnail(test.png)}}", :object => Issue.find(14))
+                   textilizable("{{thumbnail(test.png)}}", :object => Issue.find(14))
   end
 
   def test_macros_should_not_be_executed_in_pre_tags
-    text = <<-RAW
-{{hello_world(foo)}}
+    text = <<~RAW
+      {{hello_world(foo)}}
 
-<pre>
-{{hello_world(pre)}}
-!{{hello_world(pre)}}
-</pre>
+      <pre>
+      {{hello_world(pre)}}
+      !{{hello_world(pre)}}
+      </pre>
 
-{{hello_world(bar)}}
-RAW
+      {{hello_world(bar)}}
+    RAW
+    expected = <<~EXPECTED
+      <p>Hello world! Object: NilClass, Arguments: foo and no block of text.</p>
 
-    expected = <<-EXPECTED
-<p>Hello world! Object: NilClass, Arguments: foo and no block of text.</p>
+      <pre>
+      {{hello_world(pre)}}
+      !{{hello_world(pre)}}
+      </pre>
 
-<pre>
-{{hello_world(pre)}}
-!{{hello_world(pre)}}
-</pre>
-
-<p>Hello world! Object: NilClass, Arguments: bar and no block of text.</p>
-EXPECTED
-
+      <p>Hello world! Object: NilClass, Arguments: bar and no block of text.</p>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(text).gsub(%r{[\r\n\t]}, '')
   end
 
@@ -386,21 +384,19 @@ EXPECTED
   end
 
   def test_macros_with_text_should_not_mangle_following_macros
-    text = <<-RAW
-{{hello_world
-Line of text
-}}
+    text = <<~RAW
+      {{hello_world
+      Line of text
+      }}
 
-{{hello_world
-Another line of text
-}}
-RAW
-
-    expected = <<-EXPECTED
-<p>Hello world! Object: NilClass, Called with no argument and a 12 bytes long block of text.</p>
-<p>Hello world! Object: NilClass, Called with no argument and a 20 bytes long block of text.</p>
-EXPECTED
-
+      {{hello_world
+      Another line of text
+      }}
+    RAW
+    expected = <<~EXPECTED
+      <p>Hello world! Object: NilClass, Called with no argument and a 12 bytes long block of text.</p>
+      <p>Hello world! Object: NilClass, Called with no argument and a 20 bytes long block of text.</p>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), textilizable(text).gsub(%r{[\r\n\t]}, '')
   end
 

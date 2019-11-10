@@ -206,19 +206,25 @@ module Redmine
             end
             cpmap = Hash[*cpalist.flatten]
             paths = as_ary(le['paths']['path']).map do |e|
-              p = scm_iconv('UTF-8', @path_encoding, CGI.unescape(e['__content__']) )
+              p = scm_iconv('UTF-8', @path_encoding, CGI.unescape(e['__content__']))
               {:action        => e['action'],
                :path          => with_leading_slash(p),
                :from_path     => (cpmap.member?(p) ? with_leading_slash(cpmap[p]) : nil),
                :from_revision => (cpmap.member?(p) ? le['node'] : nil)}
-            end.sort_by { |e| e[:path] }
+            end
+            paths.sort_by!{|e| e[:path]}
             parents_ary = []
             as_ary(le['parents']['parent']).map do |par|
               parents_ary << par['__content__'] if par['__content__'] != "0000000000000000000000000000000000000000"
             end
             yield Revision.new(:revision => le['revision'],
                                :scmid    => le['node'],
-                               :author   => (le['author']['__content__'] rescue ''),
+                               :author   =>
+                                         (begin
+                                            le['author']['__content__']
+                                          rescue
+                                            ''
+                                          end),
                                :time     => Time.parse(le['date']['__content__']),
                                :message  => le['msg']['__content__'],
                                :paths    => paths,

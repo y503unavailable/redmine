@@ -94,34 +94,50 @@ module IssuesHelper
   def render_descendants_tree(issue)
     manage_relations = User.current.allowed_to?(:manage_subtasks, issue.project)
     s = +'<table class="list issues odd-even">'
-    issue_list(issue.descendants.visible.preload(:status, :priority, :tracker, :assigned_to).sort_by(&:lft)) do |child, level|
+    issue_list(
+      issue.descendants.visible.
+        preload(:status, :priority, :tracker,
+                :assigned_to).sort_by(&:lft)) do |child, level|
       css = +"issue issue-#{child.id} hascontextmenu #{child.css_classes}"
       css << " idnt idnt-#{level}" if level > 0
       buttons =
         if manage_relations
           link_to(l(:label_delete_link_to_subtask),
-                  issue_path({:id => child.id, :issue => {:parent_issue_id => ''},
-                              :back_url => issue_path(issue.id), :no_flash => '1'}),
-                                  :method => :put,
-                                  :data => {:confirm => l(:text_are_you_sure)},
-                                  :title => l(:label_delete_link_to_subtask),
-                                  :class => 'icon-only icon-link-break'
-                                  )
+                  issue_path(
+                    {:id => child.id, :issue => {:parent_issue_id => ''},
+                     :back_url => issue_path(issue.id), :no_flash => '1'}),
+                  :method => :put,
+                  :data => {:confirm => l(:text_are_you_sure)},
+                  :title => l(:label_delete_link_to_subtask),
+                  :class => 'icon-only icon-link-break'
+                  )
         else
           "".html_safe
         end
       buttons << link_to_context_menu
-
-      s << content_tag('tr',
-             content_tag('td', check_box_tag("ids[]", child.id, false, :id => nil), :class => 'checkbox') +
-             content_tag('td', link_to_issue(child, :project => (issue.project_id != child.project_id)), :class => 'subject', :style => 'width: 50%') +
+      s <<
+        content_tag(
+          'tr',
+          content_tag('td', check_box_tag("ids[]", child.id, false, :id => nil),
+                      :class => 'checkbox') +
+             content_tag('td',
+                         link_to_issue(
+                           child,
+                           :project => (issue.project_id != child.project_id)),
+                         :class => 'subject', :style => 'width: 50%') +
              content_tag('td', h(child.status), :class => 'status') +
              content_tag('td', format_date(child.start_date), :class => 'start_date') +
              content_tag('td', format_date(child.due_date), :class => 'due_date') +
              content_tag('td', link_to_user(child.assigned_to), :class => 'assigned_to') +
-             content_tag('td', child.disabled_core_fields.include?('done_ratio') ? '' : progress_bar(child.done_ratio), :class=> 'done_ratio') +
+             content_tag('td',
+                         (if child.disabled_core_fields.include?('done_ratio')
+                            ''
+                          else
+                             progress_bar(child.done_ratio)
+                          end),
+                         :class=> 'done_ratio') +
              content_tag('td', buttons, :class => 'buttons'),
-             :class => css)
+          :class => css)
     end
     s << '</table>'
     s.html_safe
@@ -130,39 +146,56 @@ module IssuesHelper
   # Renders the list of related issues on the issue details view
   def render_issue_relations(issue, relations)
     manage_relations = User.current.allowed_to?(:manage_issue_relations, issue.project)
-
     s = ''.html_safe
     relations.each do |relation|
       other_issue = relation.other_issue(issue)
       css = "issue hascontextmenu #{other_issue.css_classes}"
       buttons =
         if manage_relations
-          link_to(l(:label_relation_delete),
-                                  relation_path(relation),
-                                  :remote => true,
-                                  :method => :delete,
-                                  :data => {:confirm => l(:text_are_you_sure)},
-                                  :title => l(:label_relation_delete),
-                                  :class => 'icon-only icon-link-break'
-                                 )
+          link_to(
+            l(:label_relation_delete),
+            relation_path(relation),
+            :remote => true,
+            :method => :delete,
+            :data => {:confirm => l(:text_are_you_sure)},
+            :title => l(:label_relation_delete),
+            :class => 'icon-only icon-link-break'
+          )
         else
           "".html_safe
         end
       buttons << link_to_context_menu
-
-      s << content_tag('tr',
-             content_tag('td', check_box_tag("ids[]", other_issue.id, false, :id => nil), :class => 'checkbox') +
-             content_tag('td', relation.to_s(@issue) {|other| link_to_issue(other, :project => Setting.cross_project_issue_relations?)}.html_safe, :class => 'subject', :style => 'width: 50%') +
+      s <<
+        content_tag(
+          'tr',
+          content_tag('td',
+                      check_box_tag(
+                        "ids[]", other_issue.id,
+                        false, :id => nil),
+                      :class => 'checkbox') +
+             content_tag('td',
+                         relation.to_s(@issue) {|other|
+                           link_to_issue(
+                             other,
+                             :project => Setting.cross_project_issue_relations?)
+                         }.html_safe,
+                         :class => 'subject',
+                         :style => 'width: 50%') +
              content_tag('td', other_issue.status, :class => 'status') +
              content_tag('td', format_date(other_issue.start_date), :class => 'start_date') +
              content_tag('td', format_date(other_issue.due_date), :class => 'due_date') +
              content_tag('td', link_to_user(other_issue.assigned_to), :class => 'assigned_to') +
-             content_tag('td', other_issue.disabled_core_fields.include?('done_ratio') ? '' : progress_bar(other_issue.done_ratio), :class=> 'done_ratio') +
+             content_tag('td',
+                         (if other_issue.disabled_core_fields.include?('done_ratio')
+                            ''
+                          else
+                            progress_bar(other_issue.done_ratio)
+                          end),
+                         :class=> 'done_ratio') +
              content_tag('td', buttons, :class => 'buttons'),
-             :id => "relation-#{relation.id}",
-             :class => css)
+          :id => "relation-#{relation.id}",
+          :class => css)
     end
-
     content_tag('table', s, :class => 'list issues odd-even')
   end
 
@@ -253,9 +286,11 @@ module IssuesHelper
 
     def cells(label, text, options={})
       options[:class] = [options[:class] || "", 'attribute'].join(' ')
-      content_tag 'div',
-        content_tag('div', label + ":", :class => 'label') + content_tag('div', text, :class => 'value'),
-        options
+      content_tag(
+        'div',
+        content_tag('div', label + ":", :class => 'label') +
+          content_tag('div', text, :class => 'value'),
+        options)
     end
   end
 
@@ -515,9 +550,12 @@ module IssuesHelper
     elsif show_diff
       s = l(:text_journal_changed_no_detail, :label => label)
       unless no_html
-        diff_link = link_to 'diff',
-          diff_journal_url(detail.journal_id, :detail_id => detail.id, :only_path => options[:only_path]),
-          :title => l(:label_view_diff)
+        diff_link =
+          link_to(
+            'diff',
+            diff_journal_url(detail.journal_id, :detail_id => detail.id,
+                             :only_path => options[:only_path]),
+            :title => l(:label_view_diff))
         s << " (#{diff_link})"
       end
       s.html_safe

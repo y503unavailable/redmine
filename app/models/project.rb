@@ -686,20 +686,22 @@ class Project < ActiveRecord::Base
 
   # The earliest start date of a project, based on it's issues and versions
   def start_date
-    @start_date ||= [
-     issues.minimum('start_date'),
-     shared_versions.minimum('effective_date'),
-     Issue.fixed_version(shared_versions).minimum('start_date')
-    ].compact.min
+    @start_date ||=
+      [
+        issues.minimum('start_date'),
+        shared_versions.minimum('effective_date'),
+        Issue.fixed_version(shared_versions).minimum('start_date')
+      ].compact.min
   end
 
   # The latest due date of an issue or version
   def due_date
-    @due_date ||= [
-     issues.maximum('due_date'),
-     shared_versions.maximum('effective_date'),
-     Issue.fixed_version(shared_versions).maximum('due_date')
-    ].compact.max
+    @due_date ||=
+      [
+        issues.maximum('due_date'),
+        shared_versions.maximum('effective_date'),
+        Issue.fixed_version(shared_versions).maximum('due_date')
+      ].compact.max
   end
 
   def overdue?
@@ -791,7 +793,8 @@ class Project < ActiveRecord::Base
     target.destroy unless target.blank?
   end
 
-  safe_attributes 'name',
+  safe_attributes(
+    'name',
     'description',
     'homepage',
     'is_public',
@@ -802,10 +805,12 @@ class Project < ActiveRecord::Base
     'issue_custom_field_ids',
     'parent_id',
     'default_version_id',
-    'default_assigned_to_id'
+    'default_assigned_to_id')
 
-  safe_attributes 'enabled_module_names',
-    :if => lambda {|project, user|
+  safe_attributes(
+    'enabled_module_names',
+    :if =>
+      lambda {|project, user|
         if project.new_record?
           if user.admin?
             true
@@ -815,10 +820,11 @@ class Project < ActiveRecord::Base
         else
           user.allowed_to?(:select_project_modules, project)
         end
-      }
+      })
 
-  safe_attributes 'inherit_members',
-    :if => lambda {|project, user| project.parent.nil? || project.parent.visible?(user)}
+  safe_attributes(
+    'inherit_members',
+    :if => lambda {|project, user| project.parent.nil? || project.parent.visible?(user)})
 
   def safe_attributes=(attrs, user=User.current)
     if attrs.respond_to?(:to_unsafe_hash)

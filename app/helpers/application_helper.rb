@@ -167,8 +167,8 @@ module ApplicationHelper
       h(project.name)
     else
       link_to project.name,
-        project_url(project, {:only_path => true}.merge(options)),
-        html_options
+              project_url(project, {:only_path => true}.merge(options)),
+              html_options
     end
   end
 
@@ -482,7 +482,8 @@ module ApplicationHelper
       padding = level * 16
       text = content_tag('span', project.name, :style => "padding-left:#{padding}px;")
       s << link_to(text, project_path(project, :jump => jump),
-              :title => project.name, :class => (project == selected ? 'selected' : nil))
+                   :title => project.name,
+                   :class => (project == selected ? 'selected' : nil))
     }
     [
       [bookmarked, :label_optgroup_bookmarks, true],
@@ -510,17 +511,21 @@ module ApplicationHelper
     end
     text ||= l(:label_jump_to_a_project)
     url = autocomplete_projects_path(:format => 'js', :jump => current_menu_item)
-
     trigger = content_tag('span', text, :class => 'drdn-trigger')
-    q = text_field_tag('q', '', :id => 'projects-quick-search', :class => 'autocomplete', :data => {:automcomplete_url => url}, :autocomplete => 'off')
-    all = link_to(l(:label_project_all), projects_path(:jump => current_menu_item), :class => (@project.nil? && controller.class.main_menu ? 'selected' : nil))
-    content = content_tag('div',
-          content_tag('div', q, :class => 'quick-search') +
-          content_tag('div', render_projects_for_jump_box(projects, @project), :class => 'drdn-items projects selection') +
-          content_tag('div', all, :class => 'drdn-items all-projects selection'),
-        :class => 'drdn-content'
+    q = text_field_tag('q', '', :id => 'projects-quick-search',
+                       :class => 'autocomplete',
+                       :data => {:automcomplete_url => url},
+                       :autocomplete => 'off')
+    all = link_to(l(:label_project_all), projects_path(:jump => current_menu_item),
+                  :class => (@project.nil? && controller.class.main_menu ? 'selected' : nil))
+    content =
+      content_tag('div',
+                  content_tag('div', q, :class => 'quick-search') +
+                    content_tag('div', render_projects_for_jump_box(projects, @project),
+                                :class => 'drdn-items projects selection') +
+                    content_tag('div', all, :class => 'drdn-items all-projects selection'),
+                  :class => 'drdn-content'
       )
-
     content_tag('div', trigger + content, :id => "project-jump", :class => "drdn")
   end
 
@@ -636,9 +641,9 @@ module ApplicationHelper
       :reorder_param => options[:param] || object.class.name.underscore
     }
     content_tag('span', '',
-      :class => "icon-only icon-sort-handle sort-handle",
-      :data => data,
-      :title => l(:button_sort))
+                :class => "icon-only icon-sort-handle sort-handle",
+                :data => data,
+                :title => l(:button_sort))
   end
 
   def breadcrumb(*args)
@@ -1104,19 +1109,29 @@ module ApplicationHelper
                 end
                 if prefix == 'commit'
                   if repository && (changeset = Changeset.visible.where("repository_id = ? AND scmid LIKE ?", repository.id, "#{name}%").first)
-                    link = link_to h("#{project_prefix}#{repo_prefix}#{name}"), {:only_path => only_path, :controller => 'repositories', :action => 'revision', :id => project, :repository_id => repository.identifier_param, :rev => changeset.identifier},
-                                                 :class => 'changeset',
-                                                 :title => truncate_single_line_raw(changeset.comments, 100)
+                    link = link_to(
+                             h("#{project_prefix}#{repo_prefix}#{name}"),
+                             {:only_path => only_path, :controller => 'repositories',
+                              :action => 'revision', :id => project,
+                              :repository_id => repository.identifier_param,
+                              :rev => changeset.identifier},
+                             :class => 'changeset',
+                             :title => truncate_single_line_raw(changeset.comments, 100))
                   end
                 else
                   if repository && User.current.allowed_to?(:browse_repository, project)
                     name =~ %r{^[/\\]*(.*?)(@([^/\\@]+?))?(#(L\d+))?$}
                     path, rev, anchor = $1, $3, $5
-                    link = link_to h("#{project_prefix}#{prefix}:#{repo_prefix}#{name}"), {:only_path => only_path, :controller => 'repositories', :action => (prefix == 'export' ? 'raw' : 'entry'), :id => project, :repository_id => repository.identifier_param,
-                                                            :path => to_path_param(path),
-                                                            :rev => rev,
-                                                            :anchor => anchor},
-                                                           :class => (prefix == 'export' ? 'source download' : 'source')
+                    link =
+                      link_to(
+                        h("#{project_prefix}#{prefix}:#{repo_prefix}#{name}"),
+                        {:only_path => only_path, :controller => 'repositories',
+                         :action => (prefix == 'export' ? 'raw' : 'entry'),
+                         :id => project, :repository_id => repository.identifier_param,
+                         :path => to_path_param(path),
+                         :rev => rev,
+                         :anchor => anchor},
+                        :class => (prefix == 'export' ? 'source download' : 'source'))
                   end
                 end
                 repo_prefix = nil
@@ -1147,7 +1162,7 @@ module ApplicationHelper
   end
 
   LINKS_RE =
-      %r{
+    %r{
             <a( [^>]+?)?>(?<tag_content>.*?)</a>|
             (?<leading>[\s\(,\-\[\>]|^)
             (?<esc>!)?
@@ -1184,7 +1199,7 @@ module ApplicationHelper
               \]|
               <|
               $)
-      }x
+    }x
   HEADING_RE = /(<h(\d)( [^>]+)?>(.+?)<\/h(\d)>)/i unless const_defined?(:HEADING_RE)
 
   def parse_sections(text, project, obj, attr, only_path, options)
@@ -1193,9 +1208,13 @@ module ApplicationHelper
       heading, level = $1, $2
       @current_section += 1
       if @current_section > 1
-        content_tag('div',
-          link_to(l(:button_edit_section), options[:edit_section_links].merge(:section => @current_section),
-                  :class => 'icon-only icon-edit'),
+        content_tag(
+          'div',
+          link_to(
+            l(:button_edit_section),
+            options[:edit_section_links].merge(
+              :section => @current_section),
+            :class => 'icon-only icon-edit'),
           :class => "contextual heading-#{level}",
           :title => l(:button_edit_section),
           :id => "section-#{@current_section}") + heading.html_safe
@@ -1443,9 +1462,24 @@ module ApplicationHelper
       'table',
       content_tag(
         'tr',
-        (pcts[0] > 0 ? content_tag('td', '', :style => "width: #{pcts[0]}%;", :class => 'closed', :title => titles[0]) : ''.html_safe) +
-        (pcts[1] > 0 ? content_tag('td', '', :style => "width: #{pcts[1]}%;", :class => 'done', :title => titles[1]) : ''.html_safe) +
-        (pcts[2] > 0 ? content_tag('td', '', :style => "width: #{pcts[2]}%;", :class => 'todo', :title => titles[2]) : ''.html_safe)
+        (if pcts[0] > 0
+           content_tag('td', '', :style => "width: #{pcts[0]}%;",
+                       :class => 'closed', :title => titles[0])
+         else
+           ''.html_safe
+         end) +
+        (if pcts[1] > 0
+           content_tag('td', '', :style => "width: #{pcts[1]}%;",
+                      :class => 'done', :title => titles[1])
+         else
+           ''.html_safe
+         end) +
+        (if pcts[2] > 0
+           content_tag('td', '', :style => "width: #{pcts[2]}%;",
+                                   :class => 'todo', :title => titles[2])
+         else
+           ''.html_safe
+         end)
       ), :class => "progress progress-#{pcts[0]}").html_safe +
       content_tag('p', legend, :class => 'percent').html_safe
   end

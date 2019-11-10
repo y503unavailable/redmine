@@ -33,8 +33,17 @@ class Message < ActiveRecord::Base
                 :description => :content,
                 :group => :parent,
                 :type => Proc.new {|o| o.parent_id.nil? ? 'message' : 'reply'},
-                :url => Proc.new {|o| {:controller => 'messages', :action => 'show', :board_id => o.board_id}.merge(o.parent_id.nil? ? {:id => o.id} :
-                                                                                                                                       {:id => o.parent_id, :r => o.id, :anchor => "message-#{o.id}"})}
+                :url =>
+                  Proc.new {|o|
+                    {:controller => 'messages', :action => 'show',
+                     :board_id => o.board_id}.
+                       merge(
+                         if o.parent_id.nil?
+                           {:id => o.id}
+                         else
+                           {:id => o.parent_id, :r => o.id, :anchor => "message-#{o.id}"}
+                         end)
+                  }
 
   acts_as_activity_provider :scope => preload({:board => :project}, :author),
                             :author_key => :author_id
@@ -56,9 +65,9 @@ class Message < ActiveRecord::Base
 
   safe_attributes 'subject', 'content'
   safe_attributes 'locked', 'sticky', 'board_id',
-    :if => lambda {|message, user|
-      user.allowed_to?(:edit_messages, message.project)
-    }
+                  :if => lambda {|message, user|
+                    user.allowed_to?(:edit_messages, message.project)
+                  }
 
   def visible?(user=User.current)
     !user.nil? && user.allowed_to?(:view_messages, project)
