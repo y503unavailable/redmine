@@ -446,16 +446,20 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_destroy_should_nullify_changesets
-    changeset = Changeset.create!(
-      :repository => Repository::Subversion.create!(
-        :project_id => 1,
-        :url => 'file:///tmp',
-        :identifier => 'tmp'
-      ),
-      :revision => '12',
-      :committed_on => Time.now,
-      :committer => 'jsmith'
-      )
+    changeset =
+      Changeset.
+        create!(
+          :repository =>
+            Repository::Subversion.
+              create!(
+                :project_id => 1,
+                :url => 'file:///tmp',
+                :identifier => 'tmp'
+              ),
+          :revision => '12',
+          :committed_on => Time.now,
+          :committer => 'jsmith'
+        )
     assert_equal 2, changeset.user_id
 
     User.find(2).destroy
@@ -766,9 +770,12 @@ class UserTest < ActiveSupport::TestCase
     anon1 = User.anonymous
     assert !anon1.new_record?
     assert_kind_of AnonymousUser, anon1
-    anon2 = AnonymousUser.create(
-                :lastname => 'Anonymous', :firstname => '',
-                :login => '', :status => 0)
+    anon2 =
+      AnonymousUser.
+        create(
+          :lastname => 'Anonymous', :firstname => '',
+          :login => '', :status => 0
+        )
     assert_equal 1, anon2.errors.count
   end
 
@@ -981,7 +988,7 @@ class UserTest < ActiveSupport::TestCase
     user = User.find(2)
     assert_kind_of Hash, user.projects_by_role
     assert_equal 2, user.projects_by_role.size
-    assert_equal [1,5], user.projects_by_role[Role.find(1)].collect(&:id).sort
+    assert_equal [1, 5], user.projects_by_role[Role.find(1)].collect(&:id).sort
     assert_equal [2], user.projects_by_role[Role.find(2)].collect(&:id).sort
   end
 
@@ -1291,30 +1298,30 @@ class UserTest < ActiveSupport::TestCase
   if Object.const_defined?(:OpenID)
     def test_setting_identity_url
       normalized_open_id_url = 'http://example.com/'
-      u = User.new( :identity_url => 'http://example.com/' )
+      u = User.new(:identity_url => 'http://example.com/')
       assert_equal normalized_open_id_url, u.identity_url
     end
 
     def test_setting_identity_url_without_trailing_slash
       normalized_open_id_url = 'http://example.com/'
-      u = User.new( :identity_url => 'http://example.com' )
+      u = User.new(:identity_url => 'http://example.com')
       assert_equal normalized_open_id_url, u.identity_url
     end
 
     def test_setting_identity_url_without_protocol
       normalized_open_id_url = 'http://example.com/'
-      u = User.new( :identity_url => 'example.com' )
+      u = User.new(:identity_url => 'example.com')
       assert_equal normalized_open_id_url, u.identity_url
     end
 
     def test_setting_blank_identity_url
-      u = User.new( :identity_url => 'example.com' )
+      u = User.new(:identity_url => 'example.com')
       u.identity_url = ''
       assert u.identity_url.blank?
     end
 
     def test_setting_invalid_identity_url
-      u = User.new( :identity_url => 'this is not an openid url' )
+      u = User.new(:identity_url => 'this is not an openid url')
       assert u.identity_url.blank?
     end
   else

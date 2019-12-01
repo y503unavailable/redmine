@@ -47,37 +47,39 @@ class IssuesController < ApplicationController
 
     if @query.valid?
       respond_to do |format|
-        format.html {
+        format.html do
           @issue_count = @query.issue_count
           @issue_pages = Paginator.new @issue_count, per_page_option, params['page']
           @issues = @query.issues(:offset => @issue_pages.offset, :limit => @issue_pages.per_page)
           render :layout => !request.xhr?
-        }
-        format.api  {
+        end
+        format.api do
           @offset, @limit = api_offset_and_limit
           @query.column_names = %w(author)
           @issue_count = @query.issue_count
           @issues = @query.issues(:offset => @offset, :limit => @limit)
           Issue.load_visible_relations(@issues) if include_in_api_response?('relations')
-        }
-        format.atom {
+        end
+        format.atom do
           @issues = @query.issues(:limit => Setting.feeds_limit.to_i)
-          render_feed(@issues, :title => "#{@project || Setting.app_title}: #{l(:label_issue_plural)}")
-        }
-        format.csv  {
+          render_feed(@issues,
+                      :title => "#{@project || Setting.app_title}: #{l(:label_issue_plural)}")
+        end
+        format.csv do
           @issues = @query.issues(:limit => Setting.issues_export_limit.to_i)
-          send_data(query_to_csv(@issues, @query, params[:csv]), :type => 'text/csv; header=present', :filename => 'issues.csv')
-        }
-        format.pdf  {
+          send_data(query_to_csv(@issues, @query, params[:csv]),
+                    :type => 'text/csv; header=present', :filename => 'issues.csv')
+        end
+        format.pdf do
           @issues = @query.issues(:limit => Setting.issues_export_limit.to_i)
           send_file_headers! :type => 'application/pdf', :filename => 'issues.pdf'
-        }
+        end
       end
     else
       respond_to do |format|
-        format.html { render :layout => !request.xhr? }
-        format.any(:atom, :csv, :pdf) { head 422 }
-        format.api { render_validation_errors(@query) }
+        format.html {render :layout => !request.xhr?}
+        format.any(:atom, :csv, :pdf) {head 422}
+        format.api {render_validation_errors(@query)}
       end
     end
   rescue ActiveRecord::RecordNotFound
@@ -87,8 +89,11 @@ class IssuesController < ApplicationController
   def show
     @journals = @issue.visible_journals_with_index
     @has_changesets = @issue.changesets.visible.preload(:repository, :user).exists?
-    @relations = @issue.relations.select {|r| r.other_issue(@issue) && r.other_issue(@issue).visible? }
-
+    @relations =
+      @issue.relations.
+        select do |r|
+          r.other_issue(@issue) && r.other_issue(@issue).visible?
+        end
     @journals.reverse! if User.current.wants_comments_in_reverse_order?
 
     if User.current.allowed_to?(:view_time_entries, @project)
@@ -97,7 +102,7 @@ class IssuesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html {
+      format.html do
         @allowed_statuses = @issue.new_statuses_allowed_to(User.current)
         @priorities = IssuePriority.active
         @time_entry = TimeEntry.new(:issue => @issue, :project => @issue.project)
@@ -105,21 +110,25 @@ class IssuesController < ApplicationController
         @relation = IssueRelation.new
         retrieve_previous_and_next_issue_ids
         render :template => 'issues/show'
-      }
-      format.api {
+      end
+      format.api do
         @changesets = @issue.changesets.visible.preload(:repository, :user).to_a
         @changesets.reverse! if User.current.wants_comments_in_reverse_order?
-      }
-      format.atom { render :template => 'journals/index', :layout => false, :content_type => 'application/atom+xml' }
-      format.pdf  {
-        send_file_headers! :type => 'application/pdf', :filename => "#{@project.identifier}-#{@issue.id}.pdf"
-      }
+      end
+      format.atom do
+        render :template => 'journals/index', :layout => false,
+        :content_type => 'application/atom+xml'
+      end
+      format.pdf do
+        send_file_headers!(:type => 'application/pdf',
+                           :filename => "#{@project.identifier}-#{@issue.id}.pdf")
+      end
     end
   end
 
   def new
     respond_to do |format|
-      format.html { render :action => 'new', :layout => !request.xhr? }
+      format.html {render :action => 'new', :layout => !request.xhr?}
       format.js
     end
   end
@@ -128,29 +137,36 @@ class IssuesController < ApplicationController
     unless User.current.allowed_to?(:add_issues, @issue.project, :global => true)
       raise ::Unauthorized
     end
-    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+
+    call_hook(:controller_issues_new_before_save, {:params => params, :issue => @issue})
     @issue.save_attachments(params[:attachments] || (params[:issue] && params[:issue][:uploads]))
     if @issue.save
-      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
+      call_hook(:controller_issues_new_after_save, {:params => params, :issue => @issue})
       respond_to do |format|
-        format.html {
+        format.html do
           render_attachment_warning_if_needed(@issue)
-          flash[:notice] = l(:notice_issue_successful_create, :id => view_context.link_to("##{@issue.id}", issue_path(@issue), :title => @issue.subject))
+          flash[:notice] =
+            l(:notice_issue_successful_create,
+              :id => view_context.link_to("##{@issue.id}", issue_path(@issue),
+                                          :title => @issue.subject))
           redirect_after_create
-        }
-        format.api  { render :action => 'show', :status => :created, :location => issue_url(@issue) }
+        end
+        format.api do
+          render :action => 'show', :status => :created,
+          :location => issue_url(@issue)
+        end
       end
       return
     else
       respond_to do |format|
-        format.html {
+        format.html do
           if @issue.project.nil?
             render_error :status => 422
           else
             render :action => 'new'
           end
-        }
-        format.api  { render_validation_errors(@issue) }
+        end
+        format.api  {render_validation_errors(@issue)}
       end
     end
   end
@@ -159,14 +175,16 @@ class IssuesController < ApplicationController
     return unless update_issue_from_params
 
     respond_to do |format|
-      format.html { }
+      format.html {}
       format.js
     end
   end
 
   def update
     return unless update_issue_from_params
-    @issue.save_attachments(params[:attachments] || (params[:issue] && params[:issue][:uploads]))
+
+    @issue.save_attachments(params[:attachments] ||
+                             (params[:issue] && params[:issue][:uploads]))
     saved = false
     begin
       saved = save_issue_with_child_records
@@ -174,28 +192,36 @@ class IssuesController < ApplicationController
       @conflict = true
       if params[:last_journal_id]
         @conflict_journals = @issue.journals_after(params[:last_journal_id]).to_a
-        @conflict_journals.reject!(&:private_notes?) unless User.current.allowed_to?(:view_private_notes, @issue.project)
+        unless User.current.allowed_to?(:view_private_notes, @issue.project)
+          @conflict_journals.reject!(&:private_notes?)
+        end
       end
     end
 
     if saved
       render_attachment_warning_if_needed(@issue)
-      flash[:notice] = l(:notice_successful_update) unless @issue.current_journal.new_record? || params[:no_flash]
-
+      unless @issue.current_journal.new_record? || params[:no_flash]
+        flash[:notice] = l(:notice_successful_update)
+      end
       respond_to do |format|
-        format.html { redirect_back_or_default issue_path(@issue, previous_and_next_issue_ids_params) }
-        format.api  { render_api_ok }
+        format.html do
+          redirect_back_or_default(
+            issue_path(@issue, previous_and_next_issue_ids_params)
+          )
+        end
+        format.api  {render_api_ok}
       end
     else
       respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.api  { render_validation_errors(@issue) }
+        format.html {render :action => 'edit'}
+        format.api  {render_validation_errors(@issue)}
       end
     end
   end
 
   def issue_tab
     return render_error :status => 422 unless request.xhr?
+
     tab = params[:name]
 
     case tab
@@ -247,7 +273,7 @@ class IssuesController < ApplicationController
     end
     target_projects ||= @projects
 
-    @trackers = target_projects.map {|p| Issue.allowed_target_trackers(p) }.reduce(:&)
+    @trackers = target_projects.map {|p| Issue.allowed_target_trackers(p)}.reduce(:&)
     if params[:issue]
       @target_tracker = @trackers.detect {|t| t.id.to_s == params[:issue][:tracker_id].to_s}
       if @target_tracker
@@ -275,9 +301,10 @@ class IssuesController < ApplicationController
         end
       end
     end
-    @values_by_custom_field.delete_if {|k,v| v.blank?}
-
-    @custom_fields = edited_issues.map{|i| i.editable_custom_fields}.reduce(:&).select {|field| field.format.bulk_edit_supported}
+    @values_by_custom_field.delete_if {|k, v| v.blank?}
+    @custom_fields =
+      edited_issues.map{|i| i.editable_custom_fields}.
+        reduce(:&).select {|field| field.format.bulk_edit_supported}
     @assignables = target_projects.map(&:assignable_users).reduce(:&)
     @versions = target_projects.map {|p| p.shared_versions.open}.reduce(:&)
     @categories = target_projects.map {|p| p.shared_categories}.reduce(:&)
@@ -308,6 +335,7 @@ class IssuesController < ApplicationController
       unless User.current.allowed_to?(:copy_issues, @projects)
         raise ::Unauthorized
       end
+
       target_projects = @projects
       if attributes['project_id'].present?
         target_projects = Project.where(:id => attributes['project_id']).to_a
@@ -315,6 +343,7 @@ class IssuesController < ApplicationController
       unless User.current.allowed_to?(:add_issues, target_projects)
         raise ::Unauthorized
       end
+
       unless User.current.allowed_to?(:add_issue_watchers, @projects)
         copy_watchers = false
       end
@@ -348,7 +377,7 @@ class IssuesController < ApplicationController
       end
       journal = issue.init_journal(User.current, params[:notes])
       issue.safe_attributes = attributes
-      call_hook(:controller_issues_bulk_edit_before_save, { :params => params, :issue => issue })
+      call_hook(:controller_issues_bulk_edit_before_save, {:params => params, :issue => issue})
       if issue.save
         saved_issues << issue
       else
@@ -419,8 +448,8 @@ class IssuesController < ApplicationController
       end
     end
     respond_to do |format|
-      format.html { redirect_back_or_default _project_issues_path(@project) }
-      format.api  { render_api_ok }
+      format.html {redirect_back_or_default _project_issues_path(@project)}
+      format.api  {render_api_ok}
     end
   end
 
@@ -471,7 +500,7 @@ class IssuesController < ApplicationController
       :next_issue_id => params[:next_issue_id],
       :issue_position => params[:issue_position],
       :issue_count => params[:issue_count]
-    }.reject {|k,v| k.blank?}
+    }.reject {|k, v| k.blank?}
   end
 
   # Used by #edit and #update to set some common instance variables
@@ -481,11 +510,11 @@ class IssuesController < ApplicationController
     if params[:time_entry]
       @time_entry.safe_attributes = params[:time_entry]
     end
-
     @issue.init_journal(User.current)
-
     issue_attributes = params[:issue]
-    issue_attributes[:assigned_to_id] = User.current.id if issue_attributes && issue_attributes[:assigned_to_id] == 'me'
+    if issue_attributes && issue_attributes[:assigned_to_id] == 'me'
+      issue_attributes[:assigned_to_id] = User.current.id
+    end
     if issue_attributes && params[:conflict_resolution]
       case params[:conflict_resolution]
       when 'overwrite'
@@ -515,11 +544,14 @@ class IssuesController < ApplicationController
         unless User.current.allowed_to?(:copy_issues, @copy_from.project)
           raise ::Unauthorized
         end
+
         @link_copy = link_copy?(params[:link_copy]) || request.get?
         @copy_attachments = params[:copy_attachments].present? || request.get?
         @copy_subtasks = params[:copy_subtasks].present? || request.get?
         @copy_watchers = User.current.allowed_to?(:add_issue_watchers, @project)
-        @issue.copy_from(@copy_from, :attachments => @copy_attachments, :subtasks => @copy_subtasks, :watchers => @copy_watchers, :link => @link_copy)
+        @issue.copy_from(@copy_from, :attachments => @copy_attachments,
+                         :subtasks => @copy_subtasks, :watchers => @copy_watchers,
+                         :link => @link_copy)
         @issue.parent_issue_id = @copy_from.parent_id
       rescue ActiveRecord::RecordNotFound
         render_404
@@ -573,7 +605,9 @@ class IssuesController < ApplicationController
   # Saves @issue and a time_entry from the parameters
   def save_issue_with_child_records
     Issue.transaction do
-      if params[:time_entry] && (params[:time_entry][:hours].present? || params[:time_entry][:comments].present?) && User.current.allowed_to?(:log_time, @issue.project)
+      if params[:time_entry] &&
+           (params[:time_entry][:hours].present? || params[:time_entry][:comments].present?) &&
+           User.current.allowed_to?(:log_time, @issue.project)
         time_entry = @time_entry || TimeEntry.new
         time_entry.project = @issue.project
         time_entry.issue = @issue
@@ -582,10 +616,19 @@ class IssuesController < ApplicationController
         time_entry.safe_attributes = params[:time_entry]
         @issue.time_entries << time_entry
       end
-
-      call_hook(:controller_issues_edit_before_save, { :params => params, :issue => @issue, :time_entry => time_entry, :journal => @issue.current_journal})
+      call_hook(
+        :controller_issues_edit_before_save,
+        {:params => params, :issue => @issue,
+         :time_entry => time_entry,
+         :journal => @issue.current_journal}
+      )
       if @issue.save
-        call_hook(:controller_issues_edit_after_save, { :params => params, :issue => @issue, :time_entry => time_entry, :journal => @issue.current_journal})
+        call_hook(
+          :controller_issues_edit_after_save,
+          {:params => params, :issue => @issue,
+           :time_entry => time_entry,
+           :journal => @issue.current_journal}
+        )
       else
         raise ActiveRecord::Rollback
       end
@@ -609,7 +652,11 @@ class IssuesController < ApplicationController
   def redirect_after_create
     if params[:continue]
       url_params = {}
-      url_params[:issue] = {:tracker_id => @issue.tracker, :parent_issue_id => @issue.parent_issue_id}.reject {|k,v| v.nil?}
+      url_params[:issue] =
+        {
+          :tracker_id => @issue.tracker,
+          :parent_issue_id => @issue.parent_issue_id
+        }.reject {|k, v| v.nil?}
       url_params[:back_url] = params[:back_url].presence
 
       if params[:project_id]

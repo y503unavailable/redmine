@@ -945,16 +945,30 @@ class IssueTest < ActiveSupport::TestCase
     assert_equal [cf2.id.to_s], issue.read_only_attribute_names(user)
     assert_not_include cf2.id.to_s, issue.safe_attribute_names(user)
 
-    issue.send :safe_attributes=, {'custom_field_values' => {
-                                       cf1.id.to_s => 'value1', cf2.id.to_s => 'value2'
-                                     }}, user
+    issue.send(
+      :safe_attributes=,
+      {
+        'custom_field_values' =>
+          {
+            cf1.id.to_s => 'value1',
+            cf2.id.to_s => 'value2'
+          }
+      },
+      user
+    )
     assert_equal 'value1', issue.custom_field_value(cf1)
     assert_nil issue.custom_field_value(cf2)
 
-    issue.send :safe_attributes=, {'custom_fields' => [
-                                      {'id' => cf1.id.to_s, 'value' => 'valuea'},
-                                      {'id' => cf2.id.to_s, 'value' => 'valueb'}
-                                    ]}, user
+    issue.send(
+      :safe_attributes=,
+      {
+        'custom_fields' =>
+          [
+            {'id' => cf1.id.to_s, 'value' => 'valuea'},
+            {'id' => cf2.id.to_s, 'value' => 'valueb'}
+          ]
+      }, user
+    )
     assert_equal 'valuea', issue.custom_field_value(cf1)
     assert_nil issue.custom_field_value(cf2)
   end
@@ -2428,9 +2442,11 @@ class IssueTest < ActiveSupport::TestCase
     assert !Issue.new(:due_date => today).overdue?
     assert !Issue.new(:due_date => (today + 1.day).to_date).overdue?
     assert !Issue.new(:due_date => nil).overdue?
-    assert !Issue.new(:due_date => (today - 1.day).to_date,
-                      :status => IssueStatus.where(:is_closed => true).first
-                      ).overdue?
+    assert !Issue.
+              new(
+                :due_date => (today - 1.day).to_date,
+                :status => IssueStatus.where(:is_closed => true).first
+              ).overdue?
   end
 
   test "#behind_schedule? should be false if the issue has no start_date" do
@@ -2960,11 +2976,13 @@ class IssueTest < ActiveSupport::TestCase
   def test_save_attachments_with_hash_should_save_attachments_in_keys_order
     set_tmp_attachments_directory
     issue = Issue.generate!
-    issue.save_attachments({
-      'p0' => {'file' => mock_file_with_options(:original_filename => 'upload')},
-      '3' => {'file' => mock_file_with_options(:original_filename => 'bar')},
-      '1' => {'file' => mock_file_with_options(:original_filename => 'foo')}
-    })
+    issue.save_attachments(
+      {
+        'p0' => {'file' => mock_file_with_options(:original_filename => 'upload')},
+        '3' => {'file' => mock_file_with_options(:original_filename => 'bar')},
+        '1' => {'file' => mock_file_with_options(:original_filename => 'foo')}
+      }
+    )
     issue.attach_saved_attachments
 
     assert_equal 3, issue.reload.attachments.count
@@ -2974,9 +2992,7 @@ class IssueTest < ActiveSupport::TestCase
   def test_save_attachments_with_array_should_warn_about_missing_tokens
     set_tmp_attachments_directory
     issue = Issue.generate!
-    issue.save_attachments([
-      {'token' => 'missing'}
-    ])
+    issue.save_attachments([{'token' => 'missing'}])
     assert !issue.save
     assert issue.errors[:base].present?
     assert_equal 0, issue.reload.attachments.count

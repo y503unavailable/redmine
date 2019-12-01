@@ -352,7 +352,9 @@ class ApplicationController < ActionController::Base
   def find_issues
     @issues = Issue.
       where(:id => (params[:id] || params[:ids])).
-      preload(:project, :status, :tracker, :priority, :author, :assigned_to, :relations_to, {:custom_values => :custom_field}).
+      preload(:project, :status, :tracker, :priority,
+              :author, :assigned_to, :relations_to,
+              {:custom_values => :custom_field}).
       to_a
     raise ActiveRecord::RecordNotFound if @issues.empty?
     raise Unauthorized unless @issues.all?(&:visible?)
@@ -365,7 +367,7 @@ class ApplicationController < ActionController::Base
   def find_attachments
     if (attachments = params[:attachments]).present?
       att = attachments.values.collect do |attachment|
-        Attachment.find_by_token( attachment[:token] ) if attachment[:token].present?
+        Attachment.find_by_token(attachment[:token]) if attachment[:token].present?
       end
       att.compact!
     end
@@ -642,7 +644,7 @@ class ApplicationController < ActionController::Base
 
   # Returns a string that can be used as filename value in Content-Disposition header
   def filename_for_content_disposition(name)
-    %r{(MSIE|Trident|Edge)}.match?(request.env['HTTP_USER_AGENT']) ? ERB::Util.url_encode(name) : name
+    %r{(MSIE|Trident|Edge)}.match?(request.env['HTTP_USER_AGENT'].to_s) ? ERB::Util.url_encode(name) : name
   end
 
   def api_request?

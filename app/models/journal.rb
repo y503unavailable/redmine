@@ -201,7 +201,8 @@ class Journal < ActiveRecord::Base
   # Adds a journal detail for an attachment that was added or removed
   def journalize_attachment(attachment, added_or_removed)
     key = (added_or_removed == :removed ? :old_value : :value)
-    details << JournalDetail.new(
+    details <<
+      JournalDetail.new(
         :property => 'attachment',
         :prop_key => attachment.id,
         key => attachment.filename
@@ -211,7 +212,8 @@ class Journal < ActiveRecord::Base
   # Adds a journal detail for an issue relation that was added or removed
   def journalize_relation(relation, added_or_removed)
     key = (added_or_removed == :removed ? :old_value : :value)
-    details << JournalDetail.new(
+    details <<
+      JournalDetail.new(
         :property  => 'relation',
         :prop_key  => relation.relation_type_for(journalized),
         key => relation.other_issue(journalized).try(:id)
@@ -229,6 +231,7 @@ class Journal < ActiveRecord::Base
         before = @attributes_before_change[attribute]
         after = journalized.send(attribute)
         next if before == after || (before.blank? && after.blank?)
+
         add_attribute_detail(attribute, before, after)
       end
     end
@@ -278,7 +281,8 @@ class Journal < ActiveRecord::Base
 
   # Adds a journal detail
   def add_detail(property, prop_key, old_value, value)
-    details << JournalDetail.new(
+    details <<
+      JournalDetail.new(
         :property => property,
         :prop_key => prop_key,
         :old_value => old_value,
@@ -306,13 +310,15 @@ class Journal < ActiveRecord::Base
   end
 
   def send_notification
-    if notify? && (Setting.notified_events.include?('issue_updated') ||
-        (Setting.notified_events.include?('issue_note_added') && notes.present?) ||
-        (Setting.notified_events.include?('issue_status_updated') && new_status.present?) ||
-        (Setting.notified_events.include?('issue_assigned_to_updated') && detail_for_attribute('assigned_to_id').present?) ||
-        (Setting.notified_events.include?('issue_priority_updated') && new_value_for('priority_id').present?) ||
-        (Setting.notified_events.include?('issue_fixed_version_updated') && detail_for_attribute('fixed_version_id').present?)
-      )
+    if notify? &&
+        (
+          Setting.notified_events.include?('issue_updated') ||
+          (Setting.notified_events.include?('issue_note_added') && notes.present?) ||
+          (Setting.notified_events.include?('issue_status_updated') && new_status.present?) ||
+          (Setting.notified_events.include?('issue_assigned_to_updated') && detail_for_attribute('assigned_to_id').present?) ||
+          (Setting.notified_events.include?('issue_priority_updated') && new_value_for('priority_id').present?) ||
+          (Setting.notified_events.include?('issue_fixed_version_updated') && detail_for_attribute('fixed_version_id').present?)
+        )
       Mailer.deliver_issue_edit(self)
     end
   end

@@ -126,7 +126,7 @@ class QueriesController < ApplicationController
     @query.column_names = nil if params[:default_columns]
     @query.sort_criteria = (params[:query] && params[:query][:sort_criteria]) || @query.sort_criteria
     @query.name = params[:query] && params[:query][:name]
-    if User.current.allowed_to?(:manage_public_queries, @query.project) || User.current.admin? || (@query.type == 'ProjectQuery' && User.current.allowed_to?(:manage_public_queries, @query.project, :global => true))
+    if User.current.allowed_to?(:manage_public_queries, @query.project) || User.current.admin?
       @query.visibility = (params[:query] && params[:query][:visibility]) || Query::VISIBILITY_PRIVATE
       @query.role_ids = params[:query] && params[:query][:role_ids]
     else
@@ -146,6 +146,12 @@ class QueriesController < ApplicationController
         redirect_to project_gantt_path(@project, options)
       else
         redirect_to issues_gantt_path(options)
+      end
+    elsif params[:calendar]
+      if @project
+        redirect_to project_calendar_path(@project, options)
+      else
+        redirect_to issues_calendar_path(options)
       end
     else
       redirect_to _project_issues_path(@project, options)

@@ -20,19 +20,22 @@
 require File.expand_path('../../../../../test_helper', __FILE__)
 
 class Redmine::WikiFormatting::HtmlParserTest < ActiveSupport::TestCase
-
   def setup
     @parser = Redmine::WikiFormatting::HtmlParser
   end
 
   def test_convert_line_breaks
-    assert_equal "A html snippet with\na new line.",
+    assert_equal(
+      "A html snippet with\na new line.",
       @parser.to_text('<p>A html snippet with<br>a new line.</p>')
+    )
   end
 
   def test_should_remove_style_tags_from_body
-    assert_equal "Text",
+    assert_equal(
+      "Text",
       @parser.to_text('<html><body><style>body {font-size: 0.8em;}</style>Text</body></html>')
+    )
   end
 
   def test_should_remove_preceding_whitespaces
@@ -60,8 +63,9 @@ class Redmine::WikiFormatting::HtmlParserTest < ActiveSupport::TestCase
         </tr>
       </table>
     HTML
-
-    assert_equal "th1\n\nth2\n\ntd1\n\ntd2",
+    assert_equal(
+      "th1\n\nth2\n\ntd1\n\ntd2",
       @parser.to_text(str)
+    )
   end
 end

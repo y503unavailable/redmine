@@ -25,7 +25,7 @@ class TimelogControllerTest < Redmine::ControllerTest
            :trackers, :enumerations, :issue_statuses,
            :custom_fields, :custom_values,
            :projects_trackers, :custom_fields_trackers,
-           :custom_fields_projects, :issue_categories
+           :custom_fields_projects, :issue_categories, :versions
 
   include Redmine::I18n
 
@@ -1426,10 +1426,8 @@ class TimelogControllerTest < Redmine::ControllerTest
       }
     assert_response :success
 
-    assert_select 'tr.group span.name' do |elements|
-      target_element = elements[1]
-      assert_equal "Bug #1: Cannot print recipes", target_element.text
-      assert_select target_element, '+ span.count', :text => '2'
+    assert_select 'tr.group span.name', :text => 'Bug #1: Cannot print recipes' do
+      assert_select '+ span.count', :text => '2'
     end
   end
 end

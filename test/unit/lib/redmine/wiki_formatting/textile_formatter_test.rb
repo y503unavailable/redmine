@@ -22,7 +22,6 @@ require File.expand_path('../../../../../test_helper', __FILE__)
 require 'digest/md5'
 
 class Redmine::WikiFormatting::TextileFormatterTest < ActionView::TestCase
-
   def setup
     @formatter = Redmine::WikiFormatting::Textile::Formatter
   end
@@ -53,6 +52,7 @@ class Redmine::WikiFormatting::TextileFormatterTest < ActionView::TestCase
     MODIFIERS.each do |m1, tag1|
       MODIFIERS.each do |m2, tag2|
         next if m1 == m2
+
         text = "#{m2}#{m1}Phrase modifiers#{m1}#{m2}"
         html = "<#{tag2}><#{tag1}>Phrase modifiers</#{tag1}></#{tag2}>"
         assert_html_output text => html
@@ -66,50 +66,62 @@ class Redmine::WikiFormatting::TextileFormatterTest < ActionView::TestCase
 
   def test_styles
     # single style
-    assert_html_output({
-      'p{color:red}. text'           => '<p style="color:red;">text</p>',
-      'p{color:red;}. text'          => '<p style="color:red;">text</p>',
-      'p{color: red}. text'          => '<p style="color: red;">text</p>',
-      'p{color:#f00}. text'          => '<p style="color:#f00;">text</p>',
-      'p{color:#ff0000}. text'       => '<p style="color:#ff0000;">text</p>',
-      'p{border:10px}. text'         => '<p style="border:10px;">text</p>',
-      'p{border:10}. text'           => '<p style="border:10;">text</p>',
-      'p{border:10%}. text'          => '<p style="border:10%;">text</p>',
-      'p{border:10em}. text'         => '<p style="border:10em;">text</p>',
-      'p{border:1.5em}. text'        => '<p style="border:1.5em;">text</p>',
-      'p{border-left:1px}. text'     => '<p style="border-left:1px;">text</p>',
-      'p{border-right:1px}. text'    => '<p style="border-right:1px;">text</p>',
-      'p{border-top:1px}. text'      => '<p style="border-top:1px;">text</p>',
-      'p{border-bottom:1px}. text'   => '<p style="border-bottom:1px;">text</p>',
-      'p{width:50px}. text'          => '<p style="width:50px;">text</p>',
-      'p{max-width:100px}. text'     => '<p style="max-width:100px;">text</p>',
-      'p{height:40px}. text'         => '<p style="height:40px;">text</p>',
-      'p{max-height:80px}. text'     => '<p style="max-height:80px;">text</p>',
-      }, false)
+    assert_html_output(
+      {
+        'p{color:red}. text'           => '<p style="color:red;">text</p>',
+        'p{color:red;}. text'          => '<p style="color:red;">text</p>',
+        'p{color: red}. text'          => '<p style="color: red;">text</p>',
+        'p{color:#f00}. text'          => '<p style="color:#f00;">text</p>',
+        'p{color:#ff0000}. text'       => '<p style="color:#ff0000;">text</p>',
+        'p{border:10px}. text'         => '<p style="border:10px;">text</p>',
+        'p{border:10}. text'           => '<p style="border:10;">text</p>',
+        'p{border:10%}. text'          => '<p style="border:10%;">text</p>',
+        'p{border:10em}. text'         => '<p style="border:10em;">text</p>',
+        'p{border:1.5em}. text'        => '<p style="border:1.5em;">text</p>',
+        'p{border-left:1px}. text'     => '<p style="border-left:1px;">text</p>',
+        'p{border-right:1px}. text'    => '<p style="border-right:1px;">text</p>',
+        'p{border-top:1px}. text'      => '<p style="border-top:1px;">text</p>',
+        'p{border-bottom:1px}. text'   => '<p style="border-bottom:1px;">text</p>',
+        'p{width:50px}. text'          => '<p style="width:50px;">text</p>',
+        'p{max-width:100px}. text'     => '<p style="max-width:100px;">text</p>',
+        'p{height:40px}. text'         => '<p style="height:40px;">text</p>',
+        'p{max-height:80px}. text'     => '<p style="max-height:80px;">text</p>',
+      },
+      false
+    )
 
     # multiple styles
-    assert_html_output({
-      'p{color:red; border-top:1px}. text'   => '<p style="color:red;border-top:1px;">text</p>',
-      'p{color:red ; border-top:1px}. text'  => '<p style="color:red;border-top:1px;">text</p>',
-      'p{color:red;border-top:1px}. text'    => '<p style="color:red;border-top:1px;">text</p>',
-      }, false)
+    assert_html_output(
+      {
+        'p{color:red; border-top:1px}. text'   => '<p style="color:red;border-top:1px;">text</p>',
+        'p{color:red ; border-top:1px}. text'  => '<p style="color:red;border-top:1px;">text</p>',
+        'p{color:red;border-top:1px}. text'    => '<p style="color:red;border-top:1px;">text</p>',
+      },
+      false
+    )
 
     # styles with multiple values
-    assert_html_output({
-      'p{border:1px solid red;}. text'             => '<p style="border:1px solid red;">text</p>',
-      'p{border-top-left-radius: 10px 5px;}. text' => '<p style="border-top-left-radius: 10px 5px;">text</p>',
-      }, false)
+    assert_html_output(
+      {
+        'p{border:1px solid red;}. text'             => '<p style="border:1px solid red;">text</p>',
+        'p{border-top-left-radius: 10px 5px;}. text' => '<p style="border-top-left-radius: 10px 5px;">text</p>',
+      },
+      false
+    )
   end
 
   def test_invalid_styles_should_be_filtered
-    assert_html_output({
-      'p{invalid}. text'                     => '<p>text</p>',
-      'p{invalid:red}. text'                 => '<p>text</p>',
-      'p{color:(red)}. text'                 => '<p>text</p>',
-      'p{color:red;invalid:blue}. text'      => '<p style="color:red;">text</p>',
-      'p{invalid:blue;color:red}. text'      => '<p style="color:red;">text</p>',
-      'p{color:"}. text'                     => '<p>p{color:"}. text</p>',
-      }, false)
+    assert_html_output(
+      {
+        'p{invalid}. text'                     => '<p>text</p>',
+        'p{invalid:red}. text'                 => '<p>text</p>',
+        'p{color:(red)}. text'                 => '<p>text</p>',
+        'p{color:red;invalid:blue}. text'      => '<p style="color:red;">text</p>',
+        'p{invalid:blue;color:red}. text'      => '<p style="color:red;">text</p>',
+        'p{color:"}. text'                     => '<p>p{color:"}. text</p>',
+      },
+      false
+    )
   end
 
   def test_inline_code
@@ -134,32 +146,30 @@ class Redmine::WikiFormatting::TextileFormatterTest < ActionView::TestCase
   end
 
   def test_nested_lists
-    raw = <<-RAW
-# Item 1
-# Item 2
-** Item 2a
-** Item 2b
-# Item 3
-** Item 3a
-RAW
-
-    expected = <<-EXPECTED
-<ol>
-  <li>Item 1</li>
-  <li>Item 2
-    <ul>
-      <li>Item 2a</li>
-      <li>Item 2b</li>
-    </ul>
-  </li>
-  <li>Item 3
-    <ul>
-      <li>Item 3a</li>
-    </ul>
-  </li>
-</ol>
-EXPECTED
-
+    raw = <<~RAW
+      # Item 1
+      # Item 2
+      ** Item 2a
+      ** Item 2b
+      # Item 3
+      ** Item 3a
+    RAW
+    expected = <<~EXPECTED
+      <ol>
+        <li>Item 1</li>
+        <li>Item 2
+          <ul>
+            <li>Item 2a</li>
+            <li>Item 2b</li>
+          </ul>
+        </li>
+        <li>Item 3
+          <ul>
+            <li>Item 3a</li>
+          </ul>
+        </li>
+      </ol>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
@@ -170,15 +180,21 @@ EXPECTED
   end
 
   def test_kbd
-    assert_html_output({
-      '<kbd>test</kbd>'         => '<kbd>test</kbd>'
-    }, false)
+    assert_html_output(
+      {
+        '<kbd>test</kbd>'         => '<kbd>test</kbd>'
+      },
+      false
+    )
   end
 
   def test_use_of_backslashes_followed_by_numbers_in_headers
-    assert_html_output({
-      'h1. 2009\02\09'      => '<h1>2009\02\09</h1>'
-    }, false)
+    assert_html_output(
+      {
+        'h1. 2009\02\09'      => '<h1>2009\02\09</h1>'
+      },
+      false
+    )
   end
 
   def test_double_dashes_should_not_strikethrough
@@ -198,178 +214,166 @@ EXPECTED
 
   def test_blockquote
     # orig raw text
-    raw = <<-RAW
-John said:
-> Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
-> Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
-> * Donec odio lorem,
-> * sagittis ac,
-> * malesuada in,
-> * adipiscing eu, dolor.
->
-> >Nulla varius pulvinar diam. Proin id arcu id lorem scelerisque condimentum. Proin vehicula turpis vitae lacus.
-> Proin a tellus. Nam vel neque.
+    raw = <<~RAW
+      John said:
+      > Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.
+      > Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
+      > * Donec odio lorem,
+      > * sagittis ac,
+      > * malesuada in,
+      > * adipiscing eu, dolor.
+      >
+      > >Nulla varius pulvinar diam. Proin id arcu id lorem scelerisque condimentum. Proin vehicula turpis vitae lacus.
+      > Proin a tellus. Nam vel neque.
 
-He's right.
-RAW
-
+      He's right.
+    RAW
     # expected html
-    expected = <<-EXPECTED
-<p>John said:</p>
-<blockquote>
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.<br />
-Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
-<ul>
-  <li>Donec odio lorem,</li>
-  <li>sagittis ac,</li>
-  <li>malesuada in,</li>
-  <li>adipiscing eu, dolor.</li>
-</ul>
-<blockquote>
-<p>Nulla varius pulvinar diam. Proin id arcu id lorem scelerisque condimentum. Proin vehicula turpis vitae lacus.</p>
-</blockquote>
-<p>Proin a tellus. Nam vel neque.</p>
-</blockquote>
-<p>He's right.</p>
-EXPECTED
-
+    expected = <<~EXPECTED
+      <p>John said:</p>
+      <blockquote>
+      Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas sed libero.<br />
+      Nullam commodo metus accumsan nulla. Curabitur lobortis dui id dolor.
+      <ul>
+        <li>Donec odio lorem,</li>
+        <li>sagittis ac,</li>
+        <li>malesuada in,</li>
+        <li>adipiscing eu, dolor.</li>
+      </ul>
+      <blockquote>
+      <p>Nulla varius pulvinar diam. Proin id arcu id lorem scelerisque condimentum. Proin vehicula turpis vitae lacus.</p>
+      </blockquote>
+      <p>Proin a tellus. Nam vel neque.</p>
+      </blockquote>
+      <p>He's right.</p>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
   def test_table
-    raw = <<-RAW
-This is a table with empty cells:
+    raw = <<~RAW
+      This is a table with empty cells:
 
-|cell11|cell12||
-|cell21||cell23|
-|cell31|cell32|cell33|
-RAW
+      |cell11|cell12||
+      |cell21||cell23|
+      |cell31|cell32|cell33|
+    RAW
+    expected = <<~EXPECTED
+      <p>This is a table with empty cells:</p>
 
-    expected = <<-EXPECTED
-<p>This is a table with empty cells:</p>
-
-<table>
-  <tr><td>cell11</td><td>cell12</td><td></td></tr>
-  <tr><td>cell21</td><td></td><td>cell23</td></tr>
-  <tr><td>cell31</td><td>cell32</td><td>cell33</td></tr>
-</table>
-EXPECTED
-
+      <table>
+        <tr><td>cell11</td><td>cell12</td><td></td></tr>
+        <tr><td>cell21</td><td></td><td>cell23</td></tr>
+        <tr><td>cell31</td><td>cell32</td><td>cell33</td></tr>
+      </table>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
   def test_table_with_alignment
-    raw = <<-RAW
-|>. right|
-|<. left|
-|<>. justify|
-RAW
-
-    expected = <<-EXPECTED
-<table>
-  <tr><td style="text-align:right;">right</td></tr>
-  <tr><td style="text-align:left;">left</td></tr>
-  <tr><td style="text-align:justify;">justify</td></tr>
-</table>
-EXPECTED
-
+    raw = <<~RAW
+      |>. right|
+      |<. left|
+      |<>. justify|
+    RAW
+    expected = <<~EXPECTED
+      <table>
+        <tr><td style="text-align:right;">right</td></tr>
+        <tr><td style="text-align:left;">left</td></tr>
+        <tr><td style="text-align:justify;">justify</td></tr>
+      </table>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
   def test_table_with_trailing_whitespace
-    raw = <<-RAW
-This is a table with trailing whitespace in one row:
+    raw = <<~RAW
+      This is a table with trailing whitespace in one row:
 
-|cell11|cell12|
-|cell21|cell22|
-|cell31|cell32|
-RAW
+      |cell11|cell12|
+      |cell21|cell22|
+      |cell31|cell32|
+    RAW
+    expected = <<~EXPECTED
+      <p>This is a table with trailing whitespace in one row:</p>
 
-    expected = <<-EXPECTED
-<p>This is a table with trailing whitespace in one row:</p>
-
-<table>
-  <tr><td>cell11</td><td>cell12</td></tr>
-  <tr><td>cell21</td><td>cell22</td></tr>
-  <tr><td>cell31</td><td>cell32</td></tr>
-</table>
-EXPECTED
-
+      <table>
+        <tr><td>cell11</td><td>cell12</td></tr>
+        <tr><td>cell21</td><td>cell22</td></tr>
+        <tr><td>cell31</td><td>cell32</td></tr>
+      </table>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
   def test_table_with_line_breaks
-    raw = <<-RAW
-This is a table with line breaks:
+    raw = <<~RAW
+      This is a table with line breaks:
 
-|cell11
-continued|cell12||
-|-cell21-||cell23
-cell23 line2
-cell23 *line3*|
-|cell31|cell32
-cell32 line2|cell33|
+      |cell11
+      continued|cell12||
+      |-cell21-||cell23
+      cell23 line2
+      cell23 *line3*|
+      |cell31|cell32
+      cell32 line2|cell33|
 
-RAW
+    RAW
+    expected = <<~EXPECTED
+      <p>This is a table with line breaks:</p>
 
-    expected = <<-EXPECTED
-<p>This is a table with line breaks:</p>
-
-<table>
-  <tr>
-    <td>cell11<br />continued</td>
-    <td>cell12</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td><del>cell21</del></td>
-    <td></td>
-    <td>cell23<br/>cell23 line2<br/>cell23 <strong>line3</strong></td>
-  </tr>
-  <tr>
-    <td>cell31</td>
-    <td>cell32<br/>cell32 line2</td>
-    <td>cell33</td>
-  </tr>
-</table>
-EXPECTED
-
+      <table>
+        <tr>
+          <td>cell11<br />continued</td>
+          <td>cell12</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><del>cell21</del></td>
+          <td></td>
+          <td>cell23<br/>cell23 line2<br/>cell23 <strong>line3</strong></td>
+        </tr>
+        <tr>
+          <td>cell31</td>
+          <td>cell32<br/>cell32 line2</td>
+          <td>cell33</td>
+        </tr>
+      </table>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
   def test_tables_with_lists
-    raw = <<-RAW
-This is a table with lists:
+    raw = <<~RAW
+      This is a table with lists:
 
-|cell11|cell12|
-|cell21|ordered list
-# item
-# item 2|
-|cell31|unordered list
-* item
-* item 2|
+      |cell11|cell12|
+      |cell21|ordered list
+      # item
+      # item 2|
+      |cell31|unordered list
+      * item
+      * item 2|
 
-RAW
+    RAW
+    expected = <<~EXPECTED
+      <p>This is a table with lists:</p>
 
-    expected = <<-EXPECTED
-<p>This is a table with lists:</p>
-
-<table>
-  <tr>
-    <td>cell11</td>
-    <td>cell12</td>
-  </tr>
-  <tr>
-    <td>cell21</td>
-    <td>ordered list<br /># item<br /># item 2</td>
-  </tr>
-  <tr>
-    <td>cell31</td>
-    <td>unordered list<br />* item<br />* item 2</td>
-  </tr>
-</table>
-EXPECTED
-
+      <table>
+        <tr>
+          <td>cell11</td>
+          <td>cell12</td>
+        </tr>
+        <tr>
+          <td>cell21</td>
+          <td>ordered list<br /># item<br /># item 2</td>
+        </tr>
+        <tr>
+          <td>cell31</td>
+          <td>unordered list<br />* item<br />* item 2</td>
+        </tr>
+      </table>
+    EXPECTED
     assert_equal expected.gsub(%r{\s+}, ''), to_html(raw).gsub(%r{\s+}, '')
   end
 
@@ -448,9 +452,11 @@ EXPECTED
 
   def test_update_section_with_hash_should_update_the_requested_section
     replacement = "New text"
-
-    assert_equal [STR_WITHOUT_PRE[0], replacement, STR_WITHOUT_PRE[2..4]].flatten.join("\n\n"),
-      @formatter.new(TEXT_WITHOUT_PRE).update_section(2, replacement, Digest::MD5.hexdigest(STR_WITHOUT_PRE[1]))
+    assert_equal(
+      [STR_WITHOUT_PRE[0], replacement, STR_WITHOUT_PRE[2..4]].flatten.join("\n\n"),
+      @formatter.new(TEXT_WITHOUT_PRE).
+        update_section(2, replacement, Digest::MD5.hexdigest(STR_WITHOUT_PRE[1]))
+    )
   end
 
   def test_update_section_with_wrong_hash_should_raise_an_error
@@ -510,47 +516,46 @@ EXPECTED
   def test_update_section_should_not_escape_pre_content_outside_section
     text = STR_WITH_PRE.join("\n\n")
     replacement = "New text"
-
-    assert_equal [STR_WITH_PRE[0..1], "New text"].flatten.join("\n\n"),
+    assert_equal(
+      [STR_WITH_PRE[0..1], "New text"].flatten.join("\n\n"),
       @formatter.new(text).update_section(3, replacement)
+    )
   end
 
   def test_get_section_should_support_lines_with_spaces_before_heading
     # the lines after Content 2 and Heading 4 contain a space
-    text = <<-STR
-h1. Heading 1
+    text = <<~STR
+      h1. Heading 1
 
-Content 1
+      Content 1
 
-h1. Heading 2
+      h1. Heading 2
 
-Content 2
+      Content 2
 
-h1. Heading 3
+      h1. Heading 3
 
-Content 3
+      Content 3
 
-h1. Heading 4
+      h1. Heading 4
 
-Content 4
-STR
-
+      Content 4
+    STR
     [1, 2, 3, 4].each do |index|
       assert_match /\Ah1. Heading #{index}.+Content #{index}/m, @formatter.new(text).get_section(index).first
     end
   end
 
   def test_get_section_should_support_headings_starting_with_a_tab
-    text = <<-STR
-h1.\tHeading 1
+    text = <<~STR
+      h1.\tHeading 1
 
-Content 1
+      Content 1
 
-h1. Heading 2
+      h1. Heading 2
 
-Content 2
-STR
-
+      Content 2
+    STR
     assert_match /\Ah1.\tHeading 1\s+Content 1\z/, @formatter.new(text).get_section(1).first
   end
 
@@ -578,63 +583,71 @@ STR
   end
 
   def test_should_prefix_class_attribute_on_tags
-    assert_html_output({
-      '!(foo)test.png!' => "<p><img src=\"test.png\" class=\"wiki-class-foo\" alt=\"\" /></p>",
-      '%(foo)test%'     => "<p><span class=\"wiki-class-foo\">test</span></p>",
-      'p(foo). test'    => "<p class=\"wiki-class-foo\">test</p>",
-      '|(foo). test|'   => "<table>\n\t\t<tr>\n\t\t\t<td class=\"wiki-class-foo\">test</td>\n\t\t</tr>\n\t</table>",
-    }, false)
+    assert_html_output(
+      {
+        '!(foo)test.png!' => "<p><img src=\"test.png\" class=\"wiki-class-foo\" alt=\"\" /></p>",
+        '%(foo)test%'     => "<p><span class=\"wiki-class-foo\">test</span></p>",
+        'p(foo). test'    => "<p class=\"wiki-class-foo\">test</p>",
+        '|(foo). test|'   =>
+           "<table>\n\t\t<tr>\n\t\t\t<td class=\"wiki-class-foo\">test</td>\n\t\t</tr>\n\t</table>",
+      },
+      false
+    )
   end
 
   def test_should_prefix_id_attribute_on_tags
-    assert_html_output({
-      '!(#foo)test.png!' => "<p><img src=\"test.png\" id=\"wiki-id-foo\" alt=\"\" /></p>",
-      '%(#foo)test%'     => "<p><span id=\"wiki-id-foo\">test</span></p>",
-      'p(#foo). test'    => "<p id=\"wiki-id-foo\">test</p>",
-      '|(#foo). test|'   => "<table>\n\t\t<tr>\n\t\t\t<td id=\"wiki-id-foo\">test</td>\n\t\t</tr>\n\t</table>",
-    }, false)
+    assert_html_output(
+      {
+        '!(#foo)test.png!' => "<p><img src=\"test.png\" id=\"wiki-id-foo\" alt=\"\" /></p>",
+        '%(#foo)test%'     => "<p><span id=\"wiki-id-foo\">test</span></p>",
+        'p(#foo). test'    => "<p id=\"wiki-id-foo\">test</p>",
+        '|(#foo). test|'   =>
+           "<table>\n\t\t<tr>\n\t\t\t<td id=\"wiki-id-foo\">test</td>\n\t\t</tr>\n\t</table>",
+      },
+      false
+    )
   end
 
   def test_should_not_prefix_class_and_id_attributes_already_prefixed
-    assert_html_output({
-      '!(wiki-class-foo#wiki-id-bar)test.png!' => "<p><img src=\"test.png\" class=\"wiki-class-foo\" id=\"wiki-id-bar\" alt=\"\" /></p>",
-    }, false)
+    assert_html_output(
+      {
+        '!(wiki-class-foo#wiki-id-bar)test.png!' =>
+           "<p><img src=\"test.png\" class=\"wiki-class-foo\" id=\"wiki-id-bar\" alt=\"\" /></p>",
+      },
+      false
+    )
   end
 
   def test_footnotes
-    text = <<-STR
-This is some text[1].
+    text = <<~STR
+      This is some text[1].
 
-fn1. This is the foot note
-STR
-
-    expected = <<-EXPECTED
-<p>This is some text<sup><a href=\"#fn1\">1</a></sup>.</p>
-<p id="fn1" class="footnote"><sup>1</sup> This is the foot note</p>
-EXPECTED
-
+      fn1. This is the foot note
+    STR
+    expected = <<~EXPECTED
+      <p>This is some text<sup><a href=\"#fn1\">1</a></sup>.</p>
+      <p id="fn1" class="footnote"><sup>1</sup> This is the foot note</p>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), to_html(text).gsub(%r{[\r\n\t]}, '')
   end
 
   # TODO: Remove this test after migrating to RedCloth 4
   def test_should_not_crash_with_special_input
-    assert_nothing_raised { to_html(" \f") }
-    assert_nothing_raised { to_html(" \v") }
+    assert_nothing_raised {to_html(" \f")}
+    assert_nothing_raised {to_html(" \v")}
   end
 
   def test_should_not_handle_as_preformatted_text_tags_that_starts_with_pre
-    text = <<-STR
-<pree>
-  This is some text
-</pree>
-STR
-
-    expected = <<-EXPECTED
-<p>&lt;pree&gt;<br />
-  This is some text<br />
-&lt;/pree&gt;</p>
-EXPECTED
-
+    text = <<~STR
+      <pree>
+        This is some text
+      </pree>
+    STR
+    expected = <<~EXPECTED
+      <p>&lt;pree&gt;<br />
+        This is some text<br />
+      &lt;/pree&gt;</p>
+    EXPECTED
     assert_equal expected.gsub(%r{[\r\n\t]}, ''), to_html(text).gsub(%r{[\r\n\t]}, '')
   end
 
@@ -642,7 +655,11 @@ EXPECTED
 
   def assert_html_output(to_test, expect_paragraph = true)
     to_test.each do |text, expected|
-      assert_equal(( expect_paragraph ? "<p>#{expected}</p>" : expected ), @formatter.new(text).to_html, "Formatting the following text failed:\n===\n#{text}\n===\n")
+      assert_equal(
+        (expect_paragraph ? "<p>#{expected}</p>" : expected),
+        @formatter.new(text).to_html,
+        "Formatting the following text failed:\n===\n#{text}\n===\n"
+      )
     end
   end
 

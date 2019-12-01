@@ -26,6 +26,10 @@ require:
 Bundler/OrderedGems:
   Enabled: false
 
+Layout/CaseIndentation:
+  Exclude:
+    - 'config/initializers/10-patches.rb'
+
 Layout/EmptyLineBetweenDefs:
   AllowAdjacentOneLineDefs: true
 
@@ -44,11 +48,11 @@ Layout/SpaceInsideBlockBraces:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
+Lint/SuppressedException:
+  AllowComments: true
+
 Layout/TrailingWhitespace:
   AllowInHeredoc: true
-
-Lint/HandleExceptions:
-  AllowComments: true
 
 Metrics:
   Enabled: false
@@ -70,12 +74,14 @@ Rails/BulkChangeTable:
 Rails/HelperInstanceVariable:
   Enabled: false
 
-# Configuration parameters: AllowedChars.
 Style/AsciiComments:
   Exclude:
     # Copyright credit has non ascii character.
     # We can not change nor remove it.
     - 'app/models/repository/git.rb'
+
+Style/EmptyElse:
+  EnforcedStyle: empty
 
 Style/FormatStringToken:
   Enabled: false
@@ -100,4 +106,7 @@ Style/IdenticalConditionalBranches:
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false

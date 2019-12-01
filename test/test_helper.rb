@@ -63,7 +63,8 @@ class ActiveSupport::TestCase
   end
 
   def mock_file(options=nil)
-    options ||= {
+    options ||=
+      {
         :original_filename => 'a_file.png',
         :content_type => 'image/png',
         :size => 32
@@ -286,14 +287,14 @@ module Redmine
       arg = arg.dup
       request = arg.keys.detect {|key| key.is_a?(String)}
       raise ArgumentError unless request
+
       options = arg.slice!(request)
-
       raise ArgumentError unless request =~ /\A(GET|POST|PUT|PATCH|DELETE)\s+(.+)\z/
+
       method, path = $1.downcase.to_sym, $2
-
       raise ArgumentError unless arg.values.first =~ /\A(.+)#(.+)\z/
-      controller, action = $1, $2
 
+      controller, action = $1, $2
       assert_routing(
         {:method => method, :path => path},
         options.merge(:controller => controller, :action => action)
@@ -373,10 +374,13 @@ module Redmine
       assert_nil session[:user_id]
       assert_response :success
 
-      post "/login", :params => {
+      post(
+        "/login",
+        :params => {
           :username => login,
           :password => password
         }
+      )
       assert_equal login, User.find(session[:user_id]).login
     end
 
@@ -411,9 +415,11 @@ module Redmine
       def upload(format, content, credentials)
         set_tmp_attachments_directory
         assert_difference 'Attachment.count' do
-          post "/uploads.#{format}",
+          post(
+            "/uploads.#{format}",
             :params => content,
             :headers => {"CONTENT_TYPE" => 'application/octet-stream'}.merge(credentials)
+          )
           assert_response :created
         end
         data = response_data
@@ -428,6 +434,7 @@ module Redmine
         unless response.content_type.to_s =~ /^application\/(.+)/
           raise "Unexpected response type: #{response.content_type}"
         end
+
         format = $1
         case format
         when 'xml'
@@ -445,6 +452,7 @@ module Redmine
         arg = arg.dup
         request = arg.keys.detect {|key| key.is_a?(String)}
         raise ArgumentError unless request
+
         options = arg.slice!(request)
 
         API_FORMATS.each do |format|

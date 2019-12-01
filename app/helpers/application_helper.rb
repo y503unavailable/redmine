@@ -343,8 +343,8 @@ module ApplicationHelper
   end
 
   def format_activity_description(text)
-    h(text.to_s.truncate(120).gsub(%r{[\r\n]*<(pre|code)>.*$}m, '...')
-       ).gsub(/[\r\n]+/, "<br />").html_safe
+    h(text.to_s.truncate(120).gsub(%r{[\r\n]*<(pre|code)>.*$}m, '...')).
+      gsub(/[\r\n]+/, "<br />").html_safe
   end
 
   def format_version_name(version)
@@ -362,7 +362,12 @@ module ApplicationHelper
 
   def due_date_distance_in_words(date)
     if date
-      l((date < User.current.today ? :label_roadmap_overdue : :label_roadmap_due_in), distance_of_date_in_words(User.current.today, date))
+      l((if date < User.current.today
+           :label_roadmap_overdue
+         else
+           :label_roadmap_due_in
+         end),
+        distance_of_date_in_words(User.current.today, date))
     end
   end
 
@@ -423,7 +428,7 @@ module ApplicationHelper
   # Renders flash messages
   def render_flash_messages
     s = +''
-    flash.each do |k,v|
+    flash.each do |k, v|
       s << content_tag('div', v.html_safe, :class => "flash #{k}", :id => "flash_#{k}")
     end
     s.html_safe
@@ -524,8 +529,7 @@ module ApplicationHelper
                     content_tag('div', render_projects_for_jump_box(projects, @project),
                                 :class => 'drdn-items projects selection') +
                     content_tag('div', all, :class => 'drdn-items all-projects selection'),
-                  :class => 'drdn-content'
-      )
+                  :class => 'drdn-content')
     content_tag('div', trigger + content, :id => "project-jump", :class => "drdn")
   end
 
@@ -1108,7 +1112,13 @@ module ApplicationHelper
                   repository = project.repository
                 end
                 if prefix == 'commit'
-                  if repository && (changeset = Changeset.visible.where("repository_id = ? AND scmid LIKE ?", repository.id, "#{name}%").first)
+                  if repository &&
+                       (changeset =
+                          Changeset.visible.
+                            where(
+                              "repository_id = ? AND scmid LIKE ?",
+                              repository.id, "#{name}%"
+                            ).first)
                     link = link_to(
                              h("#{project_prefix}#{repo_prefix}#{name}"),
                              {:only_path => only_path, :controller => 'repositories',
@@ -1630,7 +1640,7 @@ module ApplicationHelper
     # TODO: use #image_url introduced in Rails4
     path = favicon_path
     base = url_for(:controller => 'welcome', :action => 'index', :only_path => false)
-    base.sub(%r{/+$},'') + '/' + path.sub(%r{^/+},'')
+    base.sub(%r{/+$}, '') + '/' + path.sub(%r{^/+}, '')
   end
 
   def robot_exclusion_tag

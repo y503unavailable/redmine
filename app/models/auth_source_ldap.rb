@@ -70,8 +70,7 @@ class AuthSourceLdap < AuthSource
   def test_connection
     with_timeout do
       ldap_con = initialize_ldap_con(self.account, self.account_password)
-      ldap_con.open { }
-
+      ldap_con.open {}
       if self.account.present? && !self.account.include?("$login") && self.account_password.present?
         ldap_auth = authenticate_dn(self.account, self.account_password)
         raise AuthSourceException.new(l(:error_ldap_bind_credentials)) if !ldap_auth
@@ -177,30 +176,29 @@ class AuthSourceLdap < AuthSource
   end
 
   def initialize_ldap_con(ldap_user, ldap_password)
-    options = { :host => self.host,
-                :port => self.port
-              }
+    options = {:host => self.host, :port => self.port}
     if tls
       options[:encryption] = {
         :method => :simple_tls,
         # Always provide non-empty tls_options, to make sure, that all
         # OpenSSL::SSL::SSLContext::DEFAULT_PARAMS as well as the default cert
         # store are used.
-        :tls_options => { :verify_mode => verify_peer? ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE }
+        :tls_options => {:verify_mode => verify_peer? ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE}
       }
     end
-
-    options.merge!(:auth => { :method => :simple, :username => ldap_user, :password => ldap_password }) unless ldap_user.blank? && ldap_password.blank?
+    unless ldap_user.blank? && ldap_password.blank?
+      options.merge!(:auth => {:method => :simple, :username => ldap_user, :password => ldap_password})
+    end
     Net::LDAP.new options
   end
 
   def get_user_attributes_from_ldap_entry(entry)
     {
-     :dn => entry.dn,
-     :firstname => AuthSourceLdap.get_attr(entry, self.attr_firstname),
-     :lastname => AuthSourceLdap.get_attr(entry, self.attr_lastname),
-     :mail => AuthSourceLdap.get_attr(entry, self.attr_mail),
-     :auth_source_id => self.id
+      :dn => entry.dn,
+      :firstname => AuthSourceLdap.get_attr(entry, self.attr_firstname),
+      :lastname => AuthSourceLdap.get_attr(entry, self.attr_lastname),
+      :mail => AuthSourceLdap.get_attr(entry, self.attr_mail),
+      :auth_source_id => self.id
     }
   end
 

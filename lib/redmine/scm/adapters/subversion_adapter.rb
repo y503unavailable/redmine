@@ -24,7 +24,6 @@ module Redmine
   module Scm
     module Adapters
       class SubversionAdapter < AbstractAdapter
-
         # SVN executable name
         SVN_BIN = Redmine::Configuration['scm_subversion_command'] || "svn"
 
@@ -55,7 +54,7 @@ module Redmine
           end
 
           def scm_version_from_command_line
-            shellout("#{sq_bin} --version") { |io| io.read }.to_s
+            shellout("#{sq_bin} --version") {|io| io.read}.to_s
           end
         end
 
@@ -70,16 +69,20 @@ module Redmine
               doc = parse_xml(output)
               # root_url = doc.elements["info/entry/repository/root"].text
               info = Info.new({:root_url => doc['info']['entry']['repository']['root']['__content__'],
-                               :lastrev => Revision.new({
-                                 :identifier => doc['info']['entry']['commit']['revision'],
-                                 :time => Time.parse(doc['info']['entry']['commit']['date']['__content__']).localtime,
-                                 :author => (doc['info']['entry']['commit']['author'] ? doc['info']['entry']['commit']['author']['__content__'] : "")
-                               })
+                               :lastrev =>
+                                 Revision.new(
+                                   {
+                                     :identifier => doc['info']['entry']['commit']['revision'],
+                                     :time => Time.parse(doc['info']['entry']['commit']['date']['__content__']).localtime,
+                                     :author => (doc['info']['entry']['commit']['author'] ? doc['info']['entry']['commit']['author']['__content__'] : "")
+                                   }
+                                 )
                              })
             rescue
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           info
         rescue CommandFailed
           return nil
@@ -103,16 +106,20 @@ module Redmine
                 # Skip directory if there is no commit date (usually that
                 # means that we don't have read access to it)
                 next if entry['kind'] == 'dir' && commit_date.nil?
+
                 name = entry['name']['__content__']
                 entries << Entry.new({:name => URI.unescape(name),
                             :path => ((path.empty? ? "" : "#{path}/") + name),
                             :kind => entry['kind'],
                             :size => ((s = entry['size']) ? s['__content__'].to_i : nil),
-                            :lastrev => Revision.new({
-                              :identifier => commit['revision'],
-                              :time => Time.parse(commit_date['__content__'].to_s).localtime,
-                              :author => ((a = commit['author']) ? a['__content__'] : nil)
-                              })
+                            :lastrev =>
+                              Revision.new(
+                                {
+                                  :identifier => commit['revision'],
+                                  :time => Time.parse(commit_date['__content__'].to_s).localtime,
+                                  :author => ((a = commit['author']) ? a['__content__'] : nil)
+                                }
+                              )
                             })
               end
             rescue => e
@@ -121,6 +128,7 @@ module Redmine
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           logger.debug("Found #{entries.size} entries in the repository for #{target(path)}") if logger && logger.debug?
           entries.sort_by_name
         end
@@ -144,6 +152,7 @@ module Redmine
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           properties
         end
 
@@ -163,13 +172,17 @@ module Redmine
               doc = parse_xml(output)
               each_xml_element(doc['log'], 'logentry') do |logentry|
                 paths = []
-                each_xml_element(logentry['paths'], 'path') do |path|
-                  paths << {:action => path['action'],
-                            :path => path['__content__'],
-                            :from_path => path['copyfrom-path'],
-                            :from_revision => path['copyfrom-rev']
-                            }
-                end if logentry['paths'] && logentry['paths']['path']
+                if logentry['paths'] && logentry['paths']['path']
+                  each_xml_element(logentry['paths'], 'path') do |path|
+                    paths <<
+                      {
+                        :action => path['action'],
+                        :path => path['__content__'],
+                        :from_path => path['copyfrom-path'],
+                        :from_revision => path['copyfrom-rev']
+                      }
+                  end
+                end
                 paths.sort_by! {|e| e[:path]}
 
                 revisions << Revision.new({:identifier => logentry['revision'],
@@ -183,6 +196,7 @@ module Redmine
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           revisions
         end
 
@@ -204,6 +218,7 @@ module Redmine
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           diff
         end
 
@@ -217,6 +232,7 @@ module Redmine
             cat = io.read
           end
           return nil if $? && $?.exitstatus != 0
+
           cat
         end
 
@@ -228,16 +244,20 @@ module Redmine
           shellout(cmd) do |io|
             io.each_line do |line|
               next unless line =~ %r{^\s*(\d+)\s*(\S+)\s(.*)$}
+
               rev = $1
-              blame.add_line($3.rstrip,
-                   Revision.new(
-                      :identifier => rev,
-                      :revision   => rev,
-                      :author     => $2.strip
-                      ))
+              blame.add_line(
+                $3.rstrip,
+                Revision.new(
+                  :identifier => rev,
+                  :revision   => rev,
+                  :author     => $2.strip
+                )
+              )
             end
           end
           return nil if $? && $?.exitstatus != 0
+
           blame
         end
 

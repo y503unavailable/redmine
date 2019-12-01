@@ -153,13 +153,13 @@ class ProjectTest < ActiveSupport::TestCase
 
   def test_members_should_be_active_users
     Project.all.each do |project|
-      assert_nil project.members.detect {|m| !(m.user.is_a?(User) && m.user.active?) }
+      assert_nil project.members.detect {|m| !(m.user.is_a?(User) && m.user.active?)}
     end
   end
 
   def test_users_should_be_active_users
     Project.all.each do |project|
-      assert_nil project.users.detect {|u| !(u.is_a?(User) && u.active?) }
+      assert_nil project.users.detect {|u| !(u.is_a?(User) && u.active?)}
     end
   end
 
@@ -235,7 +235,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     @ecookbook.destroy
     # make sure that the project non longer exists
-    assert_raise(ActiveRecord::RecordNotFound) { Project.find(@ecookbook.id) }
+    assert_raise(ActiveRecord::RecordNotFound) {Project.find(@ecookbook.id)}
     # make sure related data was removed
     assert_nil Member.where(:project_id => @ecookbook.id).first
     assert_nil Board.where(:project_id => @ecookbook.id).first
@@ -465,9 +465,9 @@ class ProjectTest < ActiveSupport::TestCase
 
   def test_rolled_up_trackers
     parent = Project.find(1)
-    parent.trackers = Tracker.find([1,2])
+    parent.trackers = Tracker.find([1, 2])
     child = parent.children.find(3)
-    child.trackers = Tracker.find([2,3])
+    child.trackers = Tracker.find([2, 3])
 
     assert_equal [1, 2], parent.tracker_ids
     assert_equal [2, 3], child.trackers.collect(&:id)
@@ -481,12 +481,12 @@ class ProjectTest < ActiveSupport::TestCase
 
   def test_rolled_up_trackers_should_ignore_archived_subprojects
     parent = Project.find(1)
-    parent.trackers = Tracker.find([1,2])
+    parent.trackers = Tracker.find([1, 2])
     child = parent.children.find(3)
-    child.trackers = Tracker.find([1,3])
+    child.trackers = Tracker.find([1, 3])
     parent.children.each(&:archive)
 
-    assert_equal [1,2], parent.rolled_up_trackers.collect(&:id)
+    assert_equal [1, 2], parent.rolled_up_trackers.collect(&:id)
   end
 
   def test_rolled_up_statuses
@@ -618,7 +618,7 @@ class ProjectTest < ActiveSupport::TestCase
     child = parent.children.find(3)
     private_child = parent.children.find(5)
 
-    assert_equal [1,2,3], parent.version_ids.sort
+    assert_equal [1, 2, 3], parent.version_ids.sort
     assert_equal [4], child.version_ids
     assert_equal [6], private_child.version_ids
     assert_equal [7], Version.where(:sharing => 'system').collect(&:id)
@@ -628,7 +628,7 @@ class ProjectTest < ActiveSupport::TestCase
       assert_kind_of Version, version
     end
 
-    assert_equal [1,2,3,4,6,7], parent.shared_versions.collect(&:id).sort
+    assert_equal [1, 2, 3, 4, 6, 7], parent.shared_versions.collect(&:id).sort
   end
 
   def test_shared_versions_should_ignore_archived_subprojects
@@ -637,7 +637,7 @@ class ProjectTest < ActiveSupport::TestCase
     child.archive
     parent.reload
 
-    assert_equal [1,2,3], parent.version_ids.sort
+    assert_equal [1, 2, 3], parent.version_ids.sort
     assert_equal [4], child.version_ids
     assert !parent.shared_versions.collect(&:id).include?(4)
   end
@@ -647,7 +647,7 @@ class ProjectTest < ActiveSupport::TestCase
     parent = Project.find(1)
     child = parent.children.find(5)
 
-    assert_equal [1,2,3], parent.version_ids.sort
+    assert_equal [1, 2, 3], parent.version_ids.sort
     assert_equal [6], child.version_ids
 
     versions = parent.shared_versions.visible(user)
@@ -1055,16 +1055,29 @@ class ProjectTest < ActiveSupport::TestCase
     user = User.find(2)
     project = Project.find(1)
 
-    project.send :safe_attributes=, {'custom_field_values' => {
-                                       cf1.id.to_s => 'value1', cf2.id.to_s => 'value2'
-                                     }}, user
+    project.send(
+      :safe_attributes=,
+      {
+        'custom_field_values' => {
+          cf1.id.to_s => 'value1', cf2.id.to_s => 'value2'
+        }
+      },
+      user
+    )
     assert_equal 'value1', project.custom_field_value(cf1)
     assert_nil project.custom_field_value(cf2)
 
-    project.send :safe_attributes=, {'custom_fields' => [
-                                      {'id' => cf1.id.to_s, 'value' => 'valuea'},
-                                      {'id' => cf2.id.to_s, 'value' => 'valueb'}
-                                    ]}, user
+    project.send(
+      :safe_attributes=,
+      {
+        'custom_fields' =>
+          [
+            {'id' => cf1.id.to_s, 'value' => 'valuea'},
+            {'id' => cf2.id.to_s, 'value' => 'valueb'}
+          ]
+      },
+      user
+    )
     assert_equal 'valuea', project.custom_field_value(cf1)
     assert_nil project.custom_field_value(cf2)
   end

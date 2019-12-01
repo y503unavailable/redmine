@@ -18,9 +18,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class ProjectQuery < Query
-
   self.queried_class = Project
   self.view_permission = :search_project
+
+  validate do |query|
+    # project must be blank for ProjectQuery
+    errors.add(:project_id, :exclusion) if query.project_id.present?
+  end
 
   self.available_columns = [
     QueryColumn.new(:name, :sortable => "#{Project.table_name}.name"),

@@ -68,19 +68,22 @@ class Repository::Subversion < Repository
           # loads changesets by batches of 200
           identifier_to = [identifier_from + 199, scm_revision].min
           revisions = scm.revisions('', identifier_to, identifier_from, :with_paths => true)
-          revisions.reverse_each do |revision|
-            transaction do
-              changeset = Changeset.create(:repository   => self,
-                                           :revision     => revision.identifier,
-                                           :committer    => revision.author,
-                                           :committed_on => revision.time,
-                                           :comments     => revision.message)
-
-              revision.paths.each do |change|
-                changeset.create_change(change)
-              end unless changeset.new_record?
+          unless revisions.nil?
+            revisions.reverse_each do |revision|
+              transaction do
+                changeset = Changeset.create(:repository   => self,
+                                             :revision     => revision.identifier,
+                                             :committer    => revision.author,
+                                             :committed_on => revision.time,
+                                             :comments     => revision.message)
+                unless changeset.new_record?
+                  revision.paths.each do |change|
+                    changeset.create_change(change)
+                  end
+                end
+              end
             end
-          end unless revisions.nil?
+          end
           identifier_from = identifier_to + 1
         end
       end
@@ -91,6 +94,7 @@ class Repository::Subversion < Repository
 
   def load_entries_changesets(entries)
     return unless entries
+
     entries_with_identifier =
       entries.select {|entry| entry.lastrev && entry.lastrev.identifier.present?}
     identifiers = entries_with_identifier.map {|entry| entry.lastrev.identifier}.compact.uniq

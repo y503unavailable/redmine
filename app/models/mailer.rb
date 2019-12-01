@@ -487,7 +487,7 @@ class Mailer < ActionMailer::Base
   def self.deliver_security_notification(users, sender, options={})
     # Symbols cannot be serialized:
     # ActiveJob::SerializationError: Unsupported argument type: Symbol
-    options = options.transform_values {|v| v.is_a?(Symbol) ? v.to_s : v }
+    options = options.transform_values {|v| v.is_a?(Symbol) ? v.to_s : v}
     # sender's remote_ip would be lost on serialization/deserialization
     # we have to pass it with options
     options[:remote_ip] ||= sender.remote_ip
@@ -578,6 +578,7 @@ class Mailer < ActionMailer::Base
     if options[:version] && target_version_id.blank?
       raise ActiveRecord::RecordNotFound.new("Couldn't find Version named #{options[:version]}")
     end
+
     user_ids = options[:users]
 
     scope = Issue.open.where("#{Issue.table_name}.assigned_to_id IS NOT NULL" +
@@ -704,6 +705,7 @@ class Mailer < ActionMailer::Base
 
   def self.deliver_mail(mail)
     return false if mail.to.blank? && mail.cc.blank? && mail.bcc.blank?
+
     begin
       # Log errors when raise_delivery_errors is set to false, Rails does not
       mail.raise_delivery_errors = true
@@ -740,7 +742,7 @@ class Mailer < ActionMailer::Base
 
   # Appends a Redmine header field (name is prepended with 'X-Redmine-')
   def redmine_headers(h)
-    h.each { |k,v| headers["X-Redmine-#{k}"] = v.to_s }
+    h.each {|k, v| headers["X-Redmine-#{k}"] = v.to_s}
   end
 
   # Singleton class method is public
