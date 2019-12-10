@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem "bundler", ">= 1.5.0"
 
-gem "rails", "5.2.3"
+gem "rails", "5.2.4"
 gem "rouge", "~> 3.13.0"
 gem "request_store", "1.0.5"
 gem "mini_mime", "~> 1.0.1"
@@ -80,7 +80,7 @@ group :test do
   gem "simplecov", "~> 0.17.0", :require => false
   gem "ffi", platforms: [:mingw, :x64_mingw, :mswin]
   # For running system tests
-  gem 'puma', '~> 3.7'
+  gem 'puma'
   gem "capybara", (RUBY_VERSION < "2.4" ? "~> 3.15.1" : "~> 3.29.0")
   gem "selenium-webdriver"
   # RuboCop
