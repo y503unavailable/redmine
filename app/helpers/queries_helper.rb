@@ -41,6 +41,8 @@ module QueriesHelper
         group = :label_date
       elsif %w(estimated_hours spent_time).include?(field)
         group = :label_time_tracking
+      elsif field_options[:group] == 'or_filter'
+        group = :label_orfilter
       end
       if group
         (grouped[group] ||= []) << [field_options[:name], field]
