@@ -1082,6 +1082,12 @@ en:
   label_display_type_list: List
   label_display_type_board: Board
   label_my_bookmarks: My bookmarks
+  label_orfilter: "OR filters"
+  label_orfilter_and_any: "AND any following"
+  label_orfilter_or_any: "OR any following"
+  label_orfilter_or_all: "OR all following"
+  label_match: "match"
+  label_not_match: "not match"
 
   button_login: Login
   button_submit: Submit
