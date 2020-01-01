@@ -104,6 +104,7 @@ div#wrapper, div#wrapper2, div#wrapper3 { min-height: inherit; }
 #sidebar div.wiki ul li {list-style-type:inherit;}
 #sidebar a.icon-only {opacity: 0.4; margin-left: 5px;}
 #sidebar a.icon-only:hover {opacity: 1;}
+#sidebar li input[type=checkbox] {height: 20px;}
 
 #content { flex-grow: 1; background-color: #fff; margin: 0px; padding: 6px 10px 10px 10px; overflow-x: auto;}
 html>body #content { min-height: 600px; }
@@ -210,7 +211,9 @@ div + .drdn-items {border-top:1px solid #ccc;}
 .drdn-items>span {color:#999;}
 
 .contextual .drdn-content {top:18px;}
-.contextual .drdn-items {padding:2px;}
+.contextual .drdn-items {padding:2px; min-width: 160px;}
+.contextual .drdn-items>a {padding: 5px 8px;}
+.contextual .drdn-items>a.icon {padding-left: 24px; background-position-x: 4px;}
 .contextual .drdn-items>a:hover {color:#2A5685; border:1px solid #628db6; background-color:#eef5fd; border-radius:3px;}
 
 #project-jump.drdn {width:200px;display:inline-block;}
@@ -454,8 +457,8 @@ div.square {
 .splitcontenttop {flex: 2; flex-basis: 100%;}
 
 form {display: inline;}
-input, select {vertical-align: middle; margin-top: 1px; margin-bottom: 1px; height: 24px; padding: 0 7px;}
-input, select, textarea { color: #333; background-color: #fff; border:1px solid #ccc; border-radius:3px; box-sizing: border-box;}
+input, select, button {vertical-align: middle; margin-top: 1px; margin-bottom: 1px; height: 24px; padding: 0 7px;}
+input, select, textarea, button { color: #333; background-color: #fff; border:1px solid #ccc; border-radius:3px; box-sizing: border-box;}
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -469,7 +472,7 @@ select {
   padding-right: 20px;
 }
 input[type="file"] {border: 0; padding-left: 0; padding-right: 0; background-color: initial; }
-input[type="submit"] {
+input[type="submit"], button[type="submit"] {
   -webkit-appearance: button;
   cursor: pointer;
   background-color: #fff;
@@ -479,7 +482,7 @@ input[type="submit"] {
   -o-transition: background-color 100ms linear;
   transition: background-color 100ms linear;
 }
-input[type="submit"]:hover {
+input[type="submit"]:hover, button[type="submit"]:hover {
   background-color: #ddd;
 }
 
@@ -1396,7 +1399,7 @@ td.gantt_selected_column .gantt_hdr,.gantt_selected_column_container {
   font-weight:bold;
   font-size: 10px;
   bottom: 2px;
-  padding: 0px 2px 0px 2px;
+  padding: 1px 3px;
   margin-right: 2px;
   margin-left: 2px;
   border-radius: 2px;
@@ -1533,6 +1536,7 @@ td.gantt_selected_column .gantt_hdr,.gantt_selected_column_container {
 .icon-toggle-plus { background-image: url(../images/bullet_toggle_plus.png) }
 .icon-toggle-minus { background-image: url(../images/bullet_toggle_minus.png) }
 .icon-clear-query { background-image: url(../images/close_hl.png); }
+.icon-import { background-image: url(../images/database_go.png); }
 
 .icon-file { background-image: url(../images/files/default.png); }
 .icon-file.text-plain { background-image: url(../images/files/text.png); }
