@@ -26,6 +26,8 @@ class IssueCategoriesController < ApplicationController
   before_action :authorize
   accept_api_auth :index, :show, :create, :update, :destroy
 
+  helper :projects
+
   def index
     respond_to do |format|
       format.html { redirect_to_settings_in_projects }
@@ -52,21 +54,30 @@ class IssueCategoriesController < ApplicationController
 
   def create
     @category = @project.issue_categories.build
-    @category.safe_attributes = params[:issue_category]
-    if @category.save
-      respond_to do |format|
-        format.html do
-          flash[:notice] = l(:notice_successful_create)
-          redirect_to_settings_in_projects
+    if params[:issue_category]
+      attributes = params[:issue_category].dup
+      attributes.delete('sharing') unless attributes.nil? || @category.allowed_sharings.include?(attributes['sharing'])
+      @category.safe_attributes = attributes
+    end
+     
+    if request.post?
+      if @category.save
+        respond_to do |format|
+          format.html do
+            flash[:notice] = l(:notice_successful_create)
+            redirect_back_or_default settings_project_path(@project, :tab => 'categories')
+          end
+          format.js
+          format.api do
+            render :action => 'show', :status => :created, :location => issue_category_path(@category)
+          end
         end
-        format.js
-        format.api { render :action => 'show', :status => :created, :location => issue_category_path(@category) }
-      end
-    else
-      respond_to do |format|
-        format.html { render :action => 'new'}
-        format.js   { render :action => 'new'}
-        format.api { render_validation_errors(@category) }
+      else
+        respond_to do |format|
+          format.html { render :action => 'new' }
+          format.js   { render :action => 'new' }
+          format.api  { render_validation_errors(@category) }
+        end
       end
     end
   end
@@ -75,19 +86,23 @@ class IssueCategoriesController < ApplicationController
   end
 
   def update
-    @category.safe_attributes = params[:issue_category]
-    if @category.save
-      respond_to do |format|
-        format.html {
-          flash[:notice] = l(:notice_successful_update)
-          redirect_to_settings_in_projects
-        }
-        format.api { render_api_ok }
-      end
-    else
-      respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.api { render_validation_errors(@category) }
+    if params[:issue_category]
+      attributes = params[:issue_category].dup
+      attributes.delete('sharing') unless @category.allowed_sharings.include?(attributes['sharing'])
+      @category.safe_attributes = attributes
+      if @category.save
+        respond_to do |format|
+          format.html {
+            flash[:notice] = l(:notice_successful_update)
+            redirect_back_or_default settings_project_path(@project, :tab => 'categories')
+          }
+          format.api  { render_api_ok }
+        end
+      else
+        respond_to do |format|
+          format.html { render :action => 'edit' }
+          format.api  { render_validation_errors(@category) }
+        end
       end
     end
   end
