@@ -18,4 +18,27 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 module IssueCategoriesHelper
+
+  def category_filtered_issues_path(category, options = {})
+    options = {:category_id => category, :set_filter => 1}.merge(options)
+    project = case category.sharing
+      when 'hierarchy', 'tree'
+        if version.project && category.project.root.visible?
+          category.project.root
+        else
+          category.project
+        end
+      when 'system'
+        nil
+      else
+        category.project
+    end
+
+     if project
+      project_issues_path(project, options)
+    else
+      issues_path(options)
+    end
+  end
+
 end

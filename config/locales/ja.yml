@@ -807,6 +807,11 @@ ja:
   label_version_sharing_hierarchy: プロジェクト階層単位
   label_version_sharing_tree: プロジェクトツリー単位
   label_version_sharing_system: すべてのプロジェクト
+  label_category_sharing_none: 共有しない
+  label_category_sharing_descendants: サブプロジェクト単位
+  label_category_sharing_hierarchy: プロジェクト階層単位
+  label_category_sharing_tree: プロジェクトツリー単位
+  label_category_sharing_system: すべてのプロジェクト
   label_update_issue_done_ratios: 進捗率の更新
   label_copy_source: コピー元
   label_copy_target: コピー先
