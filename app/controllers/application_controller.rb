@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
   end
 
   before_action :session_expiration, :user_setup, :check_if_login_required, :set_localization, :check_password_change
-  after_action :record_project_usage
+  after_action :record_project_usage, :access_logging 
 
   rescue_from ::Unauthorized, :with => :deny_access
   rescue_from ::ActionView::MissingTemplate, :with => :missing_template
@@ -67,6 +67,19 @@ class ApplicationController < ActionController::Base
   helper Redmine::MenuManager::MenuHelper
 
   include Redmine::SudoMode::Controller
+
+  def access_logging
+    params.delete(:password)
+    params.delete(:password_confirmation)
+    params.delete(:new_password)
+    params.delete(:new_password_confirmation)
+    req_param = params.to_unsafe_h.map {|key,value| "#{key} => #{value}"}.join(",")
+    message = "#{User.current.login}: #{req_param}" 
+    log = Logger.new(File.join(Rails.root, "/log/access.log"), "daily")
+    log.formatter = Logger::Formatter.new
+    log.info(message)
+    log.close
+  end
 
   def session_expiration
     if session[:user_id] && Rails.application.config.redmine_verify_sessions != false
