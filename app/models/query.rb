@@ -286,6 +286,8 @@ class Query < ActiveRecord::Base
     "!p"  => :label_no_issues_in_project,
     "*o"  => :label_any_open_issues,
     "!o"  => :label_no_open_issues,
+    "match"  => :label_match,
+    "!match" => :label_not_match
   }
 
   class_attribute :operators_by_filter_type
@@ -297,7 +299,7 @@ class Query < ActiveRecord::Base
     :date => [ "=", ">=", "<=", "><", "<t+", ">t+", "><t+", "t+", "nd", "t", "ld", "nw", "w", "lw", "l2w", "nm", "m", "lm", "y", ">t-", "<t-", "><t-", "t-", "!*", "*" ],
     :date_past => [ "=", ">=", "<=", "><", ">t-", "<t-", "><t-", "t-", "t", "ld", "w", "lw", "l2w", "m", "lm", "y", "!*", "*" ],
     :string => [ "~", "=", "!~", "!", "^", "$", "!*", "*" ],
-    :text => [  "~", "!~", "^", "$", "!*", "*" ],
+    :text => [  "~", "!~", "^", "$", "!*", "*", "match", "!match" ],
     :integer => [ "=", ">=", "<=", "><", "!*", "*" ],
     :float => [ "=", ">=", "<=", "><", "!*", "*" ],
     :relation => ["=", "!", "=p", "=!p", "!p", "*o", "!o", "!*", "*"],
@@ -898,10 +900,36 @@ class Query < ActiveRecord::Base
   end
 
   def statement
-    # filters clauses
-    filters_clauses = []
+    filters_clauses=[]
+    and_clauses=[]
+    and_any_clauses=[]
+    or_any_clauses=[]
+    or_all_clauses=[]
+    and_any_op = ""
+    or_any_op = ""
+    or_all_op = ""
+
+    #the AND filter start first
+    filters_clauses = and_clauses
+
     filters.each_key do |field|
       next if field == "subproject_id"
+      if field == "and_any"
+         #start the and any part, point filters_clause to and_any_clauses
+         filters_clauses = and_any_clauses
+         and_any_op = operator_for(field) == "=" ? " AND " : " AND NOT "
+         next
+      elsif field == "or_any"
+         #start the or any part, point filters_clause to or_any_clauses
+         filters_clauses = or_any_clauses
+         or_any_op = operator_for(field) == "=" ? " OR " : " OR NOT "
+         next
+      elsif  field == "or_all"
+         #start the or any part, point filters_clause to or_any_clauses
+         filters_clauses = or_all_clauses
+         or_all_op = operator_for(field) == "=" ? " OR " : " OR NOT "
+         next
+      end
 
       v = values_for(field).clone
       next unless v and !v.empty?
@@ -936,7 +964,7 @@ class Query < ActiveRecord::Base
         filters_clauses << sql_for_custom_field(field, operator, v, $1)
       elsif field =~ /^cf_(\d+)\.(.+)$/
         filters_clauses << sql_for_custom_field_attribute(field, operator, v, $1, $2)
-      elsif respond_to?(method = "sql_for_#{field.tr('.', '_')}_field")
+      elsif respond_to?(method = "sql_for_#{field.gsub('.', '_')}_field")
         # specific statement
         filters_clauses << send(method, field, operator, v)
       else
@@ -950,10 +978,39 @@ class Query < ActiveRecord::Base
       filters_clauses << c.custom_field.visibility_by_project_condition
     end
 
-    filters_clauses << project_statement
-    filters_clauses.reject!(&:blank?)
+    #now start build the full statement, project filter is allways AND
+    and_clauses.reject!(&:blank?)
+    and_statement = and_clauses.any? ? and_clauses.join(" AND ") : nil
 
-    filters_clauses.any? ? filters_clauses.join(' AND ') : nil
+    all_and_statement = ["#{project_statement}", "#{and_statement}"].reject(&:blank?)
+    all_and_statement = all_and_statement.any? ? all_and_statement.join(" AND ") : nil
+
+
+    # finish the traditional part. Now extended part
+    # add the and_any first
+    and_any_clauses.reject!(&:blank?)
+    and_any_statement = and_any_clauses.any? ? "("+ and_any_clauses.join(" OR ") +")" : nil
+
+    full_statement_ext_1 = ["#{all_and_statement}", "#{and_any_statement}"].reject(&:blank?)
+    full_statement_ext_1 = full_statement_ext_1.any? ? full_statement_ext_1.join(and_any_op) : nil
+
+    # then add the or_all
+    or_all_clauses.reject!(&:blank?)
+    or_all_statement = or_all_clauses.any? ? "("+ or_all_clauses.join(" AND ") +")" : nil
+
+    full_statement_ext_2 = ["#{full_statement_ext_1}", "#{or_all_statement}"].reject(&:blank?)
+    full_statement_ext_2 = full_statement_ext_2.any? ? full_statement_ext_2.join(or_all_op) : nil
+
+    # then add the or_any
+    or_any_clauses.reject!(&:blank?)
+    or_any_statement = or_any_clauses.any? ? "("+ or_any_clauses.join(" OR ") +")" : nil
+
+    full_statement = ["#{full_statement_ext_2}", "#{or_any_statement}"].reject(&:blank?)
+    full_statement = full_statement.any? ? full_statement.join(or_any_op) : nil
+
+    Rails.logger.info "STATEMENT #{full_statement}"
+
+    return full_statement
   end
 
   # Returns the result count by group or nil if query is not grouped
@@ -1303,10 +1360,77 @@ class Query < ActiveRecord::Base
       sql = sql_contains("#{db_table}.#{db_field}", value.first, :starts_with => true)
     when "$"
       sql = sql_contains("#{db_table}.#{db_field}", value.first, :ends_with => true)
+    when "match"
+      sql = sql_for_match_operators(field, operator, value, db_table, db_field, is_custom_filter)
+    when "!match"
+      sql = sql_for_match_operators(field, operator, value, db_table, db_field, is_custom_filter)
     else
       raise "Unknown query operator #{operator}"
     end
 
+    return sql
+  end
+
+  def sql_for_match_operators(field, operator, value, db_table, db_field, is_custom_filter=false)
+    sql = ''
+    v = "(" + value.first.strip + ")"
+
+    match = true
+    op = ""
+    term = ""
+    in_term = false
+
+    in_bracket = false
+
+    v.chars.each do |c|
+
+      if (!in_bracket && "()+~!".include?(c) && in_term  ) || (in_bracket && "}".include?(c))
+        if !term.empty?
+          sql += "(" + sql_contains("#{db_table}.#{db_field}", term, match) + ")"
+        end
+        #reset
+        op = ""
+        term = ""
+        in_term = false
+
+        in_bracket = (c == "{")
+      end
+
+      if in_bracket && (!"{}".include? c)
+        term += c
+        in_term = true
+      else
+
+        case c
+        when "{"
+          in_bracket = true
+        when "}"
+          in_bracket = false
+        when "("
+          sql += c
+        when ")"
+          sql += c
+        when "+"
+          sql += " AND " if sql.last != "("
+        when "~"
+          sql += " OR " if sql.last != "("
+        when "!"
+          sql += " NOT "
+        else
+          if c != " "
+            term += c
+            in_term = true
+          end
+        end
+
+      end
+    end
+
+    if operator.include? "!"
+      sql = " NOT " + sql
+    end
+
+    Rails.logger.info "MATCH EXPRESSION: V=#{value.first}, SQL=#{sql}"
     return sql
   end
 
