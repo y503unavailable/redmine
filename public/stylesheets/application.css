@@ -554,7 +554,7 @@ fieldset#filters td.values select {min-width:130px;}
 #issue_is_private_wrap {float:right; margin-right:1em;}
 .toggle-multiselect { margin-right:5px; cursor:pointer;}
 .buttons { font-size: 0.9em; margin-bottom: 1.4em; margin-top: 1em; }
-.buttons .icon {paddin-bottom:3px; padding-top:1px;}
+.buttons .icon {padding-bottom:3px; padding-top:1px;}
 
 div#issue-changesets {float:right; width:45%; margin-left: 1em; margin-bottom: 1em; background: #fff; padding-left: 1em; font-size: 90%;}
 div#issue-changesets div.changeset { padding: 4px;}
@@ -1094,7 +1094,7 @@ p.progress-info {clear: left; font-size: 80%; margin-top:-4px; color:#777;}
 
 /***** Tabs *****/
 #content .tabs {height: 2.6em; margin-bottom:1.2em; position:relative; overflow:hidden;}
-#content .tabs ul {margin:0; position:absolute; bottom:0; padding-left:0.5em; width: 2000px; border-bottom: 1px solid #bbbbbb;}
+#content .tabs ul {margin:0; position:absolute; bottom:0; padding-left:0.5em; min-width: 2000px; width: 100%;  border-bottom: 1px solid #bbbbbb;}
 #content .tabs ul li {
   float:left;
   list-style-type:none;
@@ -1456,7 +1456,7 @@ td.gantt_selected_column .gantt_hdr,.gantt_selected_column_container {
   vertical-align: middle;
 }
 .icon-only::after {
-  content: "&nbsp;";
+  content: "\a0";
 }
 
 .icon-add { background-image: url(../images/add.png); }

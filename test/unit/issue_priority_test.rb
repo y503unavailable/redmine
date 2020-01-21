@@ -39,6 +39,15 @@ class IssuePriorityTest < ActiveSupport::TestCase
     assert_nil IssuePriority.default
   end
 
+  def test_default_or_middle_should_return_the_default_priority
+    assert_equal Enumeration.find_by_name('Normal'), IssuePriority.default_or_middle
+  end
+
+  def test_default_or_middle_should_return_middle_when_no_default_priority
+    IssuePriority.update_all :is_default => false
+    assert_equal Enumeration.find_by_name('High'), IssuePriority.default_or_middle
+  end
+
   def test_should_be_an_enumeration
     assert IssuePriority.ancestors.include?(Enumeration)
   end
@@ -79,6 +88,43 @@ class IssuePriorityTest < ActiveSupport::TestCase
 
     IssuePriority.compute_position_names
     assert_equal %w(lowest low2 default high2 highest), IssuePriority.active.to_a.sort.map(&:position_name)
+  end
+
+  def test_low_high_helpers
+    IssuePriority.delete_all
+
+    priorities = [1, 2, 3, 4, 5, 6].map {|i| IssuePriority.create!(:name => "P#{i}")}
+
+    middle = IssuePriority.find_by_position(3)
+
+    [1, 2].each do |p|
+      assert IssuePriority.find_by_position(p).low?
+      assert !IssuePriority.find_by_position(p).high?
+    end
+
+    assert !middle.high?
+    assert !middle.low?
+
+    [4, 5, 6].each do |p|
+      assert IssuePriority.find_by_position(p).high?
+      assert !IssuePriority.find_by_position(p).low?
+    end
+
+    default = IssuePriority.find_by_position(5)
+    default.update is_default: true
+
+    [1, 2, 3, 4].each do |p|
+      assert IssuePriority.find_by_position(p).low?
+      assert !IssuePriority.find_by_position(p).high?
+    end
+
+    assert !default.high?
+    assert !default.low?
+
+    [6].each do |p|
+      assert IssuePriority.find_by_position(p).high?
+      assert !IssuePriority.find_by_position(p).low?
+    end
   end
 
   def test_adding_a_priority_should_update_position_names

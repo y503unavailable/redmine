@@ -1,10 +1,11 @@
 source 'https://rubygems.org'
 
+ruby '>= 2.3.0', '< 2.7.0'
 gem "bundler", ">= 1.5.0"
 
 gem "rails", "5.2.4.1"
-gem "rouge", "~> 3.14.0"
-gem "request_store", "~> 1.4.1"
+gem 'rouge', '~> 3.15.0'
+gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
 gem "roadie-rails", (RUBY_VERSION < "2.5" ? "~> 1.3.0" : "~> 2.1.0")
@@ -31,7 +32,7 @@ end
 
 # Optional gem for exporting the gantt to a PNG file
 group :minimagick do
-  gem "mini_magick", "~> 4.9.5"
+  gem 'mini_magick', '~> 4.10.1'
 end
 
 # Optional Markdown support, not for JRuby
@@ -53,7 +54,7 @@ if File.exist?(database_file)
       when 'mysql2'
         gem "mysql2", "~> 0.5.0", :platforms => [:mri, :mingw, :x64_mingw]
       when /postgresql/
-        gem "pg", "~> 1.1.4", :platforms => [:mri, :mingw, :x64_mingw]
+        gem "pg", "~> 1.2.2", :platforms => [:mri, :mingw, :x64_mingw]
       when /sqlite3/
         gem "sqlite3", "~> 1.4.0", :platforms => [:mri, :mingw, :x64_mingw]
       when /sqlserver/
@@ -84,7 +85,7 @@ group :test do
   gem "capybara", (RUBY_VERSION < "2.4" ? "~> 3.15.1" : "~> 3.29.0")
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 0.78.0'
+  gem 'rubocop', '~> 0.79.0'
   gem 'rubocop-performance', '~> 1.5.0'
   gem 'rubocop-rails', '~> 2.4.0'
 end

@@ -47,18 +47,33 @@ class IssuePriority < Enumeration
     update_all :position_name => nil
   end
 
+  def self.default_or_middle
+    default || begin
+      priorities = active
+      priorities[(priorities.size - 1) / 2]
+    end
+  end
+
+  def high?
+    position > self.class.default_or_middle.position
+  end
+
+  def low?
+    position < self.class.default_or_middle.position
+  end
+
   # Updates position_name for active priorities
   # Called from migration 20121026003537_populate_enumerations_position_name
   def self.compute_position_names
-    priorities = where(:active => true).sort_by(&:position)
+    priorities = active
     if priorities.any?
-      default = priorities.detect(&:is_default?) || priorities[(priorities.size - 1) / 2]
+      default_position = default_or_middle.position
       priorities.each_with_index do |priority, index|
         name =
           case
-          when priority.position == default.position
+          when priority.position == default_position
             "default"
-          when priority.position < default.position
+          when priority.position < default_position
             index == 0 ? "lowest" : "low#{index+1}"
           else
             index == (priorities.size - 1) ? "highest" : "high#{priorities.size - index}"
