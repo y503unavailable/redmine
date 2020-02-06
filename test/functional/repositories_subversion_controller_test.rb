@@ -27,7 +27,7 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
            :issue_categories, :enumerations, :custom_fields, :custom_values, :trackers
 
   PRJ_ID = 3
-  NUM_REV = 11
+  NUM_REV = 12
 
   def setup
     super
@@ -78,7 +78,7 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
 
       assert_select 'table.changesets tbody' do
         assert_select 'tr', 10
-        assert_select 'tr td.id a', :text => '11'
+        assert_select 'tr td.id a', :text => '12'
       end
 
       assert_select 'input[name=rev]'
@@ -203,9 +203,9 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
         }
       )
       assert_response :success
-
       assert_select 'table.changesets tbody' do
-        assert_select 'tr', 6
+        assert_select 'tr', 7
+        assert_select 'tr td.id a', :text => '12'
         assert_select 'tr td.id a', :text => '10'
         assert_select 'tr td.id a', :text => '9'
         assert_select 'tr td.id a', :text => '7'
@@ -249,7 +249,7 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
           }
         )
         assert_response :success
-        assert_equal 'text/html', @response.content_type
+        assert_equal 'text/html', @response.media_type
         assert_select 'p.nodata'
       end
     end
@@ -265,6 +265,19 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
       )
       assert_response :success
       assert_select 'img[src=?]', "/projects/subproject1/repository/#{@repository.id}/raw/subversion_test/folder/subfolder/rubylogo.gif"
+    end
+
+    def test_entry_should_preview_audio
+      get(
+        :entry,
+        :params => {
+          :id => PRJ_ID,
+          :repository_id => @repository.id,
+          :path => repository_path_hash(['subversion_test', 'folder', 'subfolder', 'chords.mp3'])[:param]
+        }
+      )
+      assert_response :success
+      assert_select 'audio[src=?]', "/projects/subproject1/repository/#{@repository.id}/raw/subversion_test/folder/subfolder/chords.mp3"
     end
 
     def test_entry_at_given_revision
@@ -470,7 +483,7 @@ class RepositoriesSubversionControllerTest < Redmine::RepositoryControllerTest
         }
       )
       assert_response :success
-      assert_equal 'text/x-patch', @response.content_type
+      assert_equal 'text/x-patch', @response.media_type
       assert_equal 'Index: subversion_test/folder/greeter.rb', @response.body.split(/\r?\n/).first
     end
 

@@ -230,6 +230,24 @@ class ProjectsControllerTest < Redmine::ControllerTest
     )
   end
 
+  def test_index_with_int_custom_field_total
+    @request.session[:user_id] = 1
+
+    field = ProjectCustomField.generate!(:field_format => 'int')
+    CustomValue.create!(:customized => Project.find(1), :custom_field => field, :value => '2')
+    CustomValue.create!(:customized => Project.find(2), :custom_field => field, :value => '7')
+    get(
+      :index,
+      :params => {
+        :display_type => 'list',
+        :t => ["cf_#{field.id}"]
+      }
+    )
+    assert_response :success
+    assert_select '.query-totals'
+    assert_select ".total-for-cf-#{field.id} span.value", :text => '9'
+  end
+
   def test_autocomplete_js
     get(
       :autocomplete,
@@ -240,7 +258,7 @@ class ProjectsControllerTest < Redmine::ControllerTest
       :xhr => true
     )
     assert_response :success
-    assert_equal 'text/javascript', response.content_type
+    assert_equal 'text/javascript', response.media_type
   end
 
   def test_autocomplete_js_with_blank_search_term
@@ -253,7 +271,7 @@ class ProjectsControllerTest < Redmine::ControllerTest
       :xhr => true
     )
     assert_response :success
-    assert_equal 'text/javascript', response.content_type
+    assert_equal 'text/javascript', response.media_type
   end
 
   test "#index by non-admin user with view_time_entries permission should show overall spent time link" do

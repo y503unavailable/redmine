@@ -1,9 +1,10 @@
 source 'https://rubygems.org'
 
 ruby '>= 2.3.0', '< 2.7.0'
-gem "bundler", ">= 1.5.0"
+gem 'bundler', '>= 1.12.0'
 
 gem "rails", "5.2.4.1"
+gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
 gem 'rouge', '~> 3.15.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
@@ -13,8 +14,9 @@ gem "mimemagic"
 gem "mail", "~> 2.7.1"
 gem "csv", "~> 3.1.1"
 gem "nokogiri", "~> 1.10.0"
-gem "i18n", "~> 1.6.0"
+gem 'i18n', '~> 1.8.2'
 gem "rbpdf", "~> 1.20.0"
+gem 'addressable'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :x64_mingw, :mswin]
@@ -78,11 +80,11 @@ end
 group :test do
   gem "rails-dom-testing"
   gem 'mocha', '>= 1.4.0'
-  gem "simplecov", "~> 0.17.0", :require => false
+  gem 'simplecov', (RUBY_VERSION < '2.4' ? '~> 0.17.0' : '~> 0.18.1'), :require => false
   gem "ffi", platforms: [:mingw, :x64_mingw, :mswin]
   # For running system tests
   gem 'puma'
-  gem "capybara", (RUBY_VERSION < "2.4" ? "~> 3.15.1" : "~> 3.29.0")
+  gem 'capybara', (RUBY_VERSION < '2.4' ? '~> 3.15.1' : '~> 3.31.0')
   gem "selenium-webdriver"
   # RuboCop
   gem 'rubocop', '~> 0.79.0'

@@ -706,7 +706,7 @@ class QueriesControllerTest < Redmine::ControllerTest
       }
 
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
     assert_include ["eCookbook - 2.0", "3", "open"], json
   end
@@ -720,7 +720,7 @@ class QueriesControllerTest < Redmine::ControllerTest
       }
 
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
     assert_include ["eCookbook - 2.0", "3", "open"], json
   end
@@ -735,7 +735,7 @@ class QueriesControllerTest < Redmine::ControllerTest
       }
 
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
     # response includes visible version
@@ -756,7 +756,7 @@ class QueriesControllerTest < Redmine::ControllerTest
       }
 
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
     assert_equal 4, json.count
     assert_include ["Private child of eCookbook","5"], json
@@ -770,7 +770,7 @@ class QueriesControllerTest < Redmine::ControllerTest
         :name => 'assigned_to_id'
       }
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
     assert_equal 6, json.count
@@ -788,7 +788,7 @@ class QueriesControllerTest < Redmine::ControllerTest
         :name => 'author_id'
       }
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
     assert_equal 7, json.count
@@ -807,7 +807,7 @@ class QueriesControllerTest < Redmine::ControllerTest
         :name => 'user_id'
       }
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
     assert_equal 7, json.count
@@ -827,14 +827,14 @@ class QueriesControllerTest < Redmine::ControllerTest
         :name => 'watcher_id'
       }
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
     assert_equal 1, json.count
     assert_equal [["<< me >>", "me"]], json
   end
 
-  def test_watcher_filter_with_permission_should_show_members
+  def test_watcher_filter_with_permission_should_show_members_and_groups
     # This user has view_issue_watchers permission
     @request.session[:user_id] = 1
 
@@ -844,13 +844,14 @@ class QueriesControllerTest < Redmine::ControllerTest
         :name => 'watcher_id'
       }
     assert_response :success
-    assert_equal 'application/json', response.content_type
+    assert_equal 'application/json', response.media_type
     json = ActiveSupport::JSON.decode(response.body)
 
-    assert_equal 6, json.count
+    assert_equal 7, json.count
     # "me" value should not be grouped
     assert_include ["<< me >>", "me"], json
     assert_include ["Dave Lopper", "3", "active"], json
     assert_include ["Dave2 Lopper2", "5", "locked"], json
+    assert_include ["A Team", "10", "active"], json
   end
 end

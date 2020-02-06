@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,15 +19,9 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
-class WelcomeTest < Redmine::IntegrationTest
-  fixtures :users, :email_addresses,
-           :projects, :enabled_modules, :members, :member_roles, :roles
-
-  def test_robots
-    get '/robots.txt'
-    assert_response :success
-    assert_equal 'text/plain', @response.media_type
-    # Redmine::Utils.relative_url_root does not effect on Rails 5.1.4.
-    assert @response.body.match(%r{^Disallow: /projects/ecookbook/issues\r?$})
+class ApplicationControllerTest < Redmine::ControllerTest
+  def test_back_url_should_remove_utf8_checkmark_from_referer
+    @request.set_header 'HTTP_REFERER', "/path?utf8=\u2713&foo=bar"
+    assert_equal "/path?foo=bar", @controller.back_url
   end
 end
