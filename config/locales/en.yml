@@ -1084,6 +1084,7 @@ en:
   label_display_type_list: List
   label_display_type_board: Board
   label_my_bookmarks: My bookmarks
+  label_assign_to_me: Assign to me
   label_orfilter: "OR filters"
   label_orfilter_and_any: "AND any following"
   label_orfilter_or_any: "OR any following"

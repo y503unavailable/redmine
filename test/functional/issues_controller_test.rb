@@ -46,7 +46,7 @@ class IssuesControllerTest < Redmine::ControllerTest
            :queries,
            :repositories,
            :changesets,
-           :watchers
+           :watchers, :groups_users
 
   include Redmine::I18n
 
@@ -1784,8 +1784,14 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_select 'td.attachments'
     assert_select 'tr#issue-2' do
       assert_select 'td.attachments' do
-        assert_select 'a', :text => 'source.rb'
-        assert_select 'a', :text => 'picture.jpg'
+        assert_select 'span:nth-of-type(1)' do
+          assert_select 'a[href=?]', '/attachments/4', :text => 'source.rb'
+          assert_select 'a[href=?].icon-download', '/attachments/download/4/source.rb'
+        end
+        assert_select 'span:nth-of-type(2)' do
+          assert_select 'a[href=?]', '/attachments/10', :text => 'picture.jpg'
+          assert_select 'a[href=?].icon-download', '/attachments/download/10/picture.jpg'
+        end
       end
     end
   end
@@ -2096,6 +2102,43 @@ class IssuesControllerTest < Redmine::ControllerTest
     get(:show, :params => {:id => 1})
     assert_select 'form#issue-form[method=post][enctype="multipart/form-data"]' do
       assert_select 'input[type=file][name=?]', 'attachments[dummy][file]'
+    end
+  end
+
+  def test_update_form_should_render_assign_to_me_link_when_issue_can_be_assigned_to_the_current_user
+    @request.session[:user_id] = 1
+    get :show, :params => {
+        :id => 10
+      }
+
+    assert_select 'form#issue-form #attributes' do
+      assert_select 'a[class=?][data-id=?]', 'assign-to-me-link', '1', 1
+    end
+  end
+
+  def test_update_form_should_not_render_assign_to_me_link_when_issue_cannot_be_assigned_to_the_current_user
+    @request.session[:user_id] = 1
+    get :show, :params => {
+        :id => 2
+      }
+
+    assert_select 'form#issue-form #attributes' do
+      assert_select 'a[class=?]', 'assign-to-me-link', 0
+    end
+  end
+
+  def test_update_form_should_not_show_assign_to_me_link_when_issue_is_assigned_to_the_current_user
+    issue = Issue.find(10)
+    issue.assigned_to_id = 1
+    issue.save!
+
+    @request.session[:user_id] = 1
+    get :show, :params => {
+        :id => 10
+      }
+
+    assert_select 'form#issue-form #attributes' do
+      assert_select 'a[class=?]', 'assign-to-me-link hidden', 1
     end
   end
 

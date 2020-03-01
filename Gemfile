@@ -5,7 +5,7 @@ gem 'bundler', '>= 1.12.0'
 
 gem "rails", "5.2.4.1"
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
-gem 'rouge', '~> 3.15.0'
+gem 'rouge', '~> 3.16.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
@@ -80,14 +80,14 @@ end
 group :test do
   gem "rails-dom-testing"
   gem 'mocha', '>= 1.4.0'
-  gem 'simplecov', (RUBY_VERSION < '2.4' ? '~> 0.17.0' : '~> 0.18.1'), :require => false
+  gem 'simplecov', (RUBY_VERSION < '2.4' ? '~> 0.17.0' : '~> 0.18.5'), :require => false
   gem "ffi", platforms: [:mingw, :x64_mingw, :mswin]
   # For running system tests
   gem 'puma'
   gem 'capybara', (RUBY_VERSION < '2.4' ? '~> 3.15.1' : '~> 3.31.0')
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 0.79.0'
+  gem 'rubocop', '~> 0.80.0'
   gem 'rubocop-performance', '~> 1.5.0'
   gem 'rubocop-rails', '~> 2.4.0'
 end
