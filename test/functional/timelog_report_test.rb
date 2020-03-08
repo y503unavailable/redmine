@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -257,6 +257,21 @@ class TimelogReportTest < Redmine::ControllerTest
     assert_equal 'Project,User,Overtime,2007-3,2007-4,Total time', lines.first
     # Total row
     assert_equal 'Total time,"","",154.25,8.65,162.90', lines.last
+  end
+
+  def test_report_csv_should_fill_issue_criteria_with_tracker_id_and_subject
+    get :report, :params => {
+      :project_id => 1,
+      :columns => 'month',
+      :from => "2007-01-01",
+      :to => "2007-06-30",
+      :criteria => ["issue"],
+      :format => "csv"
+    }
+
+    assert_response :success
+    lines = @response.body.chomp.split("\n")
+    assert lines.detect {|line| line.include?('Bug #1: Cannot print recipes')}
   end
 
   def test_csv_big_5

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -937,6 +937,34 @@ class QueryTest < ActiveSupport::TestCase
     filter = query.available_filters['id']
 
     assert_not_include 'bookmarks', filter[:values].map{|v| v[1]}
+  end
+
+  def test_filter_project_parent_id_with_my_projects
+    User.current = User.find(1)
+    query = ProjectQuery.new(:name => '_')
+    filter = query.available_filters['parent_id']
+    assert_not_nil filter
+    assert_include 'mine', filter[:values].map{|v| v[1]}
+
+    query.filters = { 'parent_id' => {:operator => '=', :values => ['mine']}}
+    result = query.results_scope
+
+    my_projects = User.current.memberships.map(&:project_id)
+    assert_equal Project.where(parent_id: my_projects).ids, result.map(&:id).sort
+  end
+
+  def test_filter_project_parent_id_with_my_bookmarks
+    User.current = User.find(1)
+    query = ProjectQuery.new(:name => '_')
+    filter = query.available_filters['parent_id']
+    assert_not_nil filter
+    assert_include 'bookmarks', filter[:values].map{|v| v[1]}
+
+    query.filters = { 'parent_id' => {:operator => '=', :values => ['bookmarks']}}
+    result = query.results_scope
+
+    bookmarks = User.current.bookmarked_project_ids
+    assert_equal Project.where(parent_id: bookmarks).ids, result.map(&:id).sort
   end
 
   def test_filter_watched_issues

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -553,9 +553,15 @@ class Mailer < ActionMailer::Base
   def reminder(user, issues, days)
     @issues = issues
     @days = days
-    @issues_url = url_for(:controller => 'issues', :action => 'index',
+    @open_issues_url = url_for(:controller => 'issues', :action => 'index',
                                 :set_filter => 1, :assigned_to_id => 'me',
                                 :sort => 'due_date:asc')
+    @reminder_issues_url = url_for(:controller => 'issues', :action => 'index',
+      :set_filter => 1, :sort => 'due_date:asc',
+      :f => ['status_id', 'assigned_to_id', "due_date"],
+      :op => {'status_id' => 'o', 'assigned_to_id' => '=', 'due_date' => '<t+'},
+      :v =>{'assigned_to_id' => ['me'], 'due_date' => [days]})
+
     query = IssueQuery.new(:name => '_')
     query.add_filter('assigned_to_id', '=', ['me'])
     @open_issues_count = query.issue_count

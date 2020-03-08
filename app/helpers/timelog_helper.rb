@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -68,7 +68,15 @@ module TimelogHelper
       "[#{l(:label_none)}]"
     elsif k = criteria_options[:klass]
       obj = k.find_by_id(value.to_i)
-      format_object(obj, html)
+      if obj.is_a?(Issue)
+        if obj.visible?
+          html ? link_to_issue(obj) : "#{obj.tracker} ##{obj.id}: #{obj.subject}"
+        else
+          "##{obj.id}"
+        end
+      else
+        format_object(obj, html)
+      end
     elsif cf = criteria_options[:custom_field]
       format_value(value, cf)
     else

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -5242,7 +5242,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       )
     end
     issue = Issue.order('id DESC').first
-    assert_equal [3, 10], issue.watcher_user_ids
+    assert_equal [3, 10], issue.watcher_user_ids.sort
   end
 
   def test_create_as_copy_without_watcher_user_ids_should_not_copy_watchers

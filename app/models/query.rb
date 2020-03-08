@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2019  Jean-Philippe Lang
+# Copyright (C) 2006-2020  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -952,7 +952,7 @@ class Query < ActiveRecord::Base
         end
       end
 
-      if field == 'project_id' || (self.type == 'ProjectQuery' && field == 'id')
+      if field == 'project_id' || (self.type == 'ProjectQuery' && %w[id parent_id].include?(field))
         if v.delete('mine')
           v += User.current.memberships.map(&:project_id).map(&:to_s)
         end
