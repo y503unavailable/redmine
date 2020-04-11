@@ -78,6 +78,24 @@ class UsersControllerTest < Redmine::ControllerTest
     end
   end
 
+  def test_index_csv_with_custom_field_columns
+    float_custom_field = UserCustomField.generate!(:name => 'float field', :field_format => 'float')
+    date_custom_field = UserCustomField.generate!(:name => 'date field', :field_format => 'date')
+    user = User.last
+    user.custom_field_values = {float_custom_field.id.to_s => 2.1, date_custom_field.id.to_s => '2020-01-10'}
+    user.save
+
+    User.find(@request.session[:user_id]).update(:language => nil)
+    with_settings :default_language => 'fr' do
+      get :index, :params => { :name => user.lastname, :format => 'csv' }
+      assert_response :success
+
+      assert_include 'float field;date field', response.body
+      assert_include '2,10;10/01/2020', response.body
+      assert_equal 'text/csv', @response.media_type
+    end
+  end
+
   def test_index_csv_with_status_filter
     with_settings :default_language => 'en' do
       get :index, :params => { :status => 3, :format => 'csv' }
@@ -123,7 +141,7 @@ class UsersControllerTest < Redmine::ControllerTest
     get :show, :params => {:id => 2}
     assert_response :success
 
-    assert_select 'li[class=?]', 'cf_4', :text => /Phone number/
+    assert_select 'li.cf_4.string_cf', :text => /Phone number/
   end
 
   def test_show_should_not_display_hidden_custom_fields
@@ -452,6 +470,14 @@ class UsersControllerTest < Redmine::ControllerTest
     assert User.find(6).anonymous?
     get :edit, :params => {:id => 6}
     assert_response 404
+  end
+
+  def test_edit_user_with_full_text_formatting_custom_field_should_not_fail
+    field = UserCustomField.find(4)
+    field.update_attribute :text_formatting, 'full'
+
+    get :edit, :params => {:id => 2}
+    assert_response :success
   end
 
   def test_update

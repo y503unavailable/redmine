@@ -448,7 +448,10 @@ class IssuesController < ApplicationController
       end
     end
     respond_to do |format|
-      format.html {redirect_back_or_default _project_issues_path(@project)}
+      format.html {
+        flash[:notice] = l(:notice_successful_delete)
+        redirect_back_or_default _project_issues_path(@project)
+      }
       format.api  {render_api_ok}
     end
   end
@@ -611,6 +614,7 @@ class IssuesController < ApplicationController
         time_entry = @time_entry || TimeEntry.new
         time_entry.project = @issue.project
         time_entry.issue = @issue
+        time_entry.author = User.current
         time_entry.user = User.current
         time_entry.spent_on = User.current.today
         time_entry.safe_attributes = params[:time_entry]

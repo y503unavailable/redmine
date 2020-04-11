@@ -777,6 +777,23 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_select '#csv-export-form input[name=?][value=?]', 'f[]', ''
   end
 
+  def test_index_should_show_block_columns_in_csv_export_form
+    field = IssueCustomField.
+              create!(
+                :name => 'Long text', :field_format => 'text',
+                :full_width_layout => '1',
+                :tracker_ids => [1], :is_for_all => true
+              )
+    get :index
+
+    assert_response :success
+    assert_select '#csv-export-form' do
+      assert_select 'input[value=?]', 'description'
+      assert_select 'input[value=?]', 'last_notes'
+      assert_select 'input[value=?]', "cf_#{field.id}"
+    end
+  end
+
   def test_index_csv
     get(:index, :params => {:format => 'csv'})
     assert_response :success
@@ -2525,6 +2542,7 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_show_with_thumbnails_enabled_should_display_thumbnails
+    skip unless convert_installed?
     @request.session[:user_id] = 2
     with_settings :thumbnails_enabled => '1' do
       get(:show, :params => {:id => 14})
@@ -5278,6 +5296,7 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_select 'select[name=?]', 'issue[priority_id]' do
       assert_select 'option[value="15"]', 0
     end
+    assert_select 'span.icon-warning', 0
   end
 
   def test_edit_should_hide_project_if_user_is_not_allowed_to_change_project
@@ -5387,6 +5406,21 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_select 'select[name=?]', 'issue[assigned_to_id]' do
       assert_select 'option[value="2"][selected=selected]'
     end
+  end
+
+  def test_get_edit_for_issue_with_transition_warning_should_show_the_warning
+    @request.session[:user_id] = 2
+
+    get(
+      :edit,
+      :params => {
+        :id => 9,
+      }
+    )
+
+    assert_response :success
+    reason = l(:notice_issue_not_closable_by_blocking_issue)
+    assert_select 'span.icon-warning[title=?]', reason, :text => reason
   end
 
   def test_update_form_for_existing_issue
@@ -7475,6 +7509,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       delete(:destroy, :params => {:id => 2})
     end
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
+    assert_equal 'Successful deletion.', flash[:notice]
     assert_nil Issue.find_by_id(2)
   end
 
@@ -7554,6 +7589,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       end
     end
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
+    assert_equal 'Successful deletion.', flash[:notice]
     assert !(Issue.find_by_id(1) || Issue.find_by_id(3))
     assert_nil TimeEntry.find_by_id([1, 2])
   end
@@ -7575,6 +7611,7 @@ class IssuesControllerTest < Redmine::ControllerTest
     end
     end
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
+    assert_equal 'Successful deletion.', flash[:notice]
     assert !(Issue.find_by_id(1) || Issue.find_by_id(3))
     assert_nil TimeEntry.find(1).issue_id
     assert_nil TimeEntry.find(2).issue_id
@@ -7596,6 +7633,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       end
     end
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
+    assert_equal 'Successful deletion.', flash[:notice]
     assert !(Issue.find_by_id(1) || Issue.find_by_id(3))
     assert_equal 2, TimeEntry.find(1).issue_id
     assert_equal 2, TimeEntry.find(2).issue_id
@@ -7620,6 +7658,7 @@ class IssuesControllerTest < Redmine::ControllerTest
           }
         )
         assert_response 302
+        assert_equal 'Successful deletion.', flash[:notice]
       end
     end
     assert_equal 3, target.time_entries.count
@@ -7696,6 +7735,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       )
     end
     assert_redirected_to :controller => 'issues', :action => 'index'
+    assert_equal 'Successful deletion.', flash[:notice]
     assert !(Issue.find_by_id(1) || Issue.find_by_id(2) || Issue.find_by_id(6))
   end
 
@@ -7716,6 +7756,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       )
     end
     assert_response 302
+    assert_equal 'Successful deletion.', flash[:notice]
   end
 
   def test_destroy_invalid_should_respond_with_404
@@ -7736,6 +7777,7 @@ class IssuesControllerTest < Redmine::ControllerTest
       delete(:destroy, :params => {:id => issue.id})
     end
     assert_response 302
+    assert_equal 'Successful deletion.', flash[:notice]
   end
 
   def test_destroy_without_permission_on_tracker_should_be_denied

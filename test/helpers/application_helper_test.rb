@@ -22,6 +22,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class ApplicationHelperTest < Redmine::HelperTest
   include ERB::Util
   include Rails.application.routes.url_helpers
+  include AvatarsHelper
 
   fixtures :projects, :enabled_modules,
            :users, :email_addresses,
@@ -309,11 +310,10 @@ class ApplicationHelperTest < Redmine::HelperTest
                          :class => Issue.find(3).css_classes,
                          :title => 'Bug: Error 281 when updating a recipe (New)')
     ext_issue_link = link_to(
-                         'Bug #3',
+                         'Bug #3: Error 281 when updating a recipe',
                          {:controller => 'issues', :action => 'show', :id => 3},
                          :class => Issue.find(3).css_classes,
-                         :title => 'Bug: Error 281 when updating a recipe (New)') +
-                           ": Error 281 when updating a recipe"
+                         :title => 'Status: New')
     note_link = link_to(
                          '#3-14',
                          {:controller => 'issues', :action => 'show',
@@ -321,12 +321,11 @@ class ApplicationHelperTest < Redmine::HelperTest
                          :class => Issue.find(3).css_classes,
                          :title => 'Bug: Error 281 when updating a recipe (New)')
     ext_note_link = link_to(
-                         'Bug #3-14',
+                         'Bug #3-14: Error 281 when updating a recipe',
                          {:controller => 'issues', :action => 'show',
                           :id => 3, :anchor => 'note-14'},
                          :class => Issue.find(3).css_classes,
-                         :title => 'Bug: Error 281 when updating a recipe (New)') +
-                           ": Error 281 when updating a recipe"
+                         :title => 'Status: New')
     note_link2 = link_to(
                          '#3#note-14',
                          {:controller => 'issues', :action => 'show',
@@ -334,12 +333,11 @@ class ApplicationHelperTest < Redmine::HelperTest
                          :class => Issue.find(3).css_classes,
                          :title => 'Bug: Error 281 when updating a recipe (New)')
     ext_note_link2 = link_to(
-                         'Bug #3#note-14',
+                         'Bug #3#note-14: Error 281 when updating a recipe',
                          {:controller => 'issues', :action => 'show',
                           :id => 3, :anchor => 'note-14'},
                          :class => Issue.find(3).css_classes,
-                         :title => 'Bug: Error 281 when updating a recipe (New)') +
-                           ": Error 281 when updating a recipe"
+                         :title => 'Status: New')
 
     revision_link = link_to(
                          'r1',
@@ -398,10 +396,10 @@ class ApplicationHelperTest < Redmine::HelperTest
       # should not ignore leading zero
       '#03'                         => '#03',
       # tickets with more info
-      '##3, [##3], (##3) and ##3.'      => "#{ext_issue_link}, [#{ext_issue_link}], (#{ext_issue_link}) and #{ext_issue_link}.",
-      '##3-14'                       => ext_note_link,
-      '##3#note-14'                  => ext_note_link2,
-      '##03'                         => '##03',
+      '##3, [##3], (##3) and ##3.'  => "#{ext_issue_link}, [#{ext_issue_link}], (#{ext_issue_link}) and #{ext_issue_link}.",
+      '##3-14'                      => ext_note_link,
+      '##3#note-14'                 => ext_note_link2,
+      '##03'                        => '##03',
       # changesets
       'r1'                          => revision_link,
       'r1.'                         => "#{revision_link}.",
@@ -1701,6 +1699,31 @@ class ApplicationHelperTest < Redmine::HelperTest
       [attachments(:attachments_003),   '<a href="/projects/ecookbook/wiki/Page_with_an_inline_image">Page with an inline image</a>'],
     ].each do |attachment, link|
       assert_equal link, link_to_attachment_container(attachment.container)
+    end
+  end
+
+  def test_principals_check_box_tag_with_avatar
+    principals = [User.find(1), Group.find(10)]
+    with_settings :gravatar_enabled => '1' do
+      tags = principals_check_box_tags("watcher[user_ids][]", principals)
+      principals.each do |principal|
+        assert_include avatar(principal, :size => 16), tags
+        assert_not_include content_tag('span', nil, :class => "name icon icon-#{principal.class.name.downcase}"), tags
+      end
+    end
+  end
+
+  def test_principals_check_box_tag_without_avatar
+    principals = [User.find(1), Group.find(10)]
+    Setting.gravatar_enabled = '1'
+    avatar_tags = principals.collect{|p| avatar(p, :size => 16) }
+
+    with_settings :gravatar_enabled => '0' do
+      tags = principals_check_box_tags(name, principals)
+      principals.each_with_index do |principal, i|
+        assert_not_include avatar_tags[i], tags
+        assert_include content_tag('span', nil, :class => "name icon icon-#{principal.class.name.downcase}"), tags
+      end
     end
   end
 

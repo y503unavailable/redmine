@@ -1306,4 +1306,16 @@ cs:
   field_toolbar_language_options: Jazyky zvýrazňování syntaxe kódu
   label_user_mail_notify_about_high_priority_issues_html: Notifikuj mě o úkolech
     s prioritou <em>%{prio}</em> nebo vyšší
-  label_assign_to_me: Assign to me
+  label_assign_to_me: Přiřadit na mě
+  notice_issue_not_closable_by_open_tasks: Tento úkol nemůže být uzavřen, protože
+    má alespoň jeden otevřený podúkol.
+  notice_issue_not_closable_by_blocking_issue: Tento úkol nemůže být uzavřen, protože
+    je blokován alespoň jedním otevřeným úkolem.
+  notice_issue_not_reopenable_by_closed_parent_issue: Tento úkol nemůže být znovu otevřen, protože
+    jeho rodičovský úkol je uzavřen.
+  error_bulk_download_size_too_big: Tyto přílohy nemohou být hromadně staženy, protože
+    celková velikost souboru přesahuje maximální povolenou velikost (%{max_size})
+  setting_bulk_download_max_size: Maximální celková velikost pro hromadné stažení
+  label_download_all_attachments: Stáhnout všechny soubory
+  error_attachments_too_many: Tento soubor nemůže být nahrán, protože byl překročen maximální
+    počet souborů, které mohou být současně přiloženy (%{max_number_of_files})

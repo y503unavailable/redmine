@@ -79,14 +79,14 @@ module CustomFieldsHelper
 
   # Return custom field html tag corresponding to its format
   def custom_field_tag(prefix, custom_value)
-    css = "#{custom_value.custom_field.field_format}_cf"
+    css = custom_value.custom_field.css_classes
     data = nil
     if custom_value.custom_field.full_text_formatting?
       css += ' wiki-edit'
       data = {
         :auto_complete => true,
         :issues_url => auto_complete_issues_path(:project_id => custom_value.customized.project, :q => '')
-      } if custom_value.customized && custom_value.customized.project
+      } if custom_value.customized&.try(:project)
     end
     custom_value.custom_field.format.edit_tag(
       self,
@@ -128,6 +128,15 @@ module CustomFieldsHelper
 
   # Returns the custom field tag for when bulk editing objects
   def custom_field_tag_for_bulk_edit(prefix, custom_field, objects=nil, value='')
+    css =  custom_field.css_classes
+    data = nil
+    if custom_field.full_text_formatting?
+      css += ' wiki-edit'
+      data = {
+        :auto_complete => true,
+        :issues_url => auto_complete_issues_path(:q => '')
+      }
+    end
     custom_field.format.bulk_edit_tag(
       self,
       custom_field_tag_id(prefix, custom_field),
@@ -135,7 +144,8 @@ module CustomFieldsHelper
       custom_field,
       objects,
       value,
-      :class => "#{custom_field.field_format}_cf")
+      :class => css,
+      :data => data)
   end
 
   # Returns custom field value tag

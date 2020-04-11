@@ -19,27 +19,15 @@
 
 require File.expand_path('../../test_helper', __FILE__)
 
-class GroupsHelperTest < Redmine::HelperTest
-  include ERB::Util
-  include GroupsHelper
-  include AvatarsHelper
-  include Rails.application.routes.url_helpers
-
+class EmailAddressTest < ActiveSupport::TestCase
   fixtures :users
 
-  def test_render_principals_for_new_group_users
-    group = Group.generate!
-
-    result = render_principals_for_new_group_users(group)
-    assert_select_in result, 'input[name=?][value="2"]', 'user_ids[]'
+  def setup
+    User.current = nil
   end
 
-  def test_render_principals_for_new_group_users_with_limited_results_should_paginate
-    group = Group.generate!
-
-    result = render_principals_for_new_group_users(group, 3)
-    assert_select_in result, 'span.pagination'
-    assert_select_in result, 'span.pagination li.current span', :text => '1'
-    assert_select_in result, 'a[href=?]', "/groups/#{group.id}/autocomplete_for_user.js?page=2", :text => '2'
+  def test_address_with_punycode_tld_should_be_valid
+    email = EmailAddress.new(address: 'jsmith@example.xn--80akhbyknj4f')
+    assert email.valid?
   end
 end

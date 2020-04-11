@@ -579,7 +579,10 @@ module ApplicationHelper
   def principals_check_box_tags(name, principals)
     s = +''
     principals.each do |principal|
-      s << "<label>#{ check_box_tag name, principal.id, false, :id => nil } <span class='name icon icon-#{principal.class.name.downcase}'></span>#{h principal}</label>\n"
+      s << content_tag('label',
+                       check_box_tag(name, principal.id, false, :id => nil) +
+                       (avatar(principal, :size => 16).presence || content_tag('span', nil, :class => "name icon icon-#{principal.class.name.downcase}")) +
+                       principal)
     end
     s.html_safe
   end
@@ -1056,10 +1059,10 @@ module ApplicationHelper
                 url = issue_url(issue, :only_path => only_path, :anchor => anchor)
                 link =
                   if sep == '##'
-                    link_to("#{issue.tracker.name} ##{oid}#{comment_suffix}",
+                    link_to("#{issue.tracker.name} ##{oid}#{comment_suffix}: #{issue.subject}",
                             url,
                             :class => issue.css_classes,
-                            :title => "#{issue.tracker.name}: #{issue.subject.truncate(100)} (#{issue.status.name})") + ": #{issue.subject}"
+                            :title => "#{l(:field_status)}: #{issue.status.name}")
                   else
                     link_to("##{oid}#{comment_suffix}",
                             url,

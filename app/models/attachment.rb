@@ -19,6 +19,7 @@
 
 require "digest"
 require "fileutils"
+require "zip"
 
 class Attachment < ActiveRecord::Base
   include Redmine::SafeAttributes
@@ -343,6 +344,33 @@ class Attachment < ActiveRecord::Base
 
   def self.prune(age=1.day)
     Attachment.where("created_on < ? AND (container_type IS NULL OR container_type = '')", Time.now - age).destroy_all
+  end
+
+  def self.archive_attachments(attachments)
+    attachments = attachments.select(&:readable?)
+    return nil if attachments.blank?
+
+    Zip.unicode_names = true
+    archived_file_names = []
+    buffer = Zip::OutputStream.write_buffer do |zos|
+      attachments.each do |attachment|
+        filename = attachment.filename
+        # rename the file if a file with the same name already exists
+        dup_count = 0
+        while archived_file_names.include?(filename)
+          dup_count += 1
+          extname = File.extname(attachment.filename)
+          basename = File.basename(attachment.filename, extname)
+          filename = "#{basename}(#{dup_count})#{extname}"
+        end
+        zos.put_next_entry(filename)
+        zos << IO.binread(attachment.diskfile)
+        archived_file_names << filename
+      end
+    end
+    buffer.string
+  ensure
+    buffer&.close
   end
 
   # Moves an existing attachment to its target directory

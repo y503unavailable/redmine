@@ -191,6 +191,9 @@ en:
   notice_new_password_must_be_different: The new password must be different from the current password
   notice_import_finished: "%{count} items have been imported"
   notice_import_finished_with_errors: "%{count} out of %{total} items could not be imported"
+  notice_issue_not_closable_by_open_tasks: "This issue cannot be closed because it has at least one open subtask."
+  notice_issue_not_closable_by_blocking_issue: "This issue cannot be closed because it is blocked by at least one open issue."
+  notice_issue_not_reopenable_by_closed_parent_issue: "This issue cannot be reopened because its parent issue is closed."
 
   error_can_t_load_default_data: "Default configuration could not be loaded: %{value}"
   error_scm_not_found: "The entry or revision was not found in the repository."
@@ -210,7 +213,9 @@ en:
   error_workflow_copy_target: 'Please select target tracker(s) and role(s)'
   error_unable_delete_issue_status: 'Unable to delete issue status (%{value})'
   error_unable_to_connect: "Unable to connect (%{value})"
+  error_attachments_too_many: "This file cannot be uploaded because it exceeds the maximum number of files that can be attached simultaneously (%{max_number_of_files})"
   error_attachment_too_big: "This file cannot be uploaded because it exceeds the maximum allowed file size (%{max_size})"
+  error_bulk_download_size_too_big: "These attachments cannot be bulk downloaded because the total file size exceeds the maximum allowed size (%{max_size})"
   error_session_expired: "Your session has expired. Please login again."
   error_token_expired: "This password recovery link has expired, please try again."
   warning_attachments_not_saved: "%{count} file(s) could not be saved."
@@ -398,6 +403,7 @@ en:
   setting_self_registration: Self-registration
   setting_show_custom_fields_on_registration: Show custom fields on registration
   setting_attachment_max_size: Maximum attachment size
+  setting_bulk_download_max_size: Maximum total size for bulk download
   setting_issues_export_limit: Issues export limit
   setting_mail_from: Emission email address
   setting_bcc_recipients: Blind carbon copy recipients (bcc)
@@ -1020,6 +1026,7 @@ en:
   label_users_visibility_all: All active users
   label_users_visibility_members_of_visible_projects: Members of visible projects
   label_edit_attachments: Edit attached files
+  label_download_all_attachments: Download all files
   label_link_copied_issue: Link copied issue
   label_ask: Ask
   label_search_attachments_yes: Search attachment filenames and descriptions
