@@ -590,7 +590,6 @@ az:
   label_open_issues_plural5: açıqdır
   label_optional_description: Təsvir (vacib deyil)
   label_options: Opsiyalar
-  label_overall_activity: Görülən işlərin toplu hesabatı
   label_overview: Baxış
   label_password_lost: Parolun bərpası
   label_permissions_report: Giriş hüquqları üzrə hesabat 
@@ -753,7 +752,6 @@ az:
   notice_feeds_access_key_reseted: Sizin Atom giriş açarınız sıfırlanmışdır.
   notice_file_not_found: Daxil olmağa çalışdığınız səhifə mövcud deyildir və ya silinib.
   notice_locking_conflict: İnformasiya digər istifadəçi tərəfindən yenilənib.
-  notice_no_issue_selected: "Heç bir tapşırıq seçilməyib! Xahiş edirik, redaktə etmək istədiyiniz tapşırığı qeyd edin."
   notice_not_authorized: Sizin bu səhifəyə daxil olmaq hüququnuz yoxdur.
   notice_successful_connection: Qoşulma müvəffəqiyyətlə yerinə yetirilib.
   notice_successful_create: Yaratma müvəffəqiyyətlə yerinə yetirildi.
@@ -998,7 +996,6 @@ az:
   text_zoom_out: Uzaqlaşdırmaq
   text_zoom_in: Yaxınlaşdırmaq
   notice_unable_delete_time_entry: Jurnalın qeydini silmək mümkün deyildir.
-  label_overall_spent_time: Cəmi sərf olunan vaxt
   label_user_mail_option_none: Hadisə yoxdur
   field_member_of_group: Təyin olunmuş qrup 
   field_assigned_to_role: Təyin olunmuş rol
@@ -1421,3 +1418,6 @@ az:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

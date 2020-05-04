@@ -218,7 +218,6 @@ ko:
   notice_email_error: "메일을 전송하는 과정에 오류가 발생했습니다. (%{value})"
   notice_feeds_access_key_reseted: Atom에 접근가능한 열쇠(key)가 생성되었습니다.
   notice_failed_to_save_issues: "저장에 실패하였습니다: 실패 %{count}(선택 %{total}): %{ids}."
-  notice_no_issue_selected: "일감이 선택되지 않았습니다. 수정하기 원하는 일감을 선택하세요"
   notice_account_pending: "계정이 만들어졌으며 관리자 승인 대기중입니다."
   notice_default_data_loaded: 기본값을 성공적으로 읽어들였습니다.
   notice_unable_delete_version: 삭제할 수 없는 버전입니다.
@@ -498,7 +497,6 @@ ko:
   label_last_login: 마지막 접속
   label_registered_on: 등록시각
   label_activity: 작업내역
-  label_overall_activity: 전체 작업내역
   label_user_activity: "%{value}의 작업내역"
   label_new: 새로 만들기
   label_logged_as: '로그인계정:'
@@ -946,7 +944,6 @@ ko:
   text_zoom_out: 더 작게
   text_zoom_in: 더 크게
   notice_unable_delete_time_entry: 시간 기록 항목을 삭제할 수 없습니다.
-  label_overall_spent_time: 총 소요시간
   field_time_entries: 기록된 시간
   project_module_gantt: Gantt 챠트
   project_module_calendar: 달력
@@ -1367,3 +1364,6 @@ ko:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

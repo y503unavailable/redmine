@@ -196,7 +196,6 @@ fi:
   notice_email_error: "Sähköpostilähetyksessä tapahtui virhe (%{value})"
   notice_feeds_access_key_reseted: Atom salasana on nollaantunut.
   notice_failed_to_save_issues: "%{count} Tapahtum(an/ien) tallennus epäonnistui %{total} valitut: %{ids}."
-  notice_no_issue_selected: "Tapahtumia ei ole valittu! Valitse tapahtumat joita haluat muokata."
   notice_account_pending: "Tilisi on luotu ja odottaa ylläpitäjän hyväksyntää."
   notice_default_data_loaded: Vakioasetusten palautus onnistui.
 
@@ -726,7 +725,6 @@ fi:
   label_reverse_chronological_order: Käänteisessä aikajärjestyksessä
   label_preferences: Asetukset
   setting_default_projects_public: Uudet projektit ovat oletuksena julkisia
-  label_overall_activity: Kokonaishistoria
   error_scm_annotate: "Merkintää ei ole tai siihen ei voi lisätä selityksiä."
   text_subprojects_destroy_warning: "Tämän aliprojekti(t): %{value} tullaan myös poistamaan."
   label_and_its_subprojects: "%{value} ja aliprojektit"
@@ -920,7 +918,6 @@ fi:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1350,3 +1347,6 @@ fi:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

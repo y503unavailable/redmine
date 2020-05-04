@@ -217,7 +217,6 @@ sv:
   notice_failed_to_save_issues: "Misslyckades med att spara %{count} ärende(n) på %{total} valda: %{ids}."
   notice_failed_to_save_time_entries: "Misslyckades med att spara %{count} tidloggning(ar) på %{total} valda: %{ids}."
   notice_failed_to_save_members: "Misslyckades med att spara medlem(mar): %{errors}."
-  notice_no_issue_selected: "Inget ärende är markerat! Var vänlig, markera de ärenden du vill ändra."
   notice_account_pending: "Ditt konto skapades och avvaktar nu administratörens godkännande."
   notice_default_data_loaded: Standardkonfiguration inläst.
   notice_unable_delete_version: Denna version var inte möjlig att ta bort.
@@ -596,7 +595,6 @@ sv:
   label_last_login: Senaste inloggning
   label_registered_on: Registrerad
   label_activity: Aktivitet
-  label_overall_activity: All aktivitet
   label_user_activity: "Aktiviteter för %{value}"
   label_new: Ny
   label_logged_as: Inloggad som
@@ -769,7 +767,6 @@ sv:
   label_changes_details: Detaljer om alla ändringar
   label_issue_tracking: Ärendeuppföljning
   label_spent_time: Spenderad tid
-  label_overall_spent_time: Total tid spenderad
   label_f_hour: "%{value} timme"
   label_f_hour_plural: "%{value} timmar"
   label_time_tracking: Tidsuppföljning
@@ -1362,3 +1359,6 @@ sv:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

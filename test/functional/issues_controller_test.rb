@@ -2007,6 +2007,22 @@ class IssuesControllerTest < Redmine::ControllerTest
     end
   end
 
+  def test_index_should_respect_timespan_format
+    with_settings :timespan_format => 'minutes' do
+      get(
+        :index,
+        :params => {
+          :set_filter => 1,
+          :c => %w(estimated_hours total_estimated_hours spent_hours total_spent_hours)
+        }
+      )
+      assert_select 'table.issues tr#issue-1 td.estimated_hours', :text => '200:00'
+      assert_select 'table.issues tr#issue-1 td.total_estimated_hours', :text => '200:00'
+      assert_select 'table.issues tr#issue-1 td.spent_hours', :text => '154:15'
+      assert_select 'table.issues tr#issue-1 td.total_spent_hours', :text => '154:15'
+    end
+  end
+
   def test_show_by_anonymous
     get(:show, :params => {:id => 1})
     assert_response :success
@@ -2977,6 +2993,20 @@ class IssuesControllerTest < Redmine::ControllerTest
 
       assert_select 'ul[class=?]', 'details', :text => /1.00 h/
     end
+  end
+
+  def test_show_should_display_open_badge_for_open_issue
+    get :show, params: {id: 1}
+
+    assert_response :success
+    assert_select 'span.badge.badge-status-open', text: 'open'
+  end
+
+  def test_show_should_display_closed_badge_for_closed_issue
+    get :show, params: {id: 8}
+
+    assert_response :success
+    assert_select 'span.badge.badge-status-closed', text: 'closed'
   end
 
   def test_get_new

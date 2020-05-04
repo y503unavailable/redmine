@@ -192,7 +192,6 @@ et:
   notice_failed_to_save_issues: "%{count} teemat %{total}-st ei õnnestunud salvestada: %{ids}."
   notice_failed_to_save_time_entries: "%{count} ajakulu kannet %{total}-st ei õnnestunud salvestada: %{ids}."
   notice_failed_to_save_members: "Liiget/liikmeid ei õnnestunud salvestada: %{errors}."
-  notice_no_issue_selected: "Ühtegi teemat ei ole valitud! Palun vali teema(d), mida soovid muuta."
   notice_account_pending: "Sinu konto on loodud ja ootab nüüd administraatori kinnitust."
   notice_default_data_loaded: "Algseadistuste laadimine õnnestus."
   notice_unable_delete_version: "Versiooni kustutamine ei õnnestunud."
@@ -548,7 +547,6 @@ et:
   label_last_login: "Viimane ühendus"
   label_registered_on: "Registreeritud"
   label_activity: "Ajalugu"
-  label_overall_activity: "Üldine tegevuste ajalugu"
   label_user_activity: "%{value} tegevuste ajalugu"
   label_new: "Uus"
   label_logged_as: "Sisse logitud kasutajana"
@@ -713,7 +711,6 @@ et:
   label_changes_details: "Kõigi muudatuste üksikasjad"
   label_issue_tracking: "Teemade jälgimine"
   label_spent_time: "Kulutatud aeg"
-  label_overall_spent_time: "Kokku kulutatud aeg"
   label_f_hour: "%{value} tund"
   label_f_hour_plural: "%{value} tundi"
   label_time_tracking: "Ajakulu arvestus"
@@ -1334,3 +1331,6 @@ et:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

@@ -170,7 +170,6 @@ sk:
   notice_email_error: "Pri odosielaní emailu sa vyskytla chyba (%{value})"
   notice_feeds_access_key_reseted: Váš prístupový kľúč k Atomu bol resetovaný.
   notice_failed_to_save_issues: "Nepodarilo sa uložiť %{count} úloh z %{total} vybraných: %{ids}."
-  notice_no_issue_selected: "Nebola vybraná žiadna úloha. Označte prosím úlohy, ktoré chcete upraviť."
   notice_account_pending: "Váš účet bol vytvorený a čaká na schválenie administrátorom."
   notice_default_data_loaded: Predvolená konfigurácia bola úspešne nahraná.
 
@@ -374,7 +373,6 @@ sk:
   label_last_login: Posledné prihlásenie
   label_registered_on: Dátum registrácie
   label_activity: Aktivita
-  label_overall_activity: Celková aktivita
   label_new: Nový
   label_logged_as: Prihlásený ako
   label_environment: Prostredie
@@ -893,7 +891,6 @@ sk:
   text_zoom_out: Oddialiť
   text_zoom_in: Priblížiť
   notice_unable_delete_time_entry: Nie je možné vymazať časový záznam.
-  label_overall_spent_time: Celkový strávený čas
   field_time_entries: Zaznamenaný čas
   project_module_gantt: Ganttov graf
   project_module_calendar: Kalendár
@@ -1318,3 +1315,6 @@ sk:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

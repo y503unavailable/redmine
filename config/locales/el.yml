@@ -172,7 +172,6 @@ el:
   notice_email_error: "Σφάλμα κατά την αποστολή του μηνύματος στο (%{value})"
   notice_feeds_access_key_reseted:  Έγινε επαναφορά στο κλειδί πρόσβασης Atom.
   notice_failed_to_save_issues: "Αποτυχία αποθήκευσης %{count} θεμα(των) από τα %{total} επιλεγμένα: %{ids}."
-  notice_no_issue_selected: "Κανένα θέμα δεν είναι επιλεγμένο! Παρακαλούμε, ελέγξτε τα θέματα που θέλετε να επεξεργαστείτε."
   notice_account_pending: "Ο λογαριασμός σας έχει δημιουργηθεί και είναι σε στάδιο έγκρισης από τον διαχειριστή."
   notice_default_data_loaded: Οι προεπιλεγμένες ρυθμίσεις φορτώθηκαν επιτυχώς.
   notice_unable_delete_version: Αδύνατον να διαγραφεί η έκδοση.
@@ -455,7 +454,6 @@ el:
   label_last_login: Τελευταία σύνδεση
   label_registered_on: Εγγράφηκε την
   label_activity: Δραστηριότητα
-  label_overall_activity: Συνολική δραστηριότητα
   label_user_activity: "δραστηριότητα του %{value}"
   label_new: Νέο
   label_logged_as: Σύνδεδεμένος ως
@@ -899,7 +897,6 @@ el:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1329,3 +1326,6 @@ el:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

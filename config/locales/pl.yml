@@ -520,7 +520,6 @@ pl:
   label_open_issues_plural: otwarte
   label_optional_description: Opcjonalny opis
   label_options: Opcje
-  label_overall_activity: Ogólna aktywność
   label_overview: Przegląd
   label_password_lost: Zapomniane hasło
   label_permissions: Uprawnienia
@@ -653,7 +652,6 @@ pl:
   notice_feeds_access_key_reseted: Twój klucz dostępu do kanału Atom został zresetowany.
   notice_file_not_found: Strona do której próbujesz się dostać nie istnieje lub została usunięta.
   notice_locking_conflict: Dane poprawione przez innego użytkownika.
-  notice_no_issue_selected: "Nie wybrano zagadnienia! Zaznacz zagadnienie, które chcesz edytować."
   notice_not_authorized: Nie posiadasz autoryzacji do oglądania tej strony.
   notice_successful_connection: Udane nawiązanie połączenia.
   notice_successful_create: Utworzenie zakończone pomyślnie.
@@ -916,7 +914,6 @@ pl:
   text_zoom_out: Zmniejsz
   text_zoom_in: Powiększ
   notice_unable_delete_time_entry: Nie można usunąć wpisu z dziennika.
-  label_overall_spent_time: Przepracowany czas
   field_time_entries: Dziennik
   project_module_gantt: Diagram Gantta
   project_module_calendar: Kalendarz
@@ -1342,3 +1339,6 @@ pl:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

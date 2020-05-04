@@ -195,7 +195,6 @@ ja:
   notice_api_access_key_reseted: APIアクセスキーを初期化しました。
   notice_failed_to_save_issues: "全%{total}件中%{count}件のチケットが保存できませんでした: %{ids}。"
   notice_failed_to_save_members: "メンバーの保存に失敗しました: %{errors}。"
-  notice_no_issue_selected: "チケットが選択されていません! 更新対象のチケットを選択してください。"
   notice_account_pending: アカウントを作成しました。システム管理者の承認待ちです。
   notice_default_data_loaded: デフォルト設定をロードしました。
   notice_unable_delete_version: バージョンを削除できません
@@ -534,7 +533,6 @@ ja:
   label_last_login: 最近の接続
   label_registered_on: 登録日
   label_activity: 活動
-  label_overall_activity: すべての活動
   label_user_activity: "%{value} の活動"
   label_new: 新しく作成
   label_logged_as: ログイン中：
@@ -696,7 +694,6 @@ ja:
   label_changes_details: 全変更の詳細
   label_issue_tracking: チケットトラッキング
   label_spent_time: 作業時間
-  label_overall_spent_time: すべての作業時間
   label_f_hour: "%{value}時間"
   label_f_hour_plural: "%{value}時間"
   label_time_tracking: 時間管理
@@ -1330,3 +1327,6 @@ ja:
   setting_bulk_download_max_size: 一括ダウンロードの合計ファイルサイズの上限
   label_download_all_attachments: 一括ダウンロード
   error_attachments_too_many: このファイルはアップロードできません。同時にアップロードできるファイル数の上限(%{max_number_of_files})を超えています。
+  setting_email_domains_allowed: 許可するメールアドレスのドメイン
+  setting_email_domains_denied: 禁止するメールアドレスのドメイン
+  field_passwd_changed_on: パスワード更新日

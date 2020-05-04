@@ -20,6 +20,7 @@
 module IssuesHelper
   include ApplicationHelper
   include Redmine::Export::PDF::IssuesPdfHelper
+  include IssueStatusesHelper
 
   def issue_list(issues, &block)
     ancestors = []
@@ -364,13 +365,11 @@ module IssuesHelper
   # on the new issue form
   def users_for_new_issue_watchers(issue)
     users = issue.watcher_users.select{|u| u.status == User::STATUS_ACTIVE}
-    project = issue.project
-    scope_users = project.users
-    scope_groups = project.principals.merge(Group.givable)
-    if scope_users.count + scope_groups.count <= 20
-      users = (users + scope_users.sort + scope_groups.sort).uniq
+    assignable_watchers = issue.project.principals.assignable_watchers.limit(21)
+    if assignable_watchers.size <= 20
+      users += assignable_watchers.sort
     end
-    users
+    users.uniq
   end
 
   def email_issue_attributes(issue, user, html)

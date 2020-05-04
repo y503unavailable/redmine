@@ -163,6 +163,21 @@ class ActiveSupport::TestCase
     File.directory?(repository_path(vendor))
   end
 
+  def self.is_mysql_utf8mb4
+    return false unless Redmine::Database.mysql?
+    character_sets = %w[
+      character_set_connection
+      character_set_database
+      character_set_results
+      character_set_server
+    ]
+    ActiveRecord::Base.connection.
+        select_rows('show variables like "character%"').each do |r|
+      return false if character_sets.include?(r[0]) && r[1] != "utf8mb4"
+    end
+    return true
+  end
+
   def repository_path_hash(arr)
     hs = {}
     hs[:path]  = arr.join("/")
@@ -171,15 +186,15 @@ class ActiveSupport::TestCase
   end
 
   def sqlite?
-    ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
+    Redmine::Database.sqlite?
   end
 
   def mysql?
-    ActiveRecord::Base.connection.adapter_name =~ /mysql/i
+    Redmine::Database.mysql?
   end
 
   def postgresql?
-    ActiveRecord::Base.connection.adapter_name =~ /postgresql/i
+    Redmine::Database.postgresql?
   end
 
   def quoted_date(date)
@@ -223,7 +238,7 @@ class ActiveSupport::TestCase
   end
 
   def assert_select_in(text, *args, &block)
-    d = Nokogiri::HTML(CGI::unescapeHTML(String.new(text))).root
+    d = Nokogiri::HTML(CGI.unescapeHTML(String.new(text))).root
     assert_select(d, *args, &block)
   end
 

@@ -261,7 +261,6 @@
   notice_failed_to_save_issues: "無法儲存 %{count} 議題到下列所選取的 %{total} 個項目中： %{ids}。"
   notice_failed_to_save_time_entries: "無法儲存 %{count} 個工時到下列所選取的 %{total} 個項目中： %{ids}。"
   notice_failed_to_save_members: "成員儲存失敗: %{errors}."
-  notice_no_issue_selected: "未選擇任何議題！請勾選您想要編輯的議題。"
   notice_account_pending: "您的帳號已經建立，正在等待管理員的審核。"
   notice_default_data_loaded: 預設組態已載入成功。
   notice_unable_delete_version: 無法刪除版本。
@@ -705,7 +704,6 @@
   label_last_login: 最近一次連線
   label_registered_on: 註冊於
   label_activity: 活動
-  label_overall_activity: 整體活動
   label_user_activity: "%{value} 的活動"
   label_new: 建立新的...
   label_logged_as: 目前登入
@@ -887,7 +885,6 @@
   label_issue_tracking: 議題追蹤
   label_spent_time: 耗用工時
   label_total_spent_time: 耗用工時總計
-  label_overall_spent_time: 整體耗用工時
   label_f_hour: "%{value} 小時"
   label_f_hour_plural: "%{value} 小時"
   label_f_hour_short: "%{value} 小時"
@@ -1379,3 +1376,6 @@
   setting_bulk_download_max_size: 大量下載檔案大小總計最大值
   label_download_all_attachments: 下載所有檔案
   error_attachments_too_many: 此檔案無法被上傳，因為已經超出允許同時上傳之附加檔案數量的最大值 (%{max_number_of_files}) 。
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

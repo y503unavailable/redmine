@@ -169,7 +169,6 @@ th:
   notice_email_error: "เกิดความผิดพลาดขณะกำส่งอีเมล์ (%{value})"
   notice_feeds_access_key_reseted: Atom access key ของคุณถูก reset แล้ว.
   notice_failed_to_save_issues: "%{count} ปัญหาจาก %{total} ปัญหาที่ถูกเลือกไม่สามารถจัดเก็บ: %{ids}."
-  notice_no_issue_selected: "ไม่มีปัญหาที่ถูกเลือก! กรุณาเลือกปัญหาที่คุณต้องการแก้ไข."
   notice_account_pending: "บัญชีของคุณสร้างเสร็จแล้ว ขณะนี้รอการอนุมัติจากผู้บริหารจัดการ."
   notice_default_data_loaded: ค่าเริ่มต้นโหลดเสร็จแล้ว.
 
@@ -375,7 +374,6 @@ th:
   label_registered_on: ลงทะเบียนเมื่อ
   label_activity: กิจกรรม
   label_activity_plural: กิจกรรม
-  label_overall_activity: กิจกรรมโดยรวม
   label_new: ใหม่
   label_logged_as: เข้าระบบในชื่อ
   label_environment: สภาพแวดล้อม
@@ -895,7 +893,6 @@ th:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1325,3 +1322,6 @@ th:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

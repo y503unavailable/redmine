@@ -600,7 +600,6 @@ ru:
   label_open_issues_plural5: открыто
   label_optional_description: Описание (необязательно)
   label_options: Опции
-  label_overall_activity: Сводный отчёт действий
   label_overview: Обзор
   label_password_lost: Восстановление пароля
   label_permissions_report: Отчёт по правам доступа
@@ -763,7 +762,6 @@ ru:
   notice_feeds_access_key_reseted: Ваш ключ доступа Atom был сброшен.
   notice_file_not_found: Страница, на которую Вы пытаетесь зайти, не существует или удалена.
   notice_locking_conflict: Информация обновлена другим пользователем.
-  notice_no_issue_selected: "Не выбрано ни одной задачи! Пожалуйста, отметьте задачи, которые Вы хотите отредактировать."
   notice_not_authorized: У Вас нет прав для посещения данной страницы.
   notice_successful_connection: Подключение успешно установлено.
   notice_successful_create: Создание успешно.
@@ -1008,7 +1006,6 @@ ru:
   text_zoom_out: Отдалить
   text_zoom_in: Приблизить
   notice_unable_delete_time_entry: Невозможно удалить запись журнала.
-  label_overall_spent_time: Всего трудозатрат
   label_user_mail_option_none: Нет событий
   field_member_of_group: Группа назначенного
   field_assigned_to_role: Роль назначенного
@@ -1415,3 +1412,6 @@ ru:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

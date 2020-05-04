@@ -179,7 +179,6 @@ cs:
   notice_api_access_key_reseted: Váš API přístupový klíč byl resetován.
   notice_failed_to_save_issues: "Chyba při uložení %{count} úkolu(ů) z %{total} vybraných: %{ids}."
   notice_failed_to_save_members: "Nepodařilo se uložit člena(y): %{errors}."
-  notice_no_issue_selected: "Nebyl zvolen žádný úkol. Prosím, zvolte úkoly, které chcete editovat"
   notice_account_pending: "Váš účet byl vytvořen, nyní čeká na schválení administrátorem."
   notice_default_data_loaded: Výchozí konfigurace úspěšně nahrána.
   notice_unable_delete_version: Nemohu odstanit verzi
@@ -504,7 +503,6 @@ cs:
   label_last_login: Poslední přihlášení
   label_registered_on: Registrován
   label_activity: Aktivita
-  label_overall_activity: Celková aktivita
   label_user_activity: "Aktivita uživatele: %{value}"
   label_new: Nový
   label_logged_as: Přihlášen jako
@@ -661,7 +659,6 @@ cs:
   label_changes_details: Detail všech změn
   label_issue_tracking: Sledování úkolů
   label_spent_time: Strávený čas
-  label_overall_spent_time: Celkem strávený čas
   label_f_hour: "%{value} hodina"
   label_f_hour_plural: "%{value} hodin"
   label_time_tracking: Sledování času
@@ -1319,3 +1316,6 @@ cs:
   label_download_all_attachments: Stáhnout všechny soubory
   error_attachments_too_many: Tento soubor nemůže být nahrán, protože byl překročen maximální
     počet souborů, které mohou být současně přiloženy (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

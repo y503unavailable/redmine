@@ -174,7 +174,6 @@ sr:
   notice_api_access_key_reseted: Ваш API приступни кључ је поништен.
   notice_failed_to_save_issues: "Неуспешно снимање %{count} проблема од %{total} одабраних: %{ids}."
   notice_failed_to_save_members: "Неуспешно снимање члана(ова): %{errors}."
-  notice_no_issue_selected: "Ни један проблем није одабран! Молимо, одаберите проблем који желите да мењате."
   notice_account_pending: "Ваш налог је креиран и чека на одобрење администратора."
   notice_default_data_loaded: Подразумевано конфигурисање је успешно учитано.
   notice_unable_delete_version: Верзију је немогуће избрисати.
@@ -487,7 +486,6 @@ sr:
   label_last_login: Последње повезивање
   label_registered_on: Регистрован
   label_activity: Активност
-  label_overall_activity: Целокупна активност
   label_user_activity: "Активност корисника %{value}"
   label_new: Ново
   label_logged_as: Пријављени сте као
@@ -644,7 +642,6 @@ sr:
   label_changes_details: Детаљи свих промена
   label_issue_tracking: Праћење проблема
   label_spent_time: Утрошено време
-  label_overall_spent_time: Целокупно утрошено време
   label_f_hour: "%{value} сат"
   label_f_hour_plural: "%{value} сати"
   label_time_tracking: Праћење времена
@@ -1330,3 +1327,6 @@ sr:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

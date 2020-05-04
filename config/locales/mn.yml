@@ -172,7 +172,6 @@ mn:
   notice_feeds_access_key_reseted: Таны Atom хандалтын түлхүүрийг дахин эхлүүллээ.
   notice_api_access_key_reseted: Your API access key was reset.
   notice_failed_to_save_issues: "%{total} асуудал сонгогдсоноос %{count} асуудлыг нь хадгалахад алдаа гарлаа: %{ids}."
-  notice_no_issue_selected: "Ямар ч асуудал сонгогдоогүй байна! Засварлах асуудлуудаа сонгоно уу."
   notice_account_pending: "Таны дансыг үүсгэж дууслаа, администратор баталгаажуулах хүртэл хүлээнэ үү."
   notice_default_data_loaded: Стандарт тохиргоог амжилттай ачааллаа.
   notice_unable_delete_version: Хувилбарыг устгах боломжгүй.
@@ -477,7 +476,6 @@ mn:
   label_last_login: Сүүлийн холболт
   label_registered_on: Бүртгүүлсэн огноо
   label_activity: Үйл ажиллагаа
-  label_overall_activity: Ерөнхий үйл ажиллагаа
   label_user_activity: "%{value}-ийн үйл ажиллагаа"
   label_new: Шинэ
   label_logged_as: Холбогдсон нэр
@@ -899,7 +897,6 @@ mn:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1329,3 +1326,6 @@ mn:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

@@ -182,7 +182,6 @@ lt:
   notice_failed_to_save_issues: "Nepavyko išsaugoti %{count} darbo(ų) iš %{total} pasirinktų: %{ids}."
   notice_failed_to_save_time_entries: "Nepavyko išsaugoti %{count} laiko įrašo(ų) iš %{total} pasirinktų: %{ids}."
   notice_failed_to_save_members: "Nepavyko išsaugoti nario(ių): %{errors}."
-  notice_no_issue_selected: "Nepasirinktas nei vienas darbas! Prašom pažymėti darbus, kuriuos norite redaguoti"
   notice_account_pending: "Jūsų paskyra buvo sukurta ir dabar laukiama administratoriaus patvirtinimo."
   notice_default_data_loaded: Numatytoji konfigūracija sėkmingai įkrauta.
   notice_unable_delete_version: Neįmanoma ištrinti versijos.
@@ -600,7 +599,6 @@ lt:
   label_last_login: Paskutinis prisijungimas
   label_registered_on: Užregistruota
   label_activity: Veikla
-  label_overall_activity: Visa veikla
   label_user_activity: "%{value} veikla"
   label_new: Naujas
   label_logged_as: Prisijungęs kaip
@@ -777,7 +775,6 @@ lt:
   label_issue_tracking: Darbų sekimas
   label_spent_time: Dirbtas laikas
   label_total_spent_time: Visas dirbtas laikas
-  label_overall_spent_time: Visas dirbtas laikas
   label_f_hour: "%{value} valanda"
   label_f_hour_plural: "%{value} valandų(-os)"
   label_f_hour_short: "%{value} h"
@@ -1319,3 +1316,6 @@ lt:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

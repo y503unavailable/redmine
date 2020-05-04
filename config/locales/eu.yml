@@ -174,7 +174,6 @@ eu:
   notice_feeds_access_key_reseted: Zure Atom atzipen giltza berrezarri da.
   notice_api_access_key_reseted: Zure API atzipen giltza berrezarri da.
   notice_failed_to_save_issues: "Hautatutako %{total} zereginetatik %{count} ezin izan dira konpondu: %{ids}."
-  notice_no_issue_selected: "Ez da zereginik hautatu! Mesedez, editatu nahi dituzun arazoak markatu."
   notice_account_pending: "Zure kontua sortu da, orain kudeatzailearen onarpenaren zain dago."
   notice_default_data_loaded: Lehenetsitako konfigurazioa ongi kargatu da.
   notice_unable_delete_version: Ezin da bertsioa ezabatu.
@@ -476,7 +475,6 @@ eu:
   label_last_login: Azken konexioa
   label_registered_on: Noiz erregistratuta
   label_activity: Jarduerak
-  label_overall_activity: Jarduera guztiak
   label_user_activity: "%{value}-(r)en jarduerak"
   label_new: Berria
   label_logged_as: "Sartutako erabiltzailea:"
@@ -900,7 +898,6 @@ eu:
   text_zoom_out: Zooma txikiagotu
   text_zoom_in: Zooma handiagotu
   notice_unable_delete_time_entry: "Ezin da hautatutako denbora erregistroa ezabatu."
-  label_overall_spent_time: Igarotako denbora guztira
   field_time_entries: "Denbora erregistratu"
   project_module_gantt: Gantt
   project_module_calendar: Egutegia
@@ -1330,3 +1327,6 @@ eu:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

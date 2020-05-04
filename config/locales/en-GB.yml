@@ -178,7 +178,6 @@ en-GB:
   notice_api_access_key_reseted: Your API access key was reset.
   notice_failed_to_save_issues: "Failed to save %{count} issue(s) on %{total} selected: %{ids}."
   notice_failed_to_save_members: "Failed to save member(s): %{errors}."
-  notice_no_issue_selected: "No issue is selected! Please, check the issues you want to edit."
   notice_account_pending: "Your account was created and is now pending administrator approval."
   notice_default_data_loaded: Default configuration successfully loaded.
   notice_unable_delete_version: Unable to delete version.
@@ -510,7 +509,6 @@ en-GB:
   label_last_login: Last connection
   label_registered_on: Registered on
   label_activity: Activity
-  label_overall_activity: Overall activity
   label_user_activity: "%{value}'s activity"
   label_new: New
   label_logged_as: Logged in as
@@ -671,7 +669,6 @@ en-GB:
   label_changes_details: Details of all changes
   label_issue_tracking: Issue tracking
   label_spent_time: Spent time
-  label_overall_spent_time: Overall spent time
   label_f_hour: "%{value} hour"
   label_f_hour_plural: "%{value} hours"
   label_time_tracking: Time tracking
@@ -1330,3 +1327,6 @@ en-GB:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

@@ -166,7 +166,6 @@ ro:
   notice_email_error: "A intervenit o eroare la trimiterea de email (%{value})"
   notice_feeds_access_key_reseted: Cheia de acces Atom a fost resetată.
   notice_failed_to_save_issues: "Nu s-au putut salva %{count} tichete din cele %{total} selectate: %{ids}."
-  notice_no_issue_selected: "Niciun tichet selectat! Vă rugăm să selectați tichetele pe care doriți să le editați."
   notice_account_pending: "Contul dumneavoastră a fost creat și așteaptă aprobarea administratorului."
   notice_default_data_loaded: S-a încărcat configurația implicită.
   notice_unable_delete_version: Nu se poate șterge versiunea.
@@ -439,7 +438,6 @@ ro:
   label_last_login: Ultima conectare
   label_registered_on: Înregistrat la
   label_activity: Activitate
-  label_overall_activity: Activitate - vedere de ansamblu
   label_user_activity: "Activitate %{value}"
   label_new: Nou
   label_logged_as: Autentificat ca
@@ -894,7 +892,6 @@ ro:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1324,3 +1321,6 @@ ro:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

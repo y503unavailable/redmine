@@ -174,7 +174,6 @@ mk:
   notice_api_access_key_reseted: Вашиот API клуч за пристап е reset.
   notice_failed_to_save_issues: "Failed to save %{count} issue(s) on %{total} selected: %{ids}."
   notice_failed_to_save_members: "Failed to save member(s): %{errors}."
-  notice_no_issue_selected: "No issue is selected! Please, check the issues you want to edit."
   notice_account_pending: "Your account was created and is now pending administrator approval."
   notice_default_data_loaded: Default configuration successfully loaded.
   notice_unable_delete_version: Unable to delete version.
@@ -489,7 +488,6 @@ mk:
   label_last_login: Последна најава
   label_registered_on: Регистриран на
   label_activity: Активност
-  label_overall_activity: Севкупна активност
   label_user_activity: "Активност на %{value}"
   label_new: Нова
   label_logged_as: Најавени сте како
@@ -646,7 +644,6 @@ mk:
   label_changes_details: Детали за сите промени
   label_issue_tracking: Следење на задачи
   label_spent_time: Потрошено време
-  label_overall_spent_time: Вкупно потрошено време
   label_f_hour: "%{value} час"
   label_f_hour_plural: "%{value} часа"
   label_time_tracking: Следење на време
@@ -1329,3 +1326,6 @@ mk:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

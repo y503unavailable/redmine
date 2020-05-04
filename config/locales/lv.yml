@@ -166,7 +166,6 @@ lv:
   notice_feeds_access_key_reseted: Jūsu Atom pieejas atslēga tika iestatīta sākuma stāvoklī.
   notice_api_access_key_reseted: Jūsu API pieejas atslēga tika iestatīta sākuma stāvoklī.
   notice_failed_to_save_issues: "Neizdevās saglabāt %{count} uzdevumu(us) no %{total} izvēlēti: %{ids}."
-  notice_no_issue_selected: "Nav izvēlēts uzdevums! Lūdzu, atzīmējiet uzdevumus, kurus vēlaties rediģēt!"
   notice_account_pending: "Jūsu konts tika izveidots un šobrīd gaida administratora apstiprinājumu."
   notice_default_data_loaded: Noklusētā konfigurācija tika veiksmīgi ielādēta.
   notice_unable_delete_version: Neizdevās dzēst versiju.
@@ -471,7 +470,6 @@ lv:
   label_last_login: Pēdējā pieslēgšanās
   label_registered_on: Reģistrējies
   label_activity: Aktivitāte
-  label_overall_activity: Kopējās aktivitātes
   label_user_activity: "Lietotāja %{value} aktivitātes"
   label_new: Jauns
   label_logged_as: Pieslēdzies kā
@@ -893,7 +891,6 @@ lv:
   text_zoom_out: Zoom out
   text_zoom_in: Zoom in
   notice_unable_delete_time_entry: Unable to delete time log entry.
-  label_overall_spent_time: Overall spent time
   field_time_entries: Log time
   project_module_gantt: Gantt
   project_module_calendar: Calendar
@@ -1323,3 +1320,6 @@ lv:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

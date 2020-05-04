@@ -173,7 +173,6 @@ ar:
   notice_api_access_key_reseted:  كلمة الدخولAPIلقد تم تعديل .
   notice_failed_to_save_issues: "فشل في حفظ الملف"
   notice_failed_to_save_members: "فشل في حفظ الاعضاء: %{errors}."
-  notice_no_issue_selected: "لم يتم تحديد شيء، الرجاء تحديد المسألة التي تريد"
   notice_account_pending: "لقد تم انشاء حسابك، الرجاء الانتظار حتى تتم الموافقة"
   notice_default_data_loaded: تم تحميل التكوين الافتراضي بنجاح
   notice_unable_delete_version: غير قادر على مسح النسخة.
@@ -522,7 +521,6 @@ ar:
   label_last_login: آخر اتصال
   label_registered_on: مسجل على
   label_activity: النشاط
-  label_overall_activity: النشاط العام
   label_user_activity: "قيمة النشاط"
   label_new: جديدة
   label_logged_as: تم تسجيل دخولك
@@ -682,7 +680,6 @@ ar:
   label_changes_details: تفاصيل جميع التغييرات
   label_issue_tracking: تعقب بنود العمل
   label_spent_time: ما تم إنفاقه من الوقت
-  label_overall_spent_time: الوقت الذي تم انفاقه كاملا
   label_f_hour: "%{value} ساعة"
   label_f_hour_plural: "%{value} ساعات"
   label_time_tracking: تعقب الوقت
@@ -1329,3 +1326,6 @@ ar:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed

@@ -489,7 +489,6 @@ nl:
   label_open_issues_plural: open
   label_optional_description: Optionele beschrijving
   label_options: Opties
-  label_overall_activity: Activiteit
   label_overview: Overzicht
   label_password_lost: Wachtwoord vergeten
   label_permissions: Permissies
@@ -621,7 +620,6 @@ nl:
   notice_feeds_access_key_reseted: Uw Atom-toegangssleutel werd opnieuw ingesteld.
   notice_file_not_found: De pagina, die u probeerde te benaderen, bestaat niet of is verwijderd.
   notice_locking_conflict: De gegevens werden reeds eerder gewijzigd door een andere gebruiker.
-  notice_no_issue_selected: "Er is geen issue geselecteerd. Selecteer het issue dat u wil bewerken."
   notice_not_authorized: U heeft niet de juiste machtigingen om deze pagina te raadplegen.
   notice_successful_connection: Verbinding succesvol.
   notice_successful_create: Succesvol aangemaakt.
@@ -881,7 +879,6 @@ nl:
   text_zoom_out: Uitzoomen
   text_zoom_in: Inzoomen
   notice_unable_delete_time_entry: Verwijderen van tijdregistratie is niet mogelijk.
-  label_overall_spent_time: Totaal gespendeerde tijd
   field_time_entries: Tijdregistratie
   project_module_gantt: Gantt
   project_module_calendar: Kalender
@@ -1304,3 +1301,6 @@ nl:
   label_download_all_attachments: Download all files
   error_attachments_too_many: This file cannot be uploaded because it exceeds the maximum
     number of files that can be attached simultaneously (%{max_number_of_files})
+  setting_email_domains_allowed: Allowed email domains
+  setting_email_domains_denied: Disallowed email domains
+  field_passwd_changed_on: Password last changed
