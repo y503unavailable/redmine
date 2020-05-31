@@ -34,9 +34,12 @@ class GanttsControllerTest < Redmine::ControllerTest
     i2 = Issue.find(2)
     i2.update_attribute(:due_date, 1.month.from_now)
     with_settings :gravatar_enabled => '1' do
-      get :show, :params => {
+      get(
+        :show,
+        :params => {
           :project_id => 1
         }
+      )
     end
     assert_response :success
 
@@ -49,8 +52,14 @@ class GanttsControllerTest < Redmine::ControllerTest
         end
         assert_select 'p.contextual' do
           prev_month, next_month = User.current.today.prev_month, User.current.today.next_month
-          assert_select 'a[accesskey="p"][href=?]', project_gantt_path(:project_id => 1, :month => prev_month.month, :year => prev_month.year)
-          assert_select 'a[accesskey="n"][href=?]', project_gantt_path(:project_id => 1, :month => next_month.month, :year => next_month.year)
+          assert_select(
+            'a[accesskey="p"][href=?]',
+            project_gantt_path(:project_id => 1, :month => prev_month.month, :year => prev_month.year)
+          )
+          assert_select(
+            'a[accesskey="n"][href=?]',
+            project_gantt_path(:project_id => 1, :month => next_month.month, :year => next_month.year)
+          )
         end
         assert_select 'p.buttons'
       end
@@ -137,10 +146,14 @@ class GanttsControllerTest < Redmine::ControllerTest
   end
 
   def test_gantt_should_export_to_pdf
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :project_id => 1,
+        :months => 1,
         :format => 'pdf'
       }
+    )
     assert_response :success
     assert_equal 'application/pdf', @response.media_type
     assert @response.body.starts_with?('%PDF')
@@ -157,10 +170,14 @@ class GanttsControllerTest < Redmine::ControllerTest
 
   if Object.const_defined?(:MiniMagick) && convert_installed?
     def test_gantt_should_export_to_png
-      get :show, :params => {
+      get(
+        :show,
+        :params => {
           :project_id => 1,
+          :zoom => 4,
           :format => 'png'
         }
+      )
       assert_response :success
       assert_equal 'image/png', @response.media_type
     end

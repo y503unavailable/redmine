@@ -27,7 +27,7 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
 
   REPOSITORY_PATH = Rails.root.join('tmp/test/mercurial_repository').to_s
   PRJ_ID     = 3
-  NUM_REV    = 36
+  NUM_REV    = 40
 
   def setup
     super
@@ -45,7 +45,7 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
   if Encoding.default_external.to_s != 'UTF-8'
     puts "TODO: Mercurial functional test fails " +
          "when Encoding.default_external is not UTF-8. " +
-         "Current value is '#{Encoding.default_external.to_s}'"
+         "Current value is '#{Encoding.default_external}'"
     def test_fake; assert true end
   elsif File.directory?(REPOSITORY_PATH)
 
@@ -213,12 +213,12 @@ class RepositoriesMercurialControllerTest < Redmine::RepositoryControllerTest
       @project.reload
       assert_equal NUM_REV, @repository.changesets.count
       [
-          'default',
-          'branch-Ü-01',
-          'branch (1)[2]&,%.-3_4',
-          'branch-Ü-00',
-          'test_branch.latin-1',
-          'test-branch-00',
+        'default',
+        'branch-Ü-01',
+        'branch (1)[2]&,%.-3_4',
+        'branch-Ü-00',
+        'test_branch.latin-1',
+        'test-branch-00',
       ].each do |bra|
         get :show, :params => {
             :id => PRJ_ID,

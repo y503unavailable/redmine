@@ -1622,7 +1622,7 @@ module ApplicationHelper
 
   # Returns the javascript tags that are included in the html layout head
   def javascript_heads
-    tags = javascript_include_tag('jquery-2.2.4-ui-1.11.0-ujs-5.2.3', 'tribute-3.7.3.min', 'application', 'responsive')
+    tags = javascript_include_tag('jquery-2.2.4-ui-1.12.1-ujs-5.2.3', 'tribute-5.1.3.min', 'application', 'responsive')
     unless User.current.pref.warn_on_leaving_unsaved == '0'
       tags << "\n".html_safe + javascript_tag("$(window).on('load', function(){ warnLeavingUnsaved('#{escape_javascript l(:text_warn_on_leaving_unsaved)}'); });")
     end
@@ -1698,6 +1698,16 @@ module ApplicationHelper
     messages.map { |message, items|
       "#{message}: " + items.map {|i| "##{i.id}"}.join(', ')
     }
+  end
+
+  def render_if_exist(options = {}, locals = {}, &block)
+    if options[:partial]
+      if lookup_context.exists?(options[:partial], lookup_context.prefixes, true)
+        render(options, locals, &block)
+      end
+    else
+      render(options, locals, &block)
+    end
   end
 
   private

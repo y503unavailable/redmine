@@ -446,18 +446,15 @@ module Redmine
           if show_days
             left = subject_width
             height = g_height + header_height - 1
-            wday = @date_from.cwday
-            (date_to - @date_from + 1).to_i.times do
+            (@date_from..date_to).each do |g_date|
               width =  zoom
-              gc.fill(non_working_week_days.include?(wday) ? '#eee' : 'white')
+              gc.fill(non_working_week_days.include?(g_date.cwday) ? '#eee' : 'white')
               gc.stroke('#ddd')
               gc.strokewidth(1)
               gc.draw('rectangle %d,%d %d,%d' % [
                 left, 2 * header_height, left + width, 2 * header_height + g_height - 1
               ])
               left = left + width
-              wday = wday + 1
-              wday = 1 if wday > 7
             end
           end
           # border
@@ -520,7 +517,7 @@ module Redmine
           end
         end
         g_width = PDF.right_pane_width
-        zoom = (g_width) / (self.date_to - self.date_from + 1)
+        zoom = g_width / (self.date_to - self.date_from + 1)
         g_height = 120
         t_height = g_height + headers_height
         y_start = pdf.GetY
@@ -566,35 +563,29 @@ module Redmine
           left = subject_width
           height = header_height
           day_num = self.date_from
-          wday = self.date_from.cwday
           pdf.SetFontStyle('B', 7)
-          (self.date_to - self.date_from + 1).to_i.times do
+          (self.date_from..self.date_to).each do |g_date|
             width = zoom
             pdf.SetY(y_start + header_height * 2)
             pdf.SetX(left)
-            pdf.SetTextColor(non_working_week_days.include?(wday) ? 150 : 0)
+            pdf.SetTextColor(non_working_week_days.include?(g_date.cwday) ? 150 : 0)
             pdf.RDMCell(width, height, day_num.day.to_s, "LTR", 0, "C")
             left = left + width
             day_num = day_num + 1
-            wday = wday + 1
-            wday = 1 if wday > 7
           end
         end
         # Days headers
         if show_days
           left = subject_width
           height = header_height
-          wday = self.date_from.cwday
           pdf.SetFontStyle('B', 7)
-          (self.date_to - self.date_from + 1).to_i.times do
+          (self.date_from..self.date_to).each do |g_date|
             width = zoom
             pdf.SetY(y_start + header_height * (show_day_num ? 3 : 2))
             pdf.SetX(left)
-            pdf.SetTextColor(non_working_week_days.include?(wday) ? 150 : 0)
-            pdf.RDMCell(width, height, day_name(wday).first, "LTR", 0, "C")
+            pdf.SetTextColor(non_working_week_days.include?(g_date.cwday) ? 150 : 0)
+            pdf.RDMCell(width, height, day_name(g_date.cwday).first, "LTR", 0, "C")
             left = left + width
-            wday = wday + 1
-            wday = 1 if wday > 7
           end
         end
         pdf.SetY(y_start)
