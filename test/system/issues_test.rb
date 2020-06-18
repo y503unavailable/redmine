@@ -238,7 +238,7 @@ class IssuesSystemTest < ApplicationSystemTestCase
     log_user('jsmith', 'jsmith')
     visit '/issues/1'
     page.accept_confirm /Are you sure/ do
-      page.first('#content a.icon-del').click
+      first('#content a.icon-del').click
     end
   end
 
@@ -273,7 +273,7 @@ class IssuesSystemTest < ApplicationSystemTestCase
     visit '/issues'
     assert page.has_css?('tr#issue-1')
     find('tr#issue-1 td.updated_on').click
-    page.execute_script "$('tr#issue-1 td.updated_on').trigger('contextmenu');"
+    find('tr#issue-1 td.updated_on').right_click
     assert_difference 'Watcher.count' do
       within('#context-menu') do
         click_link 'Watch'
@@ -292,7 +292,7 @@ class IssuesSystemTest < ApplicationSystemTestCase
     assert page.has_css?('tr#issue-4')
     find('tr#issue-1 input[type=checkbox]').click
     find('tr#issue-4 input[type=checkbox]').click
-    page.execute_script "$('tr#issue-1 td.updated_on').trigger('contextmenu');"
+    find('tr#issue-1 td.updated_on').right_click
     assert_difference 'Watcher.count', 2 do
       within('#context-menu') do
         click_link 'Watch'
@@ -304,6 +304,27 @@ class IssuesSystemTest < ApplicationSystemTestCase
     end
     assert Issue.find(1).watched_by?(User.find_by_login('jsmith'))
     assert Issue.find(4).watched_by?(User.find_by_login('jsmith'))
+  end
+
+  def test_bulk_update_issues
+    log_user('jsmith', 'jsmith')
+    visit '/issues'
+    issue1 = Issue.find(1)
+    issue4 = Issue.find(4)
+    assert_equal 1, issue1.reload.status.id
+    assert_equal 1, issue4.reload.status.id
+    assert page.has_css?('tr#issue-1')
+    assert page.has_css?('tr#issue-4')
+    find('tr#issue-1 input[type=checkbox]').click
+    find('tr#issue-4 input[type=checkbox]').click
+    find('tr#issue-1 td.updated_on').right_click
+    within('#context-menu') do
+      click_link 'Status'
+      click_link 'Closed'
+    end
+    assert page.has_css?('#flash_notice')
+    assert_equal 5, issue1.reload.status.id
+    assert_equal 5, issue4.reload.status.id
   end
 
   def test_issue_list_with_default_totalable_columns

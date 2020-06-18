@@ -509,7 +509,7 @@ class MailHandlerTest < ActiveSupport::TestCase
               :allow_override => 'is_private,tracker,category,priority'
             )
     assert issue.is_a?(Issue)
-    refute issue.new_record?
+    assert_not issue.new_record?
     issue.reload
     assert_equal 'New ticket on a given project', issue.subject
     assert issue.is_private
@@ -1100,7 +1100,7 @@ class MailHandlerTest < ActiveSupport::TestCase
       assert_issue_created(issue)
       assert issue.description.include?('This paragraph is before delimiters')
       assert issue.description.include?('--- This line starts with a delimiter')
-      assert !issue.description.match(/^---#{"\u00A0"}$/)
+      assert !issue.description.match(/^---\u00A0$/)
       assert !issue.description.include?('This paragraph is after the delimiter')
     end
   end
@@ -1277,9 +1277,25 @@ class MailHandlerTest < ActiveSupport::TestCase
   end
 
   def test_safe_receive_should_rescue_exceptions_and_return_false
-    MailHandler.stubs(:receive).raises(StandardError.new "Something went wrong")
+    MailHandler.stubs(:receive).raises(StandardError.new("Something went wrong"))
 
     assert_equal false, MailHandler.safe_receive
+  end
+
+  def test_smine_signature
+    issue = submit_email('smime_signature.eml', :issue => {:project => 'onlinestore'})
+    assert issue.is_a?(Issue)
+    assert !issue.new_record?
+    issue.reload
+    assert_equal 'Self-Signed S/MIME signature', issue.subject
+    assert_equal User.find_by_login('jsmith'), issue.author
+    assert_equal Project.find(2), issue.project
+    assert_equal 'smime.sh.txt describes how to create Self-Signed S/MIME Certs.', issue.description
+    assert_equal 2, issue.attachments.size
+    assert_equal 'smime.sh.txt', issue.attachments[0].filename
+    assert_equal 'text/plain', issue.attachments[0].content_type
+    assert_equal 'smime.p7s', issue.attachments[1].filename
+    assert_equal 'application/x-pkcs7-signature', issue.attachments[1].content_type
   end
 
   private

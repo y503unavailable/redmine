@@ -426,10 +426,19 @@ module ApplicationHelper
         if controller.controller_name == 'wiki' && controller.action_name == 'export'
           href = "##{page.title}"
         else
-          href = {:controller => 'wiki', :action => 'show', :project_id => page.project, :id => page.title, :version => nil}
+          href = {:controller => 'wiki', :action => 'show',
+                  :project_id => page.project, :id => page.title, :version => nil}
         end
-        content << link_to(h(page.pretty_title), href,
-                           :title => (options[:timestamp] && page.updated_on ? l(:label_updated_time, distance_of_time_in_words(Time.now, page.updated_on)) : nil))
+        content <<
+          link_to(
+            h(page.pretty_title),
+            href,
+            :title => (if options[:timestamp] && page.updated_on
+                         l(:label_updated_time, distance_of_time_in_words(Time.now, page.updated_on))
+                       else
+                         nil
+                       end)
+          )
         content << "\n" + render_page_hierarchy(pages, page.id, options) if pages[page.id]
         content << "</li>\n"
       end
@@ -1622,7 +1631,7 @@ module ApplicationHelper
 
   # Returns the javascript tags that are included in the html layout head
   def javascript_heads
-    tags = javascript_include_tag('jquery-2.2.4-ui-1.12.1-ujs-5.2.3', 'tribute-5.1.3.min', 'application', 'responsive')
+    tags = javascript_include_tag('jquery-3.5.1-ui-1.12.1-ujs-5.2.3', 'tribute-5.1.3.min', 'application', 'responsive')
     unless User.current.pref.warn_on_leaving_unsaved == '0'
       tags << "\n".html_safe + javascript_tag("$(window).on('load', function(){ warnLeavingUnsaved('#{escape_javascript l(:text_warn_on_leaving_unsaved)}'); });")
     end
