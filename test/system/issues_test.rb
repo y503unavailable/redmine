@@ -271,9 +271,13 @@ class IssuesSystemTest < ApplicationSystemTestCase
   def test_watch_issue_via_context_menu
     log_user('jsmith', 'jsmith')
     visit '/issues'
+    jsmith = User.find_by_login('jsmith')
+    issue1 = Issue.find(1)
+    assert_not issue1.reload.watched_by?(jsmith)
     assert page.has_css?('tr#issue-1')
     find('tr#issue-1 td.updated_on').click
     find('tr#issue-1 td.updated_on').right_click
+    assert page.has_css?('#context-menu .issue-1-watcher.icon-fav-off')
     assert_difference 'Watcher.count' do
       within('#context-menu') do
         click_link 'Watch'
@@ -282,17 +286,23 @@ class IssuesSystemTest < ApplicationSystemTestCase
       assert page.has_css?('#context-menu .issue-1-watcher.icon-fav')
       assert page.has_css?('tr#issue-1')
     end
-    assert Issue.find(1).watched_by?(User.find_by_login('jsmith'))
+    assert issue1.reload.watched_by?(jsmith)
   end
 
   def test_bulk_watch_issues_via_context_menu
     log_user('jsmith', 'jsmith')
     visit '/issues'
+    jsmith = User.find_by_login('jsmith')
+    issue1 = Issue.find(1)
+    issue4 = Issue.find(4)
+    assert_not issue1.reload.watched_by?(jsmith)
+    assert_not issue4.reload.watched_by?(jsmith)
     assert page.has_css?('tr#issue-1')
     assert page.has_css?('tr#issue-4')
     find('tr#issue-1 input[type=checkbox]').click
     find('tr#issue-4 input[type=checkbox]').click
     find('tr#issue-1 td.updated_on').right_click
+    assert page.has_css?('#context-menu .issue-bulk-watcher.icon-fav-off')
     assert_difference 'Watcher.count', 2 do
       within('#context-menu') do
         click_link 'Watch'
@@ -302,8 +312,8 @@ class IssuesSystemTest < ApplicationSystemTestCase
       assert page.has_css?('tr#issue-1')
       assert page.has_css?('tr#issue-4')
     end
-    assert Issue.find(1).watched_by?(User.find_by_login('jsmith'))
-    assert Issue.find(4).watched_by?(User.find_by_login('jsmith'))
+    assert issue1.reload.watched_by?(jsmith)
+    assert issue4.reload.watched_by?(jsmith)
   end
 
   def test_bulk_update_issues
@@ -325,6 +335,132 @@ class IssuesSystemTest < ApplicationSystemTestCase
     assert page.has_css?('#flash_notice')
     assert_equal 5, issue1.reload.status.id
     assert_equal 5, issue4.reload.status.id
+  end
+
+  def test_bulk_edit
+    log_user('jsmith', 'jsmith')
+    visit '/issues'
+    issue1 = Issue.find(1)
+    issue4 = Issue.find(4)
+    assert_equal 1, issue1.reload.status.id
+    assert_equal 1, issue4.reload.status.id
+    assert page.has_css?('tr#issue-1')
+    assert page.has_css?('tr#issue-4')
+    find('tr#issue-1 input[type=checkbox]').click
+    find('tr#issue-4 input[type=checkbox]').click
+    find('tr#issue-1 td.updated_on').right_click
+    within('#context-menu') do
+      click_link 'Edit'
+    end
+    assert_current_path '/issues/bulk_edit', :ignore_query => true
+    submit_buttons = page.all('input[type=submit]')
+    assert_equal 1, submit_buttons.size
+    assert_equal 'Submit', submit_buttons[0].value
+
+    page.find('#issue_status_id').select('Assigned')
+    assert_no_difference 'Issue.count' do
+      submit_buttons[0].click
+      # wait for ajax response
+      assert page.has_css?('#flash_notice')
+      assert_current_path '/issues', :ignore_query => true
+    end
+    assert_equal 2, issue1.reload.status.id
+    assert_equal 2, issue4.reload.status.id
+
+    assert page.has_css?('tr#issue-1')
+    assert page.has_css?('tr#issue-4')
+    find('tr#issue-1 input[type=checkbox]').click
+    find('tr#issue-4 input[type=checkbox]').click
+    find('tr#issue-1 td.updated_on').right_click
+    within('#context-menu') do
+      click_link 'Edit'
+    end
+    assert_current_path '/issues/bulk_edit', :ignore_query => true
+    submit_buttons = page.all('input[type=submit]')
+    assert_equal 1, submit_buttons.size
+    assert_equal 'Submit', submit_buttons[0].value
+
+    page.find('#issue_project_id').select('OnlineStore')
+    # wait for ajax response
+    assert page.has_select?('issue_project_id', {:selected => 'OnlineStore'})
+
+    submit_buttons = page.all('input[type=submit]')
+    assert_equal 2, submit_buttons.size
+    assert_equal 'Move', submit_buttons[0].value
+    assert_equal 'Move and follow', submit_buttons[1].value
+
+    page.find('#issue_status_id').select('Feedback')
+    assert_no_difference 'Issue.count' do
+      submit_buttons[1].click
+      # wait for ajax response
+      assert page.has_css?('#flash_notice')
+      assert_current_path '/projects/onlinestore/issues', :ignore_query => true
+    end
+
+    issue1.reload
+    issue4.reload
+    assert_equal 2, issue1.project.id
+    assert_equal 4, issue1.status.id
+    assert_equal 2, issue4.project.id
+    assert_equal 4, issue4.status.id
+  end
+
+  def test_bulk_copy
+    log_user('jsmith', 'jsmith')
+    visit '/issues'
+    assert page.has_css?('tr#issue-1')
+    assert page.has_css?('tr#issue-4')
+    find('tr#issue-1 input[type=checkbox]').click
+    find('tr#issue-4 input[type=checkbox]').click
+    find('tr#issue-1 td.updated_on').right_click
+    within('#context-menu') do
+      click_link 'Copy'
+    end
+    assert_current_path '/issues/bulk_edit', :ignore_query => true
+    submit_buttons = page.all('input[type=submit]')
+    assert_equal 'Copy', submit_buttons[0].value
+
+    page.find('#issue_priority_id').select('Low')
+    assert_difference 'Issue.count', 2 do
+      submit_buttons[0].click
+      # wait for ajax response
+      assert page.has_css?('#flash_notice')
+      assert_current_path '/issues', :ignore_query => true
+    end
+
+    copies = Issue.order('id DESC').limit(2)
+    assert_equal 4, copies[0].priority.id
+    assert_equal 4, copies[1].priority.id
+
+    assert page.has_css?('tr#issue-1')
+    assert page.has_css?('tr#issue-4')
+    find('tr#issue-1 input[type=checkbox]').click
+    find('tr#issue-4 input[type=checkbox]').click
+    find('tr#issue-1 td.updated_on').right_click
+    within('#context-menu') do
+      click_link 'Copy'
+    end
+    assert_current_path '/issues/bulk_edit', :ignore_query => true
+
+    page.find('#issue_project_id').select('OnlineStore')
+    # wait for ajax response
+    assert page.has_select?('issue_project_id', {:selected => 'OnlineStore'})
+
+    submit_buttons = page.all('input[type=submit]')
+    assert_equal 2, submit_buttons.size
+    assert_equal 'Copy', submit_buttons[0].value
+    assert_equal 'Copy and follow', submit_buttons[1].value
+    page.find('#issue_priority_id').select('High')
+    assert_difference 'Issue.count', 2 do
+      submit_buttons[1].click
+      # wait for ajax response
+      assert page.has_css?('#flash_notice')
+      assert_current_path '/projects/onlinestore/issues', :ignore_query => true
+    end
+
+    copies = Issue.order('id DESC').limit(2)
+    assert_equal 6, copies[0].priority.id
+    assert_equal 6, copies[1].priority.id
   end
 
   def test_issue_list_with_default_totalable_columns
@@ -351,6 +487,7 @@ class IssuesSystemTest < ApplicationSystemTestCase
     log_user('admin', 'admin')
 
     visit '/issues/1'
+    assert page.first('#journal-2-notes').has_content?('Some notes with Redmine links')
     # Click on the edit button
     page.first('#change-2 a.icon-edit').click
     # Check that the textarea is displayed
@@ -365,7 +502,7 @@ class IssuesSystemTest < ApplicationSystemTestCase
     # Save
     click_on 'Save'
 
-    sleep 0.2
+    assert page.first('#journal-2-notes').has_content?('Updated notes')
     assert_equal 'Updated notes', Journal.find(2).notes
   end
 

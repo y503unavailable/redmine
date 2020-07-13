@@ -235,7 +235,7 @@ class Query < ActiveRecord::Base
 
   validates_presence_of :name
   validates_length_of :name, :maximum => 255
-  validates :visibility, :inclusion => { :in => [VISIBILITY_PUBLIC, VISIBILITY_ROLES, VISIBILITY_PRIVATE] }
+  validates :visibility, :inclusion => {:in => [VISIBILITY_PUBLIC, VISIBILITY_ROLES, VISIBILITY_PRIVATE]}
   validate :validate_query_filters
   validate do |query|
     errors.add(:base, l(:label_role_plural) + ' ' + l('activerecord.errors.messages.blank')) if query.visibility == VISIBILITY_ROLES && roles.blank?
@@ -446,9 +446,13 @@ class Query < ActiveRecord::Base
       if values_for(field)
         case type_for(field)
         when :integer
-          add_filter_error(field, :invalid) if values_for(field).detect {|v| v.present? && !/\A[+-]?\d+(,[+-]?\d+)*\z/.match?(v) }
+          if values_for(field).detect {|v| v.present? && !/\A[+-]?\d+(,[+-]?\d+)*\z/.match?(v)}
+            add_filter_error(field, :invalid)
+          end
         when :float
-          add_filter_error(field, :invalid) if values_for(field).detect {|v| v.present? && !/\A[+-]?\d+(\.\d*)?\z/.match?(v) }
+          if values_for(field).detect {|v| v.present? && !/\A[+-]?\d+(\.\d*)?\z/.match?(v)}
+            add_filter_error(field, :invalid)
+          end
         when :date, :date_past
           case operator_for(field)
           when "=", ">=", "<=", "><"
@@ -456,7 +460,9 @@ class Query < ActiveRecord::Base
               v.present? && (!/\A\d{4}-\d{2}-\d{2}(T\d{2}((:)?\d{2}){0,2}(Z|\d{2}:?\d{2})?)?\z/.match?(v) || parse_date(v).nil?)
             }
           when ">t-", "<t-", "t-", ">t+", "<t+", "t+", "><t+", "><t-"
-            add_filter_error(field, :invalid) if values_for(field).detect {|v| v.present? && !/^\d+$/.match?(v) }
+            if values_for(field).detect {|v| v.present? && !/^\d+$/.match?(v)}
+              add_filter_error(field, :invalid)
+            end
           end
         end
       end
@@ -540,7 +546,7 @@ class Query < ActiveRecord::Base
   end
 
   def subproject_values
-    project.descendants.visible.collect{|s| [s.name, s.id.to_s] }
+    project.descendants.visible.collect{|s| [s.name, s.id.to_s]}
   end
 
   def principals
@@ -568,7 +574,9 @@ class Query < ActiveRecord::Base
   def author_values
     author_values = []
     author_values << ["<< #{l(:label_me)} >>", "me"] if User.current.logged?
-    author_values += users.sort_by(&:status).collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")] }
+    author_values +=
+      users.sort_by(&:status).
+        collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")]}
     author_values << [l(:label_user_anonymous), User.anonymous.id.to_s]
     author_values
   end
@@ -576,7 +584,9 @@ class Query < ActiveRecord::Base
   def assigned_to_values
     assigned_to_values = []
     assigned_to_values << ["<< #{l(:label_me)} >>", "me"] if User.current.logged?
-    assigned_to_values += (Setting.issue_group_assignment? ? principals : users).sort_by(&:status).collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")] }
+    assigned_to_values +=
+      (Setting.issue_group_assignment? ? principals : users).sort_by(&:status).
+        collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")]}
     assigned_to_values
   end
 
@@ -587,7 +597,8 @@ class Query < ActiveRecord::Base
     else
       versions = Version.visible.to_a
     end
-    Version.sort_by_status(versions).collect{|s| ["#{s.project.name} - #{s.name}", s.id.to_s, l("version_status_#{s.status}")] }
+    Version.sort_by_status(versions).
+      collect{|s| ["#{s.project.name} - #{s.name}", s.id.to_s, l("version_status_#{s.status}")]}
   end
 
   # Returns a scope of issue statuses that are available as columns for filters
@@ -602,7 +613,11 @@ class Query < ActiveRecord::Base
 
   def watcher_values
     watcher_values = [["<< #{l(:label_me)} >>", "me"]]
-    watcher_values += principals.sort_by(&:status).collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")] } if User.current.allowed_to?(:view_issue_watchers, self.project)
+    if User.current.allowed_to?(:view_issue_watchers, self.project)
+      watcher_values +=
+        principals.sort_by(&:status).
+          collect{|s| [s.name, s.id.to_s, l("status_#{User::LABEL_BY_STATUS[s.status]}")]}
+    end
     watcher_values
   end
 
@@ -740,7 +755,7 @@ class Query < ActiveRecord::Base
 
     # preserve the column_names order
     cols = (has_default_columns? ? default_columns_names : column_names).collect do |name|
-       available_columns.find { |col| col.name == name }
+       available_columns.find {|col| col.name == name}
     end.compact
     available_columns.select(&:frozen?) | cols
   end
@@ -779,8 +794,8 @@ class Query < ActiveRecord::Base
 
   def column_names=(names)
     if names
-      names = names.select {|n| n.is_a?(Symbol) || !n.blank? }
-      names = names.collect {|n| n.is_a?(Symbol) ? n : n.to_sym }
+      names = names.select {|n| n.is_a?(Symbol) || !n.blank?}
+      names = names.collect {|n| n.is_a?(Symbol) ? n : n.to_sym}
       if names.delete(:all_inline)
         names = available_inline_columns.map(&:name) | names
       end

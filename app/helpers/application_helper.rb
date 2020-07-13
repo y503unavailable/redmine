@@ -135,11 +135,13 @@ module ApplicationHelper
     text = options.delete(:text) || format_revision(revision)
     rev = revision.respond_to?(:identifier) ? revision.identifier : revision
     link_to(
-        h(text),
-        {:controller => 'repositories', :action => 'revision', :id => repository.project, :repository_id => repository.identifier_param, :rev => rev},
-        :title => l(:label_revision_id, format_revision(revision)),
-        :accesskey => options[:accesskey]
-      )
+      h(text),
+      {:controller => 'repositories', :action => 'revision',
+       :id => repository.project,
+       :repository_id => repository.identifier_param, :rev => rev},
+      :title => l(:label_revision_id, format_revision(revision)),
+      :accesskey => options[:accesskey]
+    )
   end
 
   # Generates a link to a message
@@ -186,21 +188,22 @@ module ApplicationHelper
   # Generates a link to a version
   def link_to_version(version, options = {})
     return '' unless version && version.is_a?(Version)
+
     options = {:title => format_date(version.effective_date)}.merge(options)
     link_to_if version.visible?, format_version_name(version), version_path(version), options
   end
 
   RECORD_LINK = {
-    'CustomValue'  => -> (custom_value) { link_to_record(custom_value.customized) },
-    'Document'     => -> (document)     { link_to(document.title, document_path(document)) },
-    'Group'        => -> (group)        { link_to(group.name, group_path(group)) },
-    'Issue'        => -> (issue)        { link_to_issue(issue, :subject => false) },
-    'Message'      => -> (message)      { link_to_message(message) },
-    'News'         => -> (news)         { link_to(news.title, news_path(news)) },
-    'Project'      => -> (project)      { link_to_project(project) },
-    'User'         => -> (user)         { link_to_user(user) },
-    'Version'      => -> (version)      { link_to_version(version) },
-    'WikiPage'     => -> (wiki_page)    { link_to(wiki_page.pretty_title, project_wiki_page_path(wiki_page.project, wiki_page.title)) }
+    'CustomValue'  => ->(custom_value) {link_to_record(custom_value.customized)},
+    'Document'     => ->(document)     {link_to(document.title, document_path(document))},
+    'Group'        => ->(group)        {link_to(group.name, group_path(group))},
+    'Issue'        => ->(issue)        {link_to_issue(issue, :subject => false)},
+    'Message'      => ->(message)      {link_to_message(message)},
+    'News'         => ->(news)         {link_to(news.title, news_path(news))},
+    'Project'      => ->(project)      {link_to_project(project)},
+    'User'         => ->(user)         {link_to_user(user)},
+    'Version'      => ->(version)      {link_to_version(version)},
+    'WikiPage'     => ->(wiki_page)    {link_to(wiki_page.pretty_title,project_wiki_page_path(wiki_page.project, wiki_page.title))}
   }
 
   def link_to_record(record)
@@ -212,8 +215,8 @@ module ApplicationHelper
   ATTACHMENT_CONTAINER_LINK = {
     # Custom list, since project/version attachments are listed in the files
     # view and not in the project/milestone view
-    'Project'      => -> (project)      { link_to(l(:project_module_files), project_files_path(project)) },
-    'Version'      => -> (version)      { link_to(l(:project_module_files), project_files_path(version.project)) },
+    'Project'      => ->(project)      {link_to(l(:project_module_files), project_files_path(project))},
+    'Version'      => ->(version)      {link_to(l(:project_module_files), project_files_path(version.project))},
   }
 
   def link_to_attachment_container(attachment_container)
@@ -497,13 +500,15 @@ module ApplicationHelper
     end
   end
 
-  def render_projects_for_jump_box(projects, selected=nil)
-    jump_box = Redmine::ProjectJumpBox.new User.current
-    query = params[:q] if request.format.js?
-    bookmarked = jump_box.bookmarked_projects(query)
-    recents = jump_box.recently_used_projects(query)
-    projects = projects - (recents + bookmarked)
-    projects_label = (bookmarked.any? || recents.any?) ? :label_optgroup_others : :label_project_plural
+  def render_projects_for_jump_box(projects, selected: nil, query: nil)
+    if query.blank?
+      jump_box = Redmine::ProjectJumpBox.new User.current
+      bookmarked = jump_box.bookmarked_projects
+      recents = jump_box.recently_used_projects
+      projects_label = :label_project_all
+    else
+      projects_label = :label_result_plural
+    end
     jump = params[:jump].presence || current_menu_item
     s = (+'').html_safe
     build_project_link = ->(project, level = 0){
@@ -519,6 +524,7 @@ module ApplicationHelper
       [projects,  projects_label,             true]
     ].each do |projects, label, is_tree|
       next if projects.blank?
+
       s << content_tag(:strong, l(label))
       if is_tree
         project_tree(projects, &build_project_link)
@@ -549,7 +555,7 @@ module ApplicationHelper
     content =
       content_tag('div',
                   content_tag('div', q, :class => 'quick-search') +
-                    content_tag('div', render_projects_for_jump_box(projects, @project),
+                    content_tag('div', render_projects_for_jump_box(projects, selected: @project),
                                 :class => 'drdn-items projects selection') +
                     content_tag('div', all, :class => 'drdn-items all-projects selection'),
                   :class => 'drdn-content')
@@ -777,6 +783,7 @@ module ApplicationHelper
     @used_accesskeys ||= []
     key = Redmine::AccessKeys.key_for(s)
     return nil if @used_accesskeys.include?(key)
+
     @used_accesskeys << key
     key
   end
@@ -799,6 +806,7 @@ module ApplicationHelper
       raise ArgumentError, 'invalid arguments to textilizable'
     end
     return '' if text.blank?
+
     project = options[:project] || @project || (obj && obj.respond_to?(:project) ? obj.project : nil)
     @only_path = only_path = options.delete(:only_path) == false ? false : true
 
@@ -1145,14 +1153,16 @@ module ApplicationHelper
                               "repository_id = ? AND scmid LIKE ?",
                               repository.id, "#{name}%"
                             ).first)
-                    link = link_to(
-                             h("#{project_prefix}#{repo_prefix}#{name}"),
-                             {:only_path => only_path, :controller => 'repositories',
-                              :action => 'revision', :id => project,
-                              :repository_id => repository.identifier_param,
-                              :rev => changeset.identifier},
-                             :class => 'changeset',
-                             :title => truncate_single_line_raw(changeset.comments, 100))
+                    link =
+                      link_to(
+                        h("#{project_prefix}#{repo_prefix}#{name}"),
+                        {:only_path => only_path, :controller => 'repositories',
+                         :action => 'revision', :id => project,
+                         :repository_id => repository.identifier_param,
+                        :rev => changeset.identifier},
+                        :class => 'changeset',
+                        :title => truncate_single_line_raw(changeset.comments, 100)
+                      )
                   end
                 else
                   if repository && User.current.allowed_to?(:browse_repository, project)
@@ -1240,6 +1250,7 @@ module ApplicationHelper
 
   def parse_sections(text, project, obj, attr, only_path, options)
     return unless options[:edit_section_links]
+
     text.gsub!(HEADING_RE) do
       heading, level = $1, $2
       @current_section += 1
@@ -1544,8 +1555,9 @@ module ApplicationHelper
         # Redmine uses 1..7 (monday..sunday) in settings and locales
         # JQuery uses 0..6 (sunday..saturday), 7 needs to be changed to 0
         start_of_week = start_of_week.to_i % 7
-        tags << javascript_tag(
-                   "var datepickerOptions={dateFormat: 'yy-mm-dd', firstDay: #{start_of_week}, " +
+        tags <<
+          javascript_tag(
+            "var datepickerOptions={dateFormat: 'yy-mm-dd', firstDay: #{start_of_week}, " +
                      "showOn: 'button', buttonImageOnly: true, buttonImage: '" +
                      path_to_image('/images/calendar.png') +
                      "', showButtonPanel: true, showWeek: true, showOtherMonths: true, " +
@@ -1631,7 +1643,13 @@ module ApplicationHelper
 
   # Returns the javascript tags that are included in the html layout head
   def javascript_heads
-    tags = javascript_include_tag('jquery-3.5.1-ui-1.12.1-ujs-5.2.3', 'tribute-5.1.3.min', 'application', 'responsive')
+    tags = javascript_include_tag(
+      'jquery-3.5.1-ui-1.12.1-ujs-5.2.3',
+      'tribute-5.1.3.min',
+      'tablesort-5.2.1.min.js',
+      'tablesort-5.2.1.number.min.js',
+      'application',
+      'responsive')
     unless User.current.pref.warn_on_leaving_unsaved == '0'
       tags << "\n".html_safe + javascript_tag("$(window).on('load', function(){ warnLeavingUnsaved('#{escape_javascript l(:text_warn_on_leaving_unsaved)}'); });")
     end
@@ -1684,6 +1702,7 @@ module ApplicationHelper
 
   def export_csv_encoding_select_tag
     return if l(:general_csv_encoding).casecmp('UTF-8') == 0
+
     options = [l(:general_csv_encoding), 'UTF-8']
     content_tag(:p) do
       concat(

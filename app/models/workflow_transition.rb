@@ -50,14 +50,15 @@ class WorkflowTransition < WorkflowRule
                 end
                 w = w.first
 
-                if transition == "1" || transition == true
+                if ["1", true].include?(transition)
                   unless w
-                    w = WorkflowTransition.new(
-                          :old_status_id => old_status_id,
-                          :new_status_id => new_status_id,
-                          :tracker_id => tracker.id,
-                          :role_id => role.id
-                        )
+                    w = WorkflowTransition.
+                          new(
+                            :old_status_id => old_status_id,
+                            :new_status_id => new_status_id,
+                            :tracker_id => tracker.id,
+                            :role_id => role.id
+                          )
                     records << w
                   end
                   w.author = true if rule == "author"
