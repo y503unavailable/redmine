@@ -117,6 +117,7 @@ class Changeset < ActiveRecord::Base
 
   def scan_comment_for_issue_ids
     return if comments.blank?
+
     # keywords used to reference issues
     ref_keywords = Setting.commit_ref_keywords.downcase.split(",").collect(&:strip)
     ref_keywords_any = ref_keywords.delete('*')
@@ -197,6 +198,7 @@ class Changeset < ActiveRecord::Base
   # Finds an issue that can be referenced by the commit message
   def find_referenced_issue_by_id(id)
     return nil if id.blank?
+
     issue = Issue.find_by_id(id.to_i)
     if Setting.commit_cross_project_ref?
       # all issues can be referenced/fixed
@@ -238,7 +240,7 @@ class Changeset < ActiveRecord::Base
       issue.assign_attributes rule.slice(*Issue.attribute_names)
     end
     Redmine::Hook.call_hook(:model_changeset_scan_commit_for_issue_ids_pre_issue_update,
-                            { :changeset => self, :issue => issue, :action => action })
+                            {:changeset => self, :issue => issue, :action => action})
 
     if issue.changes.any?
       unless issue.save

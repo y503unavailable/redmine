@@ -1139,7 +1139,7 @@ class ApplicationHelperTest < Redmine::HelperTest
       '<pre><code class=""onmouseover="alert(1)">text</code></pre>' => '<pre><code>text</code></pre>',
       '<pre class=""onmouseover="alert(1)">text</pre>' => '<pre>text</pre>',
     }
-    to_test.each { |text, result| assert_equal result, textilizable(text) }
+    to_test.each {|text, result| assert_equal result, textilizable(text)}
   end
 
   def test_allowed_html_tags
@@ -1148,7 +1148,7 @@ class ApplicationHelperTest < Redmine::HelperTest
       "<notextile>no *textile* formatting</notextile>" => "no *textile* formatting",
       "<notextile>this is <tag>a tag</tag></notextile>" => "this is &lt;tag&gt;a tag&lt;/tag&gt;"
     }
-    to_test.each { |text, result| assert_equal result, textilizable(text) }
+    to_test.each {|text, result| assert_equal result, textilizable(text)}
   end
 
   def test_pre_tags
@@ -1278,7 +1278,7 @@ class ApplicationHelperTest < Redmine::HelperTest
                'a H *umane* W *eb* T *ext* G *enerator*' => 'a H <strong>umane</strong> W <strong>eb</strong> T <strong>ext</strong> G <strong>enerator</strong>',
                'a *H* umane *W* eb *T* ext *G* enerator' => 'a <strong>H</strong> umane <strong>W</strong> eb <strong>T</strong> ext <strong>G</strong> enerator',
               }
-    to_test.each { |text, result| assert_equal "<p>#{result}</p>", textilizable(text) }
+    to_test.each {|text, result| assert_equal "<p>#{result}</p>", textilizable(text)}
   end
 
   def test_wiki_horizontal_rule
@@ -1504,14 +1504,15 @@ class ApplicationHelperTest < Redmine::HelperTest
   end
 
   def test_due_date_distance_in_words
-    to_test = { Date.today => 'Due in 0 days',
-                Date.today + 1 => 'Due in 1 day',
-                Date.today + 100 => 'Due in about 3 months',
-                Date.today + 20000 => 'Due in over 54 years',
-                Date.today - 1 => '1 day late',
-                Date.today - 100 => 'about 3 months late',
-                Date.today - 20000 => 'over 54 years late',
-               }
+    to_test = {
+      Date.today => 'Due in 0 days',
+      Date.today + 1 => 'Due in 1 day',
+      Date.today + 100 => 'Due in about 3 months',
+      Date.today + 20000 => 'Due in over 54 years',
+      Date.today - 1 => '1 day late',
+      Date.today - 100 => 'about 3 months late',
+      Date.today - 20000 => 'over 54 years late',
+    }
     ::I18n.locale = :en
     to_test.each do |date, expected|
       assert_equal expected, due_date_distance_in_words(date)
@@ -1521,7 +1522,7 @@ class ApplicationHelperTest < Redmine::HelperTest
   def test_render_page_hierarchy
     parent_page = WikiPage.find(1)
     child_page = WikiPage.find_by(parent_id: parent_page.id)
-    pages_by_parent_id = { nil => [parent_page], parent_page.id => [child_page] }
+    pages_by_parent_id = {nil => [parent_page], parent_page.id => [child_page]}
     result = render_page_hierarchy(pages_by_parent_id, nil)
     assert_select_in(
       result, 'ul.pages-hierarchy li a[href=?]',
@@ -1536,7 +1537,7 @@ class ApplicationHelperTest < Redmine::HelperTest
   def test_render_page_hierarchy_with_timestamp
     parent_page = WikiPage.find(1)
     child_page = WikiPage.find_by(parent_id: parent_page.id)
-    pages_by_parent_id = { nil => [parent_page], parent_page.id => [child_page] }
+    pages_by_parent_id = {nil => [parent_page], parent_page.id => [child_page]}
     result = render_page_hierarchy(pages_by_parent_id, nil, :timestamp => true)
     assert_select_in(
       result, 'ul.pages-hierarchy li a[title=?]',
@@ -1551,7 +1552,7 @@ class ApplicationHelperTest < Redmine::HelperTest
   def test_render_page_hierarchy_when_action_is_export
     parent_page = WikiPage.find(1)
     child_page = WikiPage.find_by(parent_id: parent_page.id)
-    pages_by_parent_id = { nil => [parent_page], parent_page.id => [child_page] }
+    pages_by_parent_id = {nil => [parent_page], parent_page.id => [child_page]}
 
     # Change controller and action using stub
     controller.stubs(:controller_name).returns('wiki')

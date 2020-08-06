@@ -6595,11 +6595,18 @@ class IssuesControllerTest < Redmine::ControllerTest
   def test_bulk_edit_should_warn_about_custom_field_values_about_to_be_cleared
     CustomField.destroy_all
 
-    cleared = IssueCustomField.generate!(:name => 'Cleared', :tracker_ids => [2], :is_for_all => true)
-    CustomValue.create!(:customized => Issue.find(2), :custom_field => cleared, :value => 'foo')
-
-    not_cleared = IssueCustomField.generate!(:name => 'Not cleared', :tracker_ids => [2, 3], :is_for_all => true)
-    CustomValue.create!(:customized => Issue.find(2), :custom_field => not_cleared, :value => 'bar')
+    cleared = IssueCustomField.generate!(:name => 'Cleared',
+                                         :tracker_ids => [2],
+                                         :is_for_all => true)
+    CustomValue.create!(:customized => Issue.find(2),
+                        :custom_field => cleared,
+                        :value => 'foo')
+    not_cleared = IssueCustomField.generate!(:name => 'Not cleared',
+                                             :tracker_ids => [2, 3],
+                                             :is_for_all => true)
+    CustomValue.create!(:customized => Issue.find(2),
+                        :custom_field => not_cleared,
+                        :value => 'bar')
     @request.session[:user_id] = 2
 
     get(
@@ -7142,6 +7149,10 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_get_bulk_copy
+    assert_not Issue.find(1).attachments.any?
+    assert Issue.find(2).attachments.any?
+    assert Issue.find(3).attachments.any?
+
     @request.session[:user_id] = 2
     get(
       :bulk_edit,
@@ -7152,10 +7163,12 @@ class IssuesControllerTest < Redmine::ControllerTest
     )
     assert_response :success
     assert_select '#bulk-selection li', 3
-    assert_select 'select[name=?]', 'issue[project_id]' do
-      assert_select 'option[value=""]'
+    assert_select 'form#bulk_edit_form[action=?]', '/issues/bulk_update' do
+      assert_select 'select[name=?]', 'issue[project_id]' do
+        assert_select 'option[value=""]'
+      end
+      assert_select 'input[name=copy_attachments]'
     end
-    assert_select 'input[name=copy_attachments]'
   end
 
   def test_get_bulk_copy_without_add_issues_permission_should_not_propose_current_project_as_target
@@ -7630,17 +7643,17 @@ class IssuesControllerTest < Redmine::ControllerTest
     set_tmp_attachments_directory
     @request.session[:user_id] = 2
     with_settings :timelog_required_fields => [] do
-    assert_difference 'Issue.count', -2 do
-      assert_no_difference 'TimeEntry.count' do
-        delete(
-          :destroy,
-          :params => {
-            :ids => [1, 3],
-            :todo => 'nullify'
-          }
-        )
+      assert_difference 'Issue.count', -2 do
+        assert_no_difference 'TimeEntry.count' do
+          delete(
+            :destroy,
+            :params => {
+              :ids => [1, 3],
+              :todo => 'nullify'
+            }
+          )
+        end
       end
-    end
     end
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
     assert_equal 'Successful deletion.', flash[:notice]

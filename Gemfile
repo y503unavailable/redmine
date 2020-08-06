@@ -5,14 +5,14 @@ gem 'bundler', '>= 1.12.0'
 
 gem 'rails', '5.2.4.2'
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
-gem 'rouge', '~> 3.20.0'
+gem 'rouge', '~> 3.21.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
 gem "roadie-rails", (RUBY_VERSION < "2.5" ? "~> 1.3.0" : "~> 2.1.0")
 gem "mimemagic"
 gem "mail", "~> 2.7.1"
-gem "csv", "~> 3.1.1"
+gem 'csv', (RUBY_VERSION < '2.5' ? ['>= 3.1.1', '<= 3.1.5'] : '~> 3.1.1')
 gem "nokogiri", "~> 1.10.0"
 gem 'i18n', '~> 1.8.2'
 gem "rbpdf", "~> 1.20.0"
