@@ -158,12 +158,12 @@ module Redmine
 
         def with_leading_slash(path)
           path ||= ''
-          (path[0,1]!="/") ? "/#{path}" : path
+          (path[0, 1]!="/") ? "/#{path}" : path
         end
 
         def with_trailling_slash(path)
           path ||= ''
-          (path[-1,1] == "/") ? path : "#{path}/"
+          (path[-1, 1] == "/") ? path : "#{path}/"
         end
 
         def without_leading_slash(path)
@@ -173,7 +173,7 @@ module Redmine
 
         def without_trailling_slash(path)
           path ||= ''
-          (path[-1,1] == "/") ? path[0..-2] : path
+          (path[-1, 1] == "/") ? path[0..-2] : path
         end
 
         private
@@ -278,6 +278,7 @@ module Redmine
         def scm_iconv(to, from, str)
           return if str.nil?
           return str if to == from && str.encoding.to_s == from
+
           str = str.dup
           str.force_encoding(from)
           begin
@@ -298,13 +299,13 @@ module Redmine
 
       class Entries < Array
         def sort_by_name
-          dup.sort! {|x,y|
+          dup.sort! do |x, y|
             if x.kind == y.kind
               x.name.to_s <=> y.name.to_s
             else
               x.kind <=> y.kind
             end
-          }
+          end
         end
 
         def revisions
@@ -354,13 +355,13 @@ module Redmine
 
       class Revisions < Array
         def latest
-          sort {|x,y|
+          sort do |x, y|
             unless x.time.nil? or y.time.nil?
               x.time <=> y.time
             else
               0
             end
-          }.last
+          end.last
         end
       end
 

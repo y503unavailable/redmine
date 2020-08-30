@@ -134,7 +134,7 @@ module IssuesHelper
                          (if child.disabled_core_fields.include?('done_ratio')
                             ''
                           else
-                             progress_bar(child.done_ratio)
+                            progress_bar(child.done_ratio)
                           end),
                          :class=> 'done_ratio') +
              content_tag('td', buttons, :class => 'buttons'),
@@ -175,11 +175,12 @@ module IssuesHelper
                         false, :id => nil),
                       :class => 'checkbox') +
              content_tag('td',
-                         relation.to_s(@issue) {|other|
+                         relation.to_s(@issue) do |other|
                            link_to_issue(
                              other,
-                             :project => Setting.cross_project_issue_relations?)
-                         }.html_safe,
+                             :project => Setting.cross_project_issue_relations?
+                           )
+                         end.html_safe,
                          :class => 'subject') +
              content_tag('td', other_issue.status, :class => 'status') +
              content_tag('td', link_to_user(other_issue.assigned_to), :class => 'assigned_to') +
@@ -527,7 +528,7 @@ module IssuesHelper
       label = l(relation_type[:name]) if relation_type
     end
     call_hook(:helper_issues_show_detail_after_setting,
-              {:detail => detail, :label => label, :value => value, :old_value => old_value })
+              {:detail => detail, :label => label, :value => value, :old_value => old_value})
 
     label ||= detail.prop_key
     value ||= detail.value

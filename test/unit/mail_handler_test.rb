@@ -262,7 +262,7 @@ class MailHandlerTest < ActiveSupport::TestCase
     field = IssueCustomField.create!(:name => 'Affected version',
                                      :field_format => 'version',
                                      :is_for_all => true,
-                                     :tracker_ids => [1,2,3])
+                                     :tracker_ids => [1, 2, 3])
     issue = submit_email('ticket_with_custom_fields.eml',
                          :issue => {:project => 'ecookbook'},
                          :allow_override => ['affected version']
@@ -613,7 +613,7 @@ class MailHandlerTest < ActiveSupport::TestCase
     assert_equal 1, issue.attachments.size
     u = +''
     u1 = 'ÄäÖöÜü'
-    11.times { u << u1 }
+    11.times {u << u1}
     attachment = issue.attachments.first
     assert_equal "#{u}.png", attachment.filename
     assert_equal 130, attachment.filesize
@@ -632,7 +632,7 @@ class MailHandlerTest < ActiveSupport::TestCase
     assert_equal 1, issue.attachments.size
     u = +''
     u1 = 'ÄäÖöÜü'
-    11.times { u << u1 }
+    11.times {u << u1}
     attachment = issue.attachments.first
     assert_equal "#{u}.txt", attachment.filename
     assert_equal 5, attachment.filesize
@@ -661,7 +661,7 @@ class MailHandlerTest < ActiveSupport::TestCase
   def test_empty_attachment_should_not_be_imported
     issue = submit_email(
               'ticket_with_empty_attachment.eml',
-              issue: { project: 'ecookbook' }
+              :issue => {:project => 'ecookbook'}
             )
     assert_equal 0, issue.attachments.size
   end
@@ -1187,7 +1187,7 @@ class MailHandlerTest < ActiveSupport::TestCase
   def test_email_with_long_subject_line
     issue = submit_email('ticket_with_long_subject.eml')
     assert issue.is_a?(Issue)
-    assert_equal issue.subject, 'New ticket on a given project with a very long subject line which exceeds 255 chars and should not be ignored but chopped off. And if the subject line is still not long enough, we just add more text. And more text. Wow, this is really annoying. Especially, if you have nothing to say...'[0,255]
+    assert_equal issue.subject, 'New ticket on a given project with a very long subject line which exceeds 255 chars and should not be ignored but chopped off. And if the subject line is still not long enough, we just add more text. And more text. Wow, this is really annoying. Especially, if you have nothing to say...'[0, 255]
   end
 
   def test_first_keyword_should_be_matched

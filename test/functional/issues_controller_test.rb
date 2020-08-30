@@ -5901,6 +5901,24 @@ class IssuesControllerTest < Redmine::ControllerTest
     assert_equal spent_hours_before + 2.5, issue.spent_hours
   end
 
+  def test_put_update_should_check_add_issue_notes_permission
+    role = Role.find(1)
+    role.remove_permission! :add_issue_notes
+    @request.session[:user_id] = 2
+
+    assert_no_difference 'Journal.count' do
+      put(
+        :update,
+        :params => {
+          :id => 1,
+          :issue => {
+            :notes => 'New note'
+          }
+        }
+      )
+    end
+  end
+
   def test_put_update_should_preserve_parent_issue_even_if_not_visible
     parent = Issue.generate!(:project_id => 1, :is_private => true)
     issue = Issue.generate!(:parent_issue_id => parent.id)
@@ -6401,6 +6419,11 @@ class IssuesControllerTest < Redmine::ControllerTest
       assert ! IssuePriority.find(15).active?
       assert_select 'select[name=?]', 'issue[priority_id]' do
         assert_select 'option[value="15"]', 0
+      end
+
+      # Initial form should hide 'follow' button
+      assert_select 'input[type=submit]', 1 do
+        assert_select '[name=?]', 'commit'
       end
     end
   end
@@ -7182,9 +7205,11 @@ class IssuesControllerTest < Redmine::ControllerTest
       }
     )
     assert_response :success
-    assert_select 'select[name=?]', 'issue[project_id]' do
-      assert_select 'option[value=""]', 0
-      assert_select 'option[value="2"]'
+    assert_select 'form#bulk_edit_form[action=?]', '/issues/bulk_update' do
+      assert_select 'select[name=?]', 'issue[project_id]' do
+        assert_select 'option[value=""]', 0
+        assert_select 'option[value="2"]'
+      end
     end
   end
 

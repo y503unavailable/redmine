@@ -53,28 +53,28 @@ module VersionsHelper
 
   def render_issue_status_by(version, criteria)
     criteria = 'tracker' unless STATUS_BY_CRITERIAS.include?(criteria)
-    h = Hash.new {|k,v| k[v] = [0, 0]}
+    h = Hash.new {|k, v| k[v] = [0, 0]}
     begin
       # Total issue count
-      version.visible_fixed_issues.group(criteria).count.each {|c,s| h[c][0] = s}
+      version.visible_fixed_issues.group(criteria).count.each {|c, s| h[c][0] = s}
       # Open issues count
-      version.visible_fixed_issues.open.group(criteria).count.each {|c,s| h[c][1] = s}
+      version.visible_fixed_issues.open.group(criteria).count.each {|c, s| h[c][1] = s}
     rescue ActiveRecord::RecordNotFound
       # When grouping by an association, Rails throws this exception if there's no result (bug)
     end
     # Sort with nil keys in last position
     sorted_keys =
-      h.keys.sort {|a, b|
+      h.keys.sort do |a, b|
         if a.nil?
           1
         else
           b.nil? ? -1 : a <=> b
         end
-      }
+      end
     counts =
-      sorted_keys.collect {|k|
+      sorted_keys.collect do |k|
           {:group => k, :total => h[k][0], :open => h[k][1], :closed => (h[k][0] - h[k][1])}
-      }
+      end
     max = counts.collect {|c| c[:total]}.max
     render :partial => 'issue_counts', :locals => {:version => version, :criteria => criteria, :counts => counts, :max => max}
   end

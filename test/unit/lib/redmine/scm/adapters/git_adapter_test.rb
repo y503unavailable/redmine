@@ -64,9 +64,11 @@ class GitAdapterTest < ActiveSupport::TestCase
     end
 
     def test_scm_version
-      to_test = { "git version 1.7.3.4\n"             => [1,7,3,4],
-                  "1.6.1\n1.7\n1.8"                   => [1,6,1],
-                  "1.6.2\r\n1.8.1\r\n1.9.1"           => [1,6,2]}
+      to_test = {
+        "git version 1.7.3.4\n"   => [1, 7, 3, 4],
+        "1.6.1\n1.7\n1.8"         => [1, 6, 1],
+        "1.6.2\r\n1.8.1\r\n1.9.1" => [1, 6, 2]
+      }
       to_test.each do |s, v|
         test_scm_version_for(s, v)
       end
@@ -125,16 +127,19 @@ class GitAdapterTest < ActiveSupport::TestCase
     end
 
     def test_tags
-      assert_equal [
-            "tag00.lightweight",
-            "tag01.annotated",
-            "tag02.lightweight.#{@char_1}.01",
-          ], @adapter.tags
+      assert_equal(
+        [
+          "tag00.lightweight",
+          "tag01.annotated",
+          "tag02.lightweight.#{@char_1}.01",
+        ],
+        @adapter.tags
+      )
     end
 
     def test_revisions_master_all
       revs1 = []
-      @adapter.revisions('', nil, "master",{}) do |rev|
+      @adapter.revisions('', nil, "master", {}) do |rev|
         revs1 << rev
       end
       assert_equal 15, revs1.length
@@ -186,7 +191,7 @@ class GitAdapterTest < ActiveSupport::TestCase
 
     def test_revisions_branch_latin_1_path_encoding_all
       revs1 = []
-      @adapter.revisions('', nil, "latin-1-path-encoding",{}) do |rev|
+      @adapter.revisions('', nil, "latin-1-path-encoding", {}) do |rev|
         revs1 << rev
       end
       assert_equal 8, revs1.length
@@ -327,7 +332,7 @@ class GitAdapterTest < ActiveSupport::TestCase
                           :includes => ['83ca5fd546063a3c7dc2e568ba3355661a9e2b2c',
                                         '92397af84d22f27389c822848ecd5b463c181583'],
                           :excludes => ['95488a44bc25f7d1f97d775a31359539ff333a63',
-                                        '4f26664364207fa8b1af9f8722647ab2d4ac5d43'] }) do |rev|
+                                        '4f26664364207fa8b1af9f8722647ab2d4ac5d43']}) do |rev|
         revs1 << rev
       end
       assert_equal 4, revs1.length
