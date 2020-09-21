@@ -1370,3 +1370,12 @@ ja:
   twofa_text_backup_codes_hint: 二要素認証アプリが利用できないときは以下のコードを認証コードの代わりに使用してください。それぞれのコードは1回だけ使用できます。バックアップコードは印刷して安全な場所に保管しておくことをお勧めします。
   twofa_text_backup_codes_created_at: "バックアップコード生成日時: %{datetime}"
   twofa_backup_codes_already_shown: バックアップコードの再表示はできません。必要があれば<a data-method="post" href="%{bc_path}">新しいバックアップコードの生成</a>を行ってください。
+  error_can_not_execute_macro_html: マクロ <strong>%{name}</strong> の実行中にエラーが発生しました (%{error})
+  error_macro_does_not_accept_block: このマクロにはテキストブロックを渡せません
+  error_childpages_macro_no_argument: Wikiページ以外から呼び出す場合は引数が必要です
+  error_circular_inclusion: 挿入対象ページの循環参照
+  error_page_not_found: ページが見つかりません
+  error_filename_required: ファイル名が必要です
+  error_invalid_size_parameter: sizeパラメータが無効です
+  error_attachment_not_found: 添付ファイル %{name} が見つかりません
+  permission_delete_project: プロジェクトの削除

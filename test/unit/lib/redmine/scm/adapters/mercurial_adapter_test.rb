@@ -50,15 +50,16 @@ class MercurialAdapterTest < ActiveSupport::TestCase
     end
 
     def test_hgversion
-      to_test = { "Mercurial Distributed SCM (version 0.9.5)\n"  => [0,9,5],
-                  "Mercurial Distributed SCM (1.0)\n"            => [1,0],
-                  "Mercurial Distributed SCM (1e4ddc9ac9f7+20080325)\n" => nil,
-                  "Mercurial Distributed SCM (1.0.1+20080525)\n" => [1,0,1],
-                  "Mercurial Distributed SCM (1916e629a29d)\n"   => nil,
-                  "Mercurial SCM Distribuito (versione 0.9.5)\n" => [0,9,5],
-                  "(1.6)\n(1.7)\n(1.8)"                          => [1,6],
-                  "(1.7.1)\r\n(1.8.1)\r\n(1.9.1)"                => [1,7,1]}
-
+      to_test = {
+        "Mercurial Distributed SCM (version 0.9.5)\n"  => [0, 9, 5],
+        "Mercurial Distributed SCM (1.0)\n"            => [1, 0],
+        "Mercurial Distributed SCM (1e4ddc9ac9f7+20080325)\n" => nil,
+        "Mercurial Distributed SCM (1.0.1+20080525)\n" => [1, 0, 1],
+        "Mercurial Distributed SCM (1916e629a29d)\n"   => nil,
+        "Mercurial SCM Distribuito (versione 0.9.5)\n" => [0, 9, 5],
+        "(1.6)\n(1.7)\n(1.8)"                          => [1, 6],
+        "(1.7.1)\r\n(1.8.1)\r\n(1.9.1)"                => [1, 7, 1]
+      }
       to_test.each do |s, v|
         test_hgversion_for(s, v)
       end
@@ -66,13 +67,13 @@ class MercurialAdapterTest < ActiveSupport::TestCase
 
     def test_template_path
       to_test = {
-                  [1,2]    => "1.0",
-                  []       => "1.0",
-                  [1,2,1]  => "1.0",
-                  [1,7]    => "1.0",
-                  [1,7,1]  => "1.0",
-                  [2,0]    => "1.0",
-                 }
+        [1, 2]    => "1.0",
+        []        => "1.0",
+        [1, 2, 1] => "1.0",
+        [1, 7]    => "1.0",
+        [1, 7, 1] => "1.0",
+        [2, 0]    => "1.0",
+      }
       to_test.each do |v, template|
         test_template_path_for(v, template)
       end
@@ -85,7 +86,7 @@ class MercurialAdapterTest < ActiveSupport::TestCase
         repo_path =  adp.info.root_url.gsub(/\\/, "/")
         assert_equal REPOSITORY_PATH, repo_path
         assert_equal '39', adp.info.lastrev.revision
-        assert_equal '04aed9840e9266e535f5f20f7e42c9f9f84f9cf4',adp.info.lastrev.scmid
+        assert_equal '04aed9840e9266e535f5f20f7e42c9f9f84f9cf4', adp.info.lastrev.scmid
       end
     end
 
@@ -388,7 +389,7 @@ class MercurialAdapterTest < ActiveSupport::TestCase
       assert_equal 'c2ffe7da686aa3d956e59f2a2854cf8980a8b768', branch.scmid
 
       branch = branches[-1]
-      assert_equal 'test-branch-00',branch.to_s
+      assert_equal 'test-branch-00', branch.to_s
       assert_equal '13', branch.revision
       assert_equal '3a330eb329586ea2adb3f83237c23310e744ebe9', branch.scmid
     end

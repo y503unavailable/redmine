@@ -457,9 +457,9 @@ class Query < ActiveRecord::Base
           case operator_for(field)
           when "=", ">=", "<=", "><"
             if values_for(field).detect do |v|
-                  v.present? &&
-                    (!/\A\d{4}-\d{2}-\d{2}(T\d{2}((:)?\d{2}){0,2}(Z|\d{2}:?\d{2})?)?\z/.match?(v) ||
-                       parse_date(v).nil?)
+                 v.present? &&
+                   (!/\A\d{4}-\d{2}-\d{2}(T\d{2}((:)?\d{2}){0,2}(Z|\d{2}:?\d{2})?)?\z/.match?(v) ||
+                     parse_date(v).nil?)
                end
               add_filter_error(field, :invalid)
             end
@@ -759,7 +759,7 @@ class Query < ActiveRecord::Base
 
     # preserve the column_names order
     cols = (has_default_columns? ? default_columns_names : column_names).collect do |name|
-       available_columns.find {|col| col.name == name}
+      available_columns.find {|col| col.name == name}
     end.compact
     available_columns.select(&:frozen?) | cols
   end
@@ -1511,7 +1511,6 @@ class Query < ActiveRecord::Base
         options = chained.query_filter_options(self)
 
         filter_id = "cf_#{field.id}.cf_#{chained.id}"
-        filter_name = chained.name
 
         add_available_filter(
           filter_id,

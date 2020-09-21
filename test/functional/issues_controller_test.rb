@@ -6423,7 +6423,29 @@ class IssuesControllerTest < Redmine::ControllerTest
 
       # Initial form should hide 'follow' button
       assert_select 'input[type=submit]', 1 do
-        assert_select '[name=?]', 'commit'
+        assert_select '[name=?]', 'commit', 1
+        assert_select '[name=?]', 'follow', 0
+      end
+    end
+  end
+
+  test "bulk_edit should show follow button when project is selected" do
+    @request.session[:user_id] = 2
+    post(
+      :bulk_edit,
+      :params => {
+        :ids => [1, 3],
+        :issue => {
+          :project_id => 2,
+        }
+      }
+    )
+    assert_response :success
+
+    assert_select 'form#bulk_edit_form[action=?]', '/issues/bulk_update' do
+      assert_select 'input[type=submit]', 2 do
+        assert_select '[name=?]', 'commit', 1
+        assert_select '[name=?]', 'follow', 1
       end
     end
   end
