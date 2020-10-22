@@ -1043,14 +1043,6 @@ Style/ExpandPathArguments:
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
-# SupportedStyles: each, for
-Style/For:
-  Exclude:
-    - 'lib/redmine/export/pdf/issues_pdf_helper.rb'
-    - 'lib/redmine/export/pdf/wiki_pdf_helper.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
 # SupportedStyles: format, sprintf, percent
 Style/FormatString:
   Exclude:
@@ -1151,13 +1143,6 @@ Style/MethodCallWithoutArgsParentheses:
   Exclude:
     - 'lib/redmine/scm/adapters/cvs_adapter.rb'
     - 'lib/redmine/scm/adapters/filesystem_adapter.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_no_parentheses_except_multiline
-Style/MethodDefParentheses:
-  Exclude:
-    - 'lib/redmine/menu_manager.rb'
 
 Style/MethodMissingSuper:
   Exclude:

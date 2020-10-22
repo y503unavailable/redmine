@@ -434,7 +434,7 @@ class MailHandler < ActionMailer::Base
       'done_ratio' => get_keyword(:done_ratio, :format => '(\d|10)?0'),
       'is_private' => get_keyword_bool(:is_private),
       'parent_issue_id' => get_keyword(:parent_issue)
-    }.delete_if {|k, v| v.blank? }
+    }.delete_if {|k, v| v.blank?}
 
     attrs
   end
@@ -524,7 +524,7 @@ class MailHandler < ActionMailer::Base
 
   def cleaned_up_subject
     subject = email.subject.to_s
-    subject.strip[0,255]
+    subject.strip[0, 255]
   end
 
   def self.assign_string_attribute_with_limit(object, attribute, value, limit=nil)

@@ -2142,10 +2142,12 @@ class IssuesControllerTest < Redmine::ControllerTest
 
   def test_update_form_should_render_assign_to_me_link_when_issue_can_be_assigned_to_the_current_user
     @request.session[:user_id] = 1
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :id => 10
       }
-
+    )
     assert_select 'form#issue-form #attributes' do
       assert_select 'a[class=?][data-id=?]', 'assign-to-me-link', '1', 1
     end
@@ -2153,10 +2155,12 @@ class IssuesControllerTest < Redmine::ControllerTest
 
   def test_update_form_should_not_render_assign_to_me_link_when_issue_cannot_be_assigned_to_the_current_user
     @request.session[:user_id] = 1
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :id => 2
       }
-
+    )
     assert_select 'form#issue-form #attributes' do
       assert_select 'a[class=?]', 'assign-to-me-link', 0
     end
@@ -2168,10 +2172,12 @@ class IssuesControllerTest < Redmine::ControllerTest
     issue.save!
 
     @request.session[:user_id] = 1
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :id => 10
       }
-
+    )
     assert_select 'form#issue-form #attributes' do
       assert_select 'a[class=?]', 'assign-to-me-link hidden', 1
     end
@@ -6450,6 +6456,27 @@ class IssuesControllerTest < Redmine::ControllerTest
     end
   end
 
+  test "bulk_edit should hide follow button when project is not changed" do
+    @request.session[:user_id] = 2
+    post(
+      :bulk_edit,
+      :params => {
+        :ids => [1, 3],
+        :issue => {
+          :project_id => "",
+        }
+      }
+    )
+    assert_response :success
+
+    assert_select 'form#bulk_edit_form[action=?]', '/issues/bulk_update' do
+      assert_select 'input[type=submit]', 1 do
+        assert_select '[name=?]', 'commit', 1
+        assert_select '[name=?]', 'follow', 0
+      end
+    end
+  end
+
   def test_get_bulk_edit_on_different_projects
     @request.session[:user_id] = 2
     get(:bulk_edit, :params => {:ids => [1, 2, 6]})
@@ -7213,6 +7240,28 @@ class IssuesControllerTest < Redmine::ControllerTest
         assert_select 'option[value=""]'
       end
       assert_select 'input[name=copy_attachments]'
+    end
+  end
+
+  test "bulk copy should show follow button when project is selected" do
+    @request.session[:user_id] = 2
+    post(
+      :bulk_edit,
+      :params => {
+        :ids => [1, 3],
+        :issue => {
+          :project_id => 2,
+        },
+        :copy => '1',
+      }
+    )
+    assert_response :success
+
+    assert_select 'form#bulk_edit_form[action=?]', '/issues/bulk_update' do
+      assert_select 'input[type=submit]', 2 do
+        assert_select '[name=?]', 'commit', 1
+        assert_select '[name=?]', 'follow', 1
+      end
     end
   end
 

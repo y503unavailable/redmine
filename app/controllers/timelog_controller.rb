@@ -47,27 +47,27 @@ class TimelogController < ApplicationController
       preload(:project, :user)
 
     respond_to do |format|
-      format.html {
+      format.html do
         @entry_count = scope.count
         @entry_pages = Paginator.new @entry_count, per_page_option, params['page']
         @entries = scope.offset(@entry_pages.offset).limit(@entry_pages.per_page).to_a
 
         render :layout => !request.xhr?
-      }
-      format.api  {
+      end
+      format.api do
         @entry_count = scope.count
         @offset, @limit = api_offset_and_limit
         @entries = scope.offset(@offset).limit(@limit).preload(:custom_values => :custom_field).to_a
-      }
-      format.atom {
+      end
+      format.atom do
         entries = scope.limit(Setting.feeds_limit.to_i).reorder("#{TimeEntry.table_name}.created_on DESC").to_a
         render_feed(entries, :title => l(:label_spent_time))
-      }
-      format.csv {
+      end
+      format.csv do
         # Export all entries
         @entries = scope.to_a
         send_data(query_to_csv(@entries, @query, params), :type => 'text/csv; header=present', :filename => 'timelog.csv')
-      }
+      end
     end
   end
 
@@ -78,37 +78,46 @@ class TimelogController < ApplicationController
     @report = Redmine::Helpers::TimeReport.new(@project, @issue, params[:criteria], params[:columns], scope)
 
     respond_to do |format|
-      format.html { render :layout => !request.xhr? }
-      format.csv  { send_data(report_to_csv(@report), :type => 'text/csv; header=present', :filename => 'timelog.csv') }
+      format.html {render :layout => !request.xhr?}
+      format.csv do
+        send_data(report_to_csv(@report), :type => 'text/csv; header=present',
+                  :filename => 'timelog.csv')
+      end
     end
   end
 
   def show
     respond_to do |format|
       # TODO: Implement html response
-      format.html { head 406 }
+      format.html {head 406}
       format.api
     end
   end
 
   def new
-    @time_entry ||= TimeEntry.new(:project => @project, :issue => @issue, :author => User.current, :spent_on => User.current.today)
+    @time_entry ||=
+      TimeEntry.new(:project => @project, :issue => @issue,
+                    :author => User.current, :spent_on => User.current.today)
     @time_entry.safe_attributes = params[:time_entry]
   end
 
   def create
-    @time_entry ||= TimeEntry.new(:project => @project, :issue => @issue, :author => User.current, :user => User.current, :spent_on => User.current.today)
+    @time_entry ||=
+      TimeEntry.new(:project => @project, :issue => @issue,
+                    :author => User.current, :user => User.current,
+                    :spent_on => User.current.today)
     @time_entry.safe_attributes = params[:time_entry]
     if @time_entry.project && !User.current.allowed_to?(:log_time, @time_entry.project)
       render_403
       return
     end
 
-    call_hook(:controller_timelog_edit_before_save, { :params => params, :time_entry => @time_entry })
+    call_hook(:controller_timelog_edit_before_save,
+              {:params => params, :time_entry => @time_entry})
 
     if @time_entry.save
       respond_to do |format|
-        format.html {
+        format.html do
           flash[:notice] = l(:notice_successful_create)
           if params[:continue]
             options = {
@@ -130,13 +139,15 @@ class TimelogController < ApplicationController
           else
             redirect_back_or_default project_time_entries_path(@time_entry.project)
           end
-        }
-        format.api  { render :action => 'show', :status => :created, :location => time_entry_url(@time_entry) }
+        end
+        format.api do
+          render :action => 'show', :status => :created, :location => time_entry_url(@time_entry)
+        end
       end
     else
       respond_to do |format|
-        format.html { render :action => 'new' }
-        format.api  { render_validation_errors(@time_entry) }
+        format.html {render :action => 'new'}
+        format.api  {render_validation_errors(@time_entry)}
       end
     end
   end
@@ -147,20 +158,21 @@ class TimelogController < ApplicationController
 
   def update
     @time_entry.safe_attributes = params[:time_entry]
-    call_hook(:controller_timelog_edit_before_save, { :params => params, :time_entry => @time_entry })
+    call_hook(:controller_timelog_edit_before_save,
+              {:params => params, :time_entry => @time_entry})
 
     if @time_entry.save
       respond_to do |format|
-        format.html {
+        format.html do
           flash[:notice] = l(:notice_successful_update)
           redirect_back_or_default project_time_entries_path(@time_entry.project)
-        }
-        format.api  { render_api_ok }
+        end
+        format.api  {render_api_ok}
       end
     else
       respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.api  { render_validation_errors(@time_entry) }
+        format.html {render :action => 'edit'}
+        format.api  {render_validation_errors(@time_entry)}
       end
     end
   end
@@ -189,7 +201,10 @@ class TimelogController < ApplicationController
     @time_entries.each do |time_entry|
       time_entry.reload
       time_entry.safe_attributes = attributes
-      call_hook(:controller_time_entries_bulk_edit_before_save, { :params => params, :time_entry => time_entry })
+      call_hook(
+        :controller_time_entries_bulk_edit_before_save,
+        {:params => params, :time_entry => time_entry}
+      )
       if time_entry.save
         saved_time_entries << time_entry
       else
@@ -222,21 +237,21 @@ class TimelogController < ApplicationController
     end
 
     respond_to do |format|
-      format.html {
+      format.html do
         if destroyed
           flash[:notice] = l(:notice_successful_delete)
         else
           flash[:error] = l(:notice_unable_delete_time_entry)
         end
         redirect_back_or_default project_time_entries_path(@projects.first), :referer => true
-      }
-      format.api  {
+      end
+      format.api do
         if destroyed
           render_api_ok
         else
           render_validation_errors(@time_entries)
         end
-      }
+      end
     end
   end
 
@@ -263,6 +278,7 @@ class TimelogController < ApplicationController
 
     raise ActiveRecord::RecordNotFound if @time_entries.empty?
     raise Unauthorized unless @time_entries.all? {|t| t.editable_by?(User.current)}
+
     @projects = @time_entries.collect(&:project).compact.uniq
     @project = @projects.first if @projects.size == 1
   rescue ActiveRecord::RecordNotFound

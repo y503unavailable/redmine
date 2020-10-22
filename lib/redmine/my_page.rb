@@ -24,17 +24,17 @@ module Redmine
     CORE_GROUPS = ['top', 'left', 'right']
 
     CORE_BLOCKS = {
-        'issuesassignedtome' => {:label => :label_assigned_to_me_issues},
-        'issuesreportedbyme' => {:label => :label_reported_issues},
-        'issuesupdatedbyme' => {:label => :label_updated_issues},
-        'issueswatched' => {:label => :label_watched_issues},
-        'issuequery' => {:label => :label_issue_plural, :max_occurs => 3},
-        'news' => {:label => :label_news_latest},
-        'calendar' => {:label => :label_calendar},
-        'documents' => {:label => :label_document_plural},
-        'timelog' => {:label => :label_spent_time},
-        'activity' => {:label => :label_activity}
-      }
+      'issuesassignedtome' => {:label => :label_assigned_to_me_issues},
+      'issuesreportedbyme' => {:label => :label_reported_issues},
+      'issuesupdatedbyme' => {:label => :label_updated_issues},
+      'issueswatched' => {:label => :label_watched_issues},
+      'issuequery' => {:label => :label_issue_plural, :max_occurs => 3},
+      'news' => {:label => :label_news_latest},
+      'calendar' => {:label => :label_calendar},
+      'documents' => {:label => :label_document_plural},
+      'timelog' => {:label => :label_spent_time},
+      'activity' => {:label => :label_activity}
+    }
 
     def self.groups
       CORE_GROUPS.dup.freeze
@@ -77,11 +77,14 @@ module Redmine
 
     # Returns the additional blocks that are defined by plugin partials
     def self.additional_blocks
-      @@additional_blocks ||= Dir.glob("#{Redmine::Plugin.directory}/*/app/views/my/blocks/_*.{rhtml,erb}").inject({}) do |h,file|
-        name = File.basename(file).split('.').first.gsub(/^_/, '')
-        h[name] = {:label => name.to_sym, :partial => "my/blocks/#{name}"}
-        h
-      end
+      @@additional_blocks ||=
+        Dir.glob(
+          "#{Redmine::Plugin.directory}/*/app/views/my/blocks/_*.{rhtml,erb}"
+        ).inject({}) do |h, file|
+          name = File.basename(file).split('.').first.gsub(/^_/, '')
+          h[name] = {:label => name.to_sym, :partial => "my/blocks/#{name}"}
+          h
+        end
     end
 
     # Returns the default layout for My Page

@@ -58,17 +58,17 @@ class MyController < ApplicationController
         @user.pref.save
         set_language_if_valid @user.language
         respond_to do |format|
-          format.html {
+          format.html do
             flash[:notice] = l(:notice_account_updated)
             redirect_to my_account_path
-          }
-          format.api  { render_api_ok }
+          end
+          format.api  {render_api_ok}
         end
         return
       else
         respond_to do |format|
-          format.html { render :action => :account }
-          format.api  { render_validation_errors(@user) }
+          format.html {render :action => :account}
+          format.api  {render_validation_errors(@user)}
         end
       end
     end
@@ -169,7 +169,7 @@ class MyController < ApplicationController
     if @user.pref.add_block @block
       @user.pref.save
       respond_to do |format|
-        format.html { redirect_to my_page_path }
+        format.html {redirect_to my_page_path}
         format.js
       end
     else
@@ -185,7 +185,7 @@ class MyController < ApplicationController
     @user.pref.remove_block @block
     @user.pref.save
     respond_to do |format|
-      format.html { redirect_to my_page_path }
+      format.html {redirect_to my_page_path}
       format.js
     end
   end

@@ -272,23 +272,23 @@ class ApplicationController < ActionController::Base
         url = url_for(:controller => params[:controller], :action => params[:action], :id => params[:id], :project_id => params[:project_id])
       end
       respond_to do |format|
-        format.html {
+        format.html do
           if request.xhr?
             head :unauthorized
           else
             redirect_to signin_path(:back_url => url)
           end
-        }
-        format.any(:atom, :pdf, :csv) {
+        end
+        format.any(:atom, :pdf, :csv) do
           redirect_to signin_path(:back_url => url)
-        }
-        format.api  {
+        end
+        format.api do
           if Setting.rest_api_enabled? && accept_api_auth?
             head(:unauthorized, 'WWW-Authenticate' => 'Basic realm="Redmine API"')
           else
             head(:forbidden)
           end
-        }
+        end
         format.js   { head :unauthorized, 'WWW-Authenticate' => 'Basic realm="Redmine API"' }
         format.any  { head :unauthorized }
       end
@@ -425,10 +425,10 @@ class ApplicationController < ActionController::Base
   end
 
   def parse_params_for_bulk_update(params)
-    attributes = (params || {}).reject {|k,v| v.blank?}
+    attributes = (params || {}).reject {|k, v| v.blank?}
     attributes.keys.each {|k| attributes[k] = '' if attributes[k] == 'none'}
     if custom = attributes[:custom_field_values]
-      custom.reject! {|k,v| v.blank?}
+      custom.reject! {|k, v| v.blank?}
       custom.keys.each do |k|
         if custom[k].is_a?(Array)
           custom[k] << '' if custom[k].delete('__none__')
@@ -575,9 +575,9 @@ class ApplicationController < ActionController::Base
     @status = arg[:status] || 500
 
     respond_to do |format|
-      format.html {
+      format.html do
         render :template => 'common/error', :layout => use_layout, :status => @status
-      }
+      end
       format.any { head @status }
     end
   end
@@ -612,7 +612,7 @@ class ApplicationController < ActionController::Base
 
   def render_feed(items, options={})
     @items = (items || []).to_a
-    @items.sort! {|x,y| y.event_datetime <=> x.event_datetime }
+    @items.sort! {|x, y| y.event_datetime <=> x.event_datetime}
     @items = @items.slice(0, Setting.feeds_limit.to_i)
     @title = options[:title] || Setting.app_title
     render :template => "common/feed", :formats => [:atom], :layout => false,
@@ -688,13 +688,13 @@ class ApplicationController < ActionController::Base
     tmp = []
     if value
       parts = value.split(/,\s*/)
-      parts.each {|part|
+      parts.each do |part|
         if m = %r{^([^\s,]+?)(?:;\s*q=(\d+(?:\.\d+)?))?$}.match(part)
           val = m[1]
           q = (m[2] or 1).to_f
           tmp.push([val, q])
         end
-      }
+      end
       tmp = tmp.sort_by{|val, q| -q}
       tmp.collect!{|val, q| val}
     end

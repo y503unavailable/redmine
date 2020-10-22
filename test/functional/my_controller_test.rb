@@ -46,9 +46,16 @@ class MyControllerTest < Redmine::ControllerTest
     preferences = User.find(2).pref
     preferences[:my_page_layout] = {'top' => ['timelog']}
     preferences.save!
-    with_issue =    TimeEntry.create!(:user => User.find(2), :spent_on => Date.yesterday, :hours => 2.5, :activity_id => 10, :issue_id => 1)
-    without_issue = TimeEntry.create!(:user => User.find(2), :spent_on => Date.yesterday, :hours => 3.5, :activity_id => 10, :project_id => 1)
-
+    with_issue =
+      TimeEntry.create!(
+        :user => User.find(2), :spent_on => Date.yesterday,
+        :hours => 2.5, :activity_id => 10, :issue_id => 1
+      )
+    without_issue =
+      TimeEntry.create!(
+        :user => User.find(2), :spent_on => Date.yesterday,
+        :hours => 3.5, :activity_id => 10, :project_id => 1
+      )
     get :page
     assert_response :success
     assert_select "tr#time-entry-#{with_issue.id}" do
@@ -80,7 +87,8 @@ class MyControllerTest < Redmine::ControllerTest
   def test_page_with_assigned_issues_block_and_custom_columns
     preferences = User.find(2).pref
     preferences.my_page_layout = {'top' => ['issuesassignedtome']}
-    preferences.my_page_settings = {'issuesassignedtome' => {:columns => ['tracker', 'subject', 'due_date']}}
+    preferences.my_page_settings =
+      {'issuesassignedtome' => {:columns => ['tracker', 'subject', 'due_date']}}
     preferences.save!
 
     get :page
@@ -119,7 +127,11 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_page_with_issuequery_block_and_global_query
     user = User.find(2)
-    query = IssueQuery.create!(:name => 'All issues', :user => user, :column_names => [:tracker, :subject, :status, :assigned_to])
+    query =
+      IssueQuery.create!(
+        :name => 'All issues', :user => user,
+        :column_names => [:tracker, :subject, :status, :assigned_to]
+      )
     user.pref.my_page_layout = {'top' => ['issuequery']}
     user.pref.my_page_settings = {'issuequery' => {:query_id => query.id}}
     user.pref.save!
@@ -139,7 +151,12 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_page_with_issuequery_block_and_project_query
     user = User.find(2)
-    query = IssueQuery.create!(:name => 'All issues', :project => Project.find(1), :user => user, :column_names => [:tracker, :subject, :status, :assigned_to])
+    query =
+      IssueQuery.create!(
+        :name => 'All issues', :project => Project.find(1),
+        :user => user,
+        :column_names => [:tracker, :subject, :status, :assigned_to]
+      )
     user.pref.my_page_layout = {'top' => ['issuequery']}
     user.pref.my_page_settings = {'issuequery' => {:query_id => query.id}}
     user.pref.save!
@@ -159,9 +176,15 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_page_with_issuequery_block_and_query_should_display_custom_columns
     user = User.find(2)
-    query = IssueQuery.create!(:name => 'All issues', :user => user, :column_names => [:tracker, :subject, :status, :assigned_to])
+    query =
+      IssueQuery.create!(
+        :name => 'All issues', :user => user,
+        :column_names => [:tracker, :subject, :status, :assigned_to]
+      )
     user.pref.my_page_layout = {'top' => ['issuequery']}
-    user.pref.my_page_settings = {'issuequery' => {:query_id => query.id, :columns => [:subject, :due_date]}}
+    user.pref.my_page_settings = {
+      'issuequery' => {:query_id => query.id, :columns => [:subject, :due_date]}
+    }
     user.pref.save!
 
     get :page
@@ -176,13 +199,17 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_page_with_multiple_issuequery_blocks
     user = User.find(2)
-    query1 = IssueQuery.create!(:name => 'All issues', :user => user, :column_names => [:tracker, :subject, :status, :assigned_to])
-    query2 = IssueQuery.create!(:name => 'Other issues', :user => user, :column_names => [:tracker, :subject, :priority])
+    query1 =
+      IssueQuery.create!(:name => 'All issues', :user => user,
+                         :column_names => [:tracker, :subject, :status, :assigned_to])
+    query2 =
+      IssueQuery.create!(:name => 'Other issues', :user => user,
+                         :column_names => [:tracker, :subject, :priority])
     user.pref.my_page_layout = {'top' => ['issuequery__1', 'issuequery']}
     user.pref.my_page_settings = {
-        'issuequery' => {:query_id => query1.id, :columns => [:subject, :due_date]},
-        'issuequery__1' => {:query_id => query2.id}
-      }
+      'issuequery' => {:query_id => query1.id, :columns => [:subject, :due_date]},
+      'issuequery__1' => {:query_id => query2.id}
+    }
     user.pref.save!
 
     get :page
@@ -214,7 +241,10 @@ class MyControllerTest < Redmine::ControllerTest
 
     assert_select 'div#block-activity' do
       assert_select 'h3' do
-        assert_select 'a[href=?]', activity_path(from: User.current.today, user_id: user.id),  :text => 'Activity'
+        assert_select(
+          'a[href=?]', activity_path(from: User.current.today, user_id: user.id),
+          :text => 'Activity'
+        )
       end
       assert_select 'div#activity' do
         assert_select 'dt', 10
@@ -385,7 +415,9 @@ class MyControllerTest < Redmine::ControllerTest
   end
 
   def test_update_account
-    put :account, :params => {
+    put(
+      :account,
+      :params => {
         :user => {
           :firstname => "Joe",
           :login => "root",
@@ -394,10 +426,9 @@ class MyControllerTest < Redmine::ControllerTest
           :custom_field_values => {
             "4" => "0100562500"
           }
-
         }
       }
-
+    )
     assert_redirected_to '/my/account'
     user = User.find(2)
     assert_equal "Joe", user.firstname
@@ -410,16 +441,22 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_update_account_should_send_security_notification
     ActionMailer::Base.deliveries.clear
-    put :account, :params => {
+    put(
+      :account,
+      :params => {
         :user => {
           :mail => 'foobar@example.com'
 
         }
       }
-
+    )
     assert_not_nil (mail = ActionMailer::Base.deliveries.last)
     assert_mail_body_match '0.0.0.0', mail
-    assert_mail_body_match I18n.t(:mail_body_security_notification_change_to, field: I18n.t(:field_mail), value: 'foobar@example.com'), mail
+    assert_mail_body_match(
+      I18n.t(:mail_body_security_notification_change_to,
+             :field => I18n.t(:field_mail), :value => 'foobar@example.com'),
+      mail
+    )
     assert_select_email do
       assert_select 'a[href^=?]', 'http://localhost:3000/my/account', :text => 'My account'
     end
@@ -434,11 +471,14 @@ class MyControllerTest < Redmine::ControllerTest
     assert_select 'label[for="pref_notify_about_high_priority_issues"]'
 
     # preference should be persisted
-    put :account, :params => {
+    put(
+      :account,
+      :params => {
         :pref => {
           notify_about_high_priority_issues: '1'
         }
       }
+    )
     assert User.find(2).notify_about_high_priority_issues?
 
     # preference should be hidden if there aren't any priorities
@@ -486,9 +526,12 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_post_destroy_without_confirmation_should_destroy_account
     assert_difference 'User.count', -1 do
-      post :destroy, :params => {
+      post(
+        :destroy,
+        :params => {
           :confirm => '1'
         }
+      )
     end
     assert_redirected_to '/'
     assert_match /deleted/i, flash[:notice]
@@ -498,9 +541,12 @@ class MyControllerTest < Redmine::ControllerTest
     User.any_instance.stubs(:own_account_deletable?).returns(false)
 
     assert_no_difference 'User.count' do
-      post :destroy, :params => {
+      post(
+        :destroy,
+        :params => {
           :confirm => '1'
         }
+      )
     end
     assert_redirected_to '/my/account'
   end
@@ -514,21 +560,27 @@ class MyControllerTest < Redmine::ControllerTest
   end
 
   def test_update_password
-    post :password, :params => {
+    post(
+      :password,
+      :params => {
         :password => 'jsmith',
         :new_password => 'secret123',
         :new_password_confirmation => 'secret123'
       }
+    )
     assert_redirected_to '/my/account'
     assert User.try_to_login('jsmith', 'secret123')
   end
 
   def test_update_password_with_non_matching_confirmation
-    post :password, :params => {
+    post(
+      :password,
+      :params => {
         :password => 'jsmith',
         :new_password => 'secret123',
         :new_password_confirmation => 'secret1234'
       }
+    )
     assert_response :success
     assert_select_error /Password doesn.*t match confirmation/
     assert User.try_to_login('jsmith', 'jsmith')
@@ -536,11 +588,14 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_update_password_with_wrong_password
     # wrong password
-    post :password, :params => {
+    post(
+      :password,
+      :params => {
         :password => 'wrongpassword',
         :new_password => 'secret123',
         :new_password_confirmation => 'secret123'
       }
+    )
     assert_response :success
     assert_equal 'Wrong password', flash[:error]
     assert User.try_to_login('jsmith', 'jsmith')
@@ -556,12 +611,14 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_update_password_should_send_security_notification
     ActionMailer::Base.deliveries.clear
-    post :password, :params => {
+    post(
+      :password,
+      :params => {
         :password => 'jsmith',
         :new_password => 'secret123',
         :new_password_confirmation => 'secret123'
       }
-
+    )
     assert_not_nil (mail = ActionMailer::Base.deliveries.last)
     assert_mail_body_no_match 'secret123', mail # just to be sure: pw should never be sent!
     assert_select_email do
@@ -573,57 +630,77 @@ class MyControllerTest < Redmine::ControllerTest
     user = User.generate!(:language => 'en')
     @request.session[:user_id] = user.id
 
-    post :update_page, :params => {
+    post(
+      :update_page,
+      :params => {
         :settings => {
           'issuesassignedtome' => {
-          'columns' => ['subject', 'due_date']}
+            'columns' => ['subject', 'due_date']
+          }
         }
       },
       :xhr => true
+    )
     assert_response :success
     assert_include '$("#block-issuesassignedtome").replaceWith(', response.body
     assert_include 'Due date', response.body
 
-    assert_equal({:columns => ['subject', 'due_date']}, user.reload.pref.my_page_settings('issuesassignedtome'))
+    assert_equal({:columns => ['subject', 'due_date']},
+                 user.reload.pref.my_page_settings('issuesassignedtome'))
   end
 
   def test_add_block
-    post :add_block, :params => {
+    post(
+      :add_block,
+      :params => {
         :block => 'issueswatched'
       }
+    )
     assert_redirected_to '/my/page'
     assert User.find(2).pref[:my_page_layout]['top'].include?('issueswatched')
   end
 
   def test_add_block_xhr
-    post :add_block, :params => {
+    post(
+      :add_block,
+      :params => {
         :block => 'issueswatched'
       },
       :xhr => true
+    )
     assert_response :success
     assert_include 'issueswatched', User.find(2).pref[:my_page_layout]['top']
   end
 
   def test_add_invalid_block_should_error
-    post :add_block, :params => {
+    post(
+      :add_block,
+      :params => {
         :block => 'invalid'
       }
+    )
     assert_response 422
   end
 
   def test_remove_block
-    post :remove_block, :params => {
+    post(
+      :remove_block,
+      :params => {
         :block => 'issuesassignedtome'
       }
+    )
     assert_redirected_to '/my/page'
     assert !User.find(2).pref[:my_page_layout].values.flatten.include?('issuesassignedtome')
   end
 
   def test_remove_block_xhr
-    post :remove_block, :params => {
+    post(
+      :remove_block,
+      :params => {
         :block => 'issuesassignedtome'
       },
       :xhr => true
+    )
     assert_response :success
     assert_include '$("#block-issuesassignedtome").remove();', response.body
     assert !User.find(2).pref[:my_page_layout].values.flatten.include?('issuesassignedtome')
@@ -631,30 +708,38 @@ class MyControllerTest < Redmine::ControllerTest
 
   def test_order_blocks
     pref = User.find(2).pref
-    pref.my_page_layout = {'left' => ['news', 'calendar','documents']}
+    pref.my_page_layout = {'left' => ['news', 'calendar', 'documents']}
     pref.save!
 
-    post :order_blocks, :params => {
+    post(
+      :order_blocks,
+      :params => {
         :group => 'left',
         :blocks => ['documents', 'calendar', 'news']
       },
       :xhr => true
+    )
     assert_response :success
     assert_equal ['documents', 'calendar', 'news'], User.find(2).pref.my_page_layout['left']
   end
 
   def test_move_block
     pref = User.find(2).pref
-    pref.my_page_layout = {'left' => ['news','documents'], 'right' => ['calendar']}
+    pref.my_page_layout = {'left' => ['news', 'documents'], 'right' => ['calendar']}
     pref.save!
 
-    post :order_blocks, :params => {
+    post(
+      :order_blocks,
+      :params => {
         :group => 'left',
         :blocks => ['news', 'calendar', 'documents']
       },
       :xhr => true
+    )
     assert_response :success
-    assert_equal({'left' => ['news', 'calendar', 'documents'], 'right' => []}, User.find(2).pref.my_page_layout)
+    assert_equal({'left' => ['news', 'calendar', 'documents'],
+                 'right' => []},
+                 User.find(2).pref.my_page_layout)
   end
 
   def test_reset_rss_key_with_existing_key

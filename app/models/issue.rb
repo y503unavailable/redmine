@@ -51,7 +51,7 @@ class Issue < ActiveRecord::Base
                 :url => Proc.new {|o| {:controller => 'issues', :action => 'show', :id => o.id}},
                 :type => Proc.new {|o| 'issue' + (o.closed? ? '-closed' : '')}
 
-  acts_as_activity_provider :scope => preload(:project, :author, :tracker, :status),
+  acts_as_activity_provider :scope => proc { preload(:project, :author, :tracker, :status) },
                             :author_key => :author_id
 
   DONE_RATIO_OPTIONS = %w(issue_field issue_status)
@@ -1215,10 +1215,10 @@ class Issue < ActiveRecord::Base
   # Returns a scope of the given issues and their descendants
   def self.self_and_descendants(issues)
     Issue.joins(
-        "JOIN #{Issue.table_name} ancestors" +
-        " ON ancestors.root_id = #{Issue.table_name}.root_id" +
-        " AND ancestors.lft <= #{Issue.table_name}.lft AND ancestors.rgt >= #{Issue.table_name}.rgt"
-      ).
+      "JOIN #{Issue.table_name} ancestors" +
+      " ON ancestors.root_id = #{Issue.table_name}.root_id" +
+      " AND ancestors.lft <= #{Issue.table_name}.lft AND ancestors.rgt >= #{Issue.table_name}.rgt"
+    ).
       where(:ancestors => {:id => issues.map(&:id)})
   end
 
@@ -1441,10 +1441,11 @@ class Issue < ActiveRecord::Base
   def self.update_versions_from_hierarchy_change(project)
     moved_project_ids = project.self_and_descendants.reload.pluck(:id)
     # Update issues of the moved projects and issues assigned to a version of a moved project
-    Issue.update_versions(
-            ["#{Version.table_name}.project_id IN (?) OR #{Issue.table_name}.project_id IN (?)",
-             moved_project_ids, moved_project_ids]
-          )
+    Issue.
+      update_versions(
+        ["#{Version.table_name}.project_id IN (?) OR #{Issue.table_name}.project_id IN (?)",
+         moved_project_ids, moved_project_ids]
+      )
   end
 
   # Unassigns issues from +categories+ if it's no longer shared with issue's project

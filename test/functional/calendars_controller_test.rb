@@ -41,9 +41,12 @@ class CalendarsControllerTest < Redmine::ControllerTest
     travel_to issues(:issues_002).start_date
 
     with_settings :gravatar_enabled => '1' do
-      get :show, :params => {
+      get(
+        :show,
+        :params => {
           :project_id => 1
         }
+      )
     end
     assert_response :success
 
@@ -60,18 +63,23 @@ class CalendarsControllerTest < Redmine::ControllerTest
 
     # Assert context menu on issues
     assert_select 'form[data-cm-url=?]', '/issues/context_menu'
-    assert_select 'div.issue.hascontextmenu.tooltip' do
-      assert_select 'input[name=?][type=?]', 'ids[]', 'checkbox'
-      assert_select 'img[class="gravatar"]'
+    assert_select 'div.issue.hascontextmenu.tooltip.starting' do
+      assert_select 'a.issue[href=?]', '/issues/2', :text => 'Feature request #2'
+      assert_select 'span.tip' do
+        assert_select 'img[class="gravatar"]'
+      end
+      assert_select 'input[name=?][type=?][value=?]', 'ids[]', 'checkbox', '2'
     end
   end
 
   def test_show_should_run_custom_queries
     @query = IssueQuery.create!(:name => 'Calendar Query', :visibility => IssueQuery::VISIBILITY_PUBLIC)
-
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :query_id => @query.id
       }
+    )
     assert_response :success
     assert_select 'h2', :text => 'Calendar Query'
   end
@@ -83,10 +91,13 @@ class CalendarsControllerTest < Redmine::ControllerTest
 
   def test_week_number_calculation
     with_settings :start_of_week => 7 do
-      get :show, :params => {
+      get(
+        :show,
+        :params => {
           :month => '1',
           :year => '2010'
         }
+      )
       assert_response :success
     end
 
@@ -103,10 +114,13 @@ class CalendarsControllerTest < Redmine::ControllerTest
     end
 
     with_settings :start_of_week => 1 do
-      get :show, :params => {
+      get(
+        :show,
+        :params => {
           :month => '1',
           :year => '2010'
         }
+      )
       assert_response :success
     end
 
@@ -124,28 +138,35 @@ class CalendarsControllerTest < Redmine::ControllerTest
   end
 
   def test_show_custom_query_with_multiple_sort_criteria
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :query_id => 5
       }
-
+    )
     assert_response :success
     assert_select 'h2', :text => 'Open issues by priority and tracker'
   end
 
   def test_show_custom_query_with_group_by_option
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :query_id => 6
       }
-
+    )
     assert_response :success
     assert_select 'h2', :text => 'Open issues grouped by tracker'
   end
 
   def test_show_calendar_day_css_classes
-    get :show, :params => {
+    get(
+      :show,
+      :params => {
         :month => '12',
         :year => '2016'
       }
+    )
     assert_response :success
 
     assert_select 'tr:nth-child(2)' do

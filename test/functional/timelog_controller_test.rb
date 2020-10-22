@@ -839,8 +839,13 @@ class TimelogControllerTest < Redmine::ControllerTest
 
   def test_bulk_update_custom_field
     @request.session[:user_id] = 2
-    post :bulk_update, :params => {:ids => [1, 2], :time_entry => { :custom_field_values => {'10' => '0'} }}
-
+    post(
+      :bulk_update,
+      :params => {
+        :ids => [1, 2],
+        :time_entry => {:custom_field_values => {'10' => '0'}}
+      }
+    )
     assert_response 302
     assert_equal ["0", "0"], TimeEntry.where(:id => [1, 2]).collect {|i| i.custom_value_for(10).value}
   end
@@ -848,15 +853,20 @@ class TimelogControllerTest < Redmine::ControllerTest
   def test_bulk_update_clear_custom_field
     field = TimeEntryCustomField.generate!(:field_format => 'string')
     @request.session[:user_id] = 2
-    post :bulk_update, :params => {:ids => [1, 2], :time_entry => { :custom_field_values => {field.id.to_s => '__none__'} }}
-
+    post(
+      :bulk_update,
+      :params => {
+        :ids => [1, 2],
+        :time_entry => {:custom_field_values => {field.id.to_s => '__none__'}}
+      }
+    )
     assert_response 302
     assert_equal ["", ""], TimeEntry.where(:id => [1, 2]).collect {|i| i.custom_value_for(field).value}
   end
 
   def test_post_bulk_update_should_redirect_back_using_the_back_url_parameter
     @request.session[:user_id] = 2
-    post :bulk_update, :params => {:ids => [1,2], :back_url => '/time_entries'}
+    post :bulk_update, :params => {:ids => [1, 2], :back_url => '/time_entries'}
 
     assert_response :redirect
     assert_redirected_to '/time_entries'
@@ -864,7 +874,7 @@ class TimelogControllerTest < Redmine::ControllerTest
 
   def test_post_bulk_update_should_not_redirect_back_using_the_back_url_parameter_off_the_host
     @request.session[:user_id] = 2
-    post :bulk_update, :params => {:ids => [1,2], :back_url => 'http://google.com'}
+    post :bulk_update, :params => {:ids => [1, 2], :back_url => 'http://google.com'}
 
     assert_response :redirect
     assert_redirected_to :controller => 'timelog', :action => 'index', :project_id => Project.find(1).identifier
@@ -874,7 +884,7 @@ class TimelogControllerTest < Redmine::ControllerTest
     @request.session[:user_id] = 2
     Role.find_by_name('Manager').remove_permission! :edit_time_entries
 
-    post :bulk_update, :params => {:ids => [1,2]}
+    post :bulk_update, :params => {:ids => [1, 2]}
     assert_response 403
   end
 

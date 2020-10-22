@@ -43,7 +43,7 @@ class Changeset < ActiveRecord::Base
 
   acts_as_activity_provider :timestamp => "#{table_name}.committed_on",
                             :author_key => :user_id,
-                            :scope => preload(:user, {:repository => :project})
+                            :scope => proc { preload(:user, {:repository => :project}) }
 
   validates_presence_of :repository_id, :revision, :committed_on, :commit_date
   validates_uniqueness_of :revision, :scope => :repository_id
@@ -94,8 +94,8 @@ class Changeset < ActiveRecord::Base
 
   def before_create_cs
     self.committer = self.class.to_utf8(self.committer, repository.repo_log_encoding)
-    self.comments  = self.class.normalize_comments(
-                       self.comments, repository.repo_log_encoding)
+    self.comments =
+      self.class.normalize_comments(self.comments, repository.repo_log_encoding)
     self.user = repository.find_committer_user(self.committer)
   end
 
