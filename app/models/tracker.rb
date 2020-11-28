@@ -40,7 +40,7 @@ class Tracker < ActiveRecord::Base
   validates_length_of :name, :maximum => 30
   validates_length_of :description, :maximum => 255
 
-  scope :sorted, lambda { order(:position) }
+  scope :sorted, lambda {order(:position)}
   scope :named, lambda {|arg| where("LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip)}
 
   # Returns the trackers that are visible by the user.
@@ -51,7 +51,7 @@ class Tracker < ActiveRecord::Base
   #
   #   Tracker.visible(user)
   #   => returns the trackers that are visible by the user in at least on project
-  scope :visible, lambda {|*args|
+  scope :visible, (lambda do |*args|
     user = args.shift || User.current
     condition = Project.allowed_to_condition(user, :view_issues) do |role, user|
       unless role.permissions_all_trackers?(:view_issues)
@@ -64,7 +64,7 @@ class Tracker < ActiveRecord::Base
       end
     end
     joins(:projects).where(condition).distinct
-  }
+  end)
 
   safe_attributes(
     'name',
@@ -75,6 +75,16 @@ class Tracker < ActiveRecord::Base
     'custom_field_ids',
     'project_ids',
     'description')
+
+  def copy_from(arg, options={})
+    return if arg.blank?
+
+    tracker = arg.is_a?(Tracker) ? arg : Tracker.find_by_id(arg.to_s)
+    self.attributes = tracker.attributes.dup.except("id", "name", "position")
+    self.custom_field_ids = tracker.custom_field_ids.dup
+    self.project_ids = tracker.project_ids.dup
+    self
+  end
 
   def to_s; name end
 

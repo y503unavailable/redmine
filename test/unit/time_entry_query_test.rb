@@ -88,9 +88,12 @@ class TimeEntryQueryTest < ActiveSupport::TestCase
 
   def test_project_query_should_include_project_issue_custom_fields_only_as_filters
     global = IssueCustomField.generate!(:is_for_all => true, :is_filter => true)
-    field_on_project = IssueCustomField.generate!(:is_for_all => false, :project_ids => [3], :is_filter => true)
-    field_not_on_project = IssueCustomField.generate!(:is_for_all => false, :project_ids => [1,2], :is_filter => true)
-
+    field_on_project =
+      IssueCustomField.generate!(:is_for_all => false, :project_ids => [3],
+                                 :is_filter => true)
+    field_not_on_project =
+      IssueCustomField.generate!(:is_for_all => false, :project_ids => [1, 2],
+                                 :is_filter => true)
     query = TimeEntryQuery.new(:project => Project.find(3))
 
     assert_include "issue.cf_#{global.id}", query.available_filters.keys
@@ -100,9 +103,12 @@ class TimeEntryQueryTest < ActiveSupport::TestCase
 
   def test_project_query_should_include_project_issue_custom_fields_only_as_columns
     global = IssueCustomField.generate!(:is_for_all => true, :is_filter => true)
-    field_on_project = IssueCustomField.generate!(:is_for_all => false, :project_ids => [3], :is_filter => true)
-    field_not_on_project = IssueCustomField.generate!(:is_for_all => false, :project_ids => [1,2], :is_filter => true)
-
+    field_on_project =
+      IssueCustomField.generate!(:is_for_all => false, :project_ids => [3],
+                                 :is_filter => true)
+    field_not_on_project =
+      IssueCustomField.generate!(:is_for_all => false, :project_ids => [1, 2],
+                                 :is_filter => true)
     query = TimeEntryQuery.new(:project => Project.find(3))
 
     assert_include "issue.cf_#{global.id}", query.available_columns.map(&:name).map(&:to_s)
@@ -131,7 +137,7 @@ class TimeEntryQueryTest < ActiveSupport::TestCase
   end
 
   def test_results_scope_should_be_in_the_same_order_when_paginating
-    4.times { TimeEntry.generate! }
+    4.times {TimeEntry.generate!}
     q = TimeEntryQuery.new
     q.sort_criteria = {'0' => ['user', 'asc']}
     time_entry_ids = q.results_scope.pluck(:id)

@@ -50,9 +50,13 @@ class WatchersController < ApplicationController
       end
     end
     respond_to do |format|
-      format.html { redirect_to_referer_or {render :html => 'Watcher added.', :status => 200, :layout => true}}
-      format.js { @users = users_for_new_watcher }
-      format.api { render_api_ok }
+      format.html do
+        redirect_to_referer_or do
+          render(:html => 'Watcher added.', :status => 200, :layout => true)
+        end
+      end
+      format.js  {@users = users_for_new_watcher}
+      format.api {render_api_ok}
     end
   end
 
@@ -72,9 +76,13 @@ class WatchersController < ApplicationController
       watchable.set_watcher(user, false)
     end
     respond_to do |format|
-      format.html { redirect_to_referer_or {render :html => 'Watcher removed.', :status => 200, :layout => true} }
+      format.html do
+        redirect_to_referer_or do
+          render(:html => 'Watcher removed.', :status => 200, :layout => true)
+        end
+      end
       format.js
-      format.api { render_api_ok }
+      format.api {render_api_ok}
     end
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -111,11 +119,16 @@ class WatchersController < ApplicationController
       watchable.set_watcher(user, watching)
     end
     respond_to do |format|
-      format.html {
+      format.html do
         text = watching ? 'Watcher added.' : 'Watcher removed.'
-        redirect_to_referer_or {render :html => text, :status => 200, :layout => true}
-      }
-      format.js { render :partial => 'set_watcher', :locals => {:user => user, :watched => watchables} }
+        redirect_to_referer_or do
+          render(:html => text, :status => 200, :layout => true)
+        end
+      end
+      format.js do
+        render(:partial => 'set_watcher',
+               :locals => {:user => user, :watched => watchables})
+      end
     end
   end
 
@@ -155,6 +168,7 @@ class WatchersController < ApplicationController
         !w.project.visible?
       end
     end
+
     objects
   end
 end

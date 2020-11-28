@@ -43,16 +43,16 @@ class Changeset < ActiveRecord::Base
 
   acts_as_activity_provider :timestamp => "#{table_name}.committed_on",
                             :author_key => :user_id,
-                            :scope => proc { preload(:user, {:repository => :project}) }
+                            :scope => proc {preload(:user, {:repository => :project})}
 
   validates_presence_of :repository_id, :revision, :committed_on, :commit_date
   validates_uniqueness_of :revision, :scope => :repository_id
   validates_uniqueness_of :scmid, :scope => :repository_id, :allow_nil => true
 
-  scope :visible, lambda {|*args|
+  scope :visible, (lambda do |*args|
     joins(:repository => :project).
     where(Project.allowed_to_condition(args.shift || User.current, :view_changesets, *args))
-  }
+  end)
 
   after_create :scan_for_issues
   before_create :before_create_cs

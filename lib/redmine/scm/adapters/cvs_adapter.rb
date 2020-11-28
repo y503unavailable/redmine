@@ -52,7 +52,7 @@ module Redmine
           end
 
           def scm_version_from_command_line
-            shellout("#{sq_bin} --version") { |io| io.read }.to_s
+            shellout("#{sq_bin} --version") {|io| io.read}.to_s
           end
         end
 
@@ -198,10 +198,10 @@ module Redmine
                   next
                 end
               elsif state == "tags"
-                if /^#{STARTLOG}/ =~ line
+                if /^#{STARTLOG}/.match?(line)
                   commit_log = ""
                   state = "revision"
-                elsif /^#{ENDLOG}/ =~ line
+                elsif /^#{ENDLOG}/.match?(line)
                   state = "head"
                 end
                 next
@@ -232,13 +232,13 @@ module Redmine
                   end
                   commit_log = ""
                   revision   = nil
-                  if /^#{ENDLOG}/ =~ line
+                  if /^#{ENDLOG}/.match?(line)
                     state = "entry_start"
                   end
                   next
                 end
 
-                if /^branches: (.+)$/ =~ line
+                if /^branches: (.+)$/.match?(line)
                   # TODO: version.branch = $1
                 elsif /^revision (\d+(?:\.\d+)+).*$/ =~ line
                   revision = $1
@@ -260,7 +260,7 @@ module Redmine
                   #                  version.line_minus = 0
                   #                end
                 else
-                  commit_log += line unless line =~ /^\*\*\* empty log message \*\*\*/
+                  commit_log += line unless /^\*\*\* empty log message \*\*\*/.match?(line)
                 end
               end
             end
@@ -314,12 +314,13 @@ module Redmine
             io.each_line do |line|
               next unless line =~ %r{^([\d\.]+)\s+\(([^\)]+)\s+[^\)]+\):\s(.*)$}
               blame.add_line(
-                  $3.rstrip,
-                  Revision.new(
-                    :revision   => $1,
-                    :identifier => nil,
-                    :author     => $2.strip
-                    ))
+                $3.rstrip,
+                Revision.new(
+                  :revision   => $1,
+                  :identifier => nil,
+                  :author     => $2.strip
+                )
+              )
             end
           end
           blame
@@ -379,10 +380,12 @@ module Redmine
           full_args.map do |e|
             full_args_locale << scm_iconv(@path_encoding, 'UTF-8', e)
           end
-          ret = shellout(
-                   self.class.sq_bin + ' ' + full_args_locale.map { |e| shell_quote e.to_s }.join(' '),
-                   &block
-                   )
+          ret =
+            shellout(
+              self.class.sq_bin + ' ' +
+                full_args_locale.map {|e| shell_quote e.to_s}.join(' '),
+              &block
+            )
           if $? && $?.exitstatus != 0
             raise ScmCommandAborted, "cvs exited with non-zero status: #{$?.exitstatus}"
           end

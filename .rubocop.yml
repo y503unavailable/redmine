@@ -1,8 +1,10 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
   TargetRailsVersion: 5.2
+
+  NewCops: enable
 
   Exclude:
     - '**/vendor/**/*'
@@ -30,8 +32,26 @@ Layout/CaseIndentation:
   Exclude:
     - 'config/initializers/10-patches.rb'
 
+Layout/EmptyLinesAroundAccessModifier:
+  Enabled: true
+  Exclude:
+    - 'config/initializers/10-patches.rb'
+
 Layout/EmptyLineBetweenDefs:
   AllowAdjacentOneLineDefs: true
+
+Layout/RescueEnsureAlignment:
+  Enabled: true
+  Exclude:
+    - 'db/migrate/085_add_role_tracker_old_status_index_to_workflows.rb'
+
+Layout/SpaceAroundEqualsInParameterDefault:
+  Enabled: false
+
+Layout/SpaceBeforeSemicolon:
+  Enabled: true
+  Exclude:
+    - 'config/initializers/10-patches.rb'
 
 Layout/SpaceBeforeBlockBraces:
   # "space" is used more than "no_space".
@@ -39,12 +59,20 @@ Layout/SpaceBeforeBlockBraces:
   #   str = path.to_s.split(%r{[/\\]}).select{|p| !p.blank?}.join("/")
   Enabled: false
 
-# You can see results by "rubocop --only Layout/SpaceInsideBlockBraces"
 Layout/SpaceInsideBlockBraces:
+  Enabled: true
   EnforcedStyle: no_space
   SpaceBeforeBlockParameters: false
+  Exclude:
+    - 'config/initializers/10-patches.rb'
+    - 'config/initializers/backtrace_silencers.rb'
+    - 'db/migrate/007_create_journals.rb'
+    - 'db/migrate/096_add_commit_access_permission.rb'
+    - 'db/migrate/20170418090031_add_view_news_to_all_existing_roles.rb'
+    - 'db/migrate/20170419144536_add_view_messages_to_all_existing_roles.rb'
+    - 'lib/diff.rb'
+    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
-# You can see results by "rubocop --only Layout/SpaceInsideHashLiteralBraces"
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
@@ -86,6 +114,12 @@ Style/AsciiComments:
     # We can not change nor remove it.
     - 'app/models/repository/git.rb'
 
+Style/BlockDelimiters:
+  Enabled: true
+  Exclude:
+    - 'db/migrate/007_create_journals.rb'
+    - 'lib/diff.rb'
+
 Style/EmptyElse:
   EnforcedStyle: empty
 
@@ -122,6 +156,9 @@ Style/IdenticalConditionalBranches:
   Exclude:
     - 'config/initializers/10-patches.rb'
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
+
+Style/RaiseArgs:
+  Enabled: false
 
 Style/TrailingCommaInArrayLiteral:
   Enabled: false

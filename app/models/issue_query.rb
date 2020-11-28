@@ -40,10 +40,10 @@ class IssueQuery < Query
     QueryColumn.new(:estimated_hours, :sortable => "#{Issue.table_name}.estimated_hours", :totalable => true),
     QueryColumn.new(
       :total_estimated_hours,
-      :sortable => -> {
+      :sortable => -> do
                      "COALESCE((SELECT SUM(estimated_hours) FROM #{Issue.table_name} subtasks" +
         " WHERE #{Issue.visible_condition(User.current).gsub(/\bissues\b/, 'subtasks')} AND subtasks.root_id = #{Issue.table_name}.root_id AND subtasks.lft >= #{Issue.table_name}.lft AND subtasks.rgt <= #{Issue.table_name}.rgt), 0)"
-                   },
+                   end,
       :default_order => 'desc'),
     QueryColumn.new(:done_ratio, :sortable => "#{Issue.table_name}.done_ratio", :groupable => true),
     TimestampQueryColumn.new(:created_on, :sortable => "#{Issue.table_name}.created_on", :default_order => 'desc', :groupable => true),
@@ -57,7 +57,7 @@ class IssueQuery < Query
 
   def initialize(attributes=nil, *args)
     super attributes
-    self.filters ||= { 'status_id' => {:operator => "o", :values => [""]} }
+    self.filters ||= {'status_id' => {:operator => "o", :values => [""]}}
   end
 
   def draw_relations
@@ -98,39 +98,39 @@ class IssueQuery < Query
   def initialize_available_filters
     add_available_filter(
       "status_id",
-      :type => :list_status, :values => lambda { issue_statuses_values }
+      :type => :list_status, :values => lambda {issue_statuses_values}
     )
     add_available_filter(
       "project_id",
-      :type => :list, :values => lambda { project_values }
+      :type => :list, :values => lambda {project_values}
     ) if project.nil?
     add_available_filter(
       "tracker_id",
-      :type => :list, :values => trackers.collect{|s| [s.name, s.id.to_s] }
+      :type => :list, :values => trackers.collect{|s| [s.name, s.id.to_s]}
     )
     add_available_filter(
       "priority_id",
-      :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s] }
+      :type => :list, :values => IssuePriority.all.collect{|s| [s.name, s.id.to_s]}
     )
     add_available_filter(
       "author_id",
-      :type => :list, :values => lambda { author_values }
+      :type => :list, :values => lambda {author_values}
     )
     add_available_filter(
       "assigned_to_id",
-      :type => :list_optional, :values => lambda { assigned_to_values }
+      :type => :list_optional, :values => lambda {assigned_to_values}
     )
     add_available_filter(
       "member_of_group",
-      :type => :list_optional, :values => lambda { Group.givable.visible.collect {|g| [g.name, g.id.to_s] } }
+      :type => :list_optional, :values => lambda {Group.givable.visible.collect {|g| [g.name, g.id.to_s]}}
     )
     add_available_filter(
       "assigned_to_role",
-      :type => :list_optional, :values => lambda { Role.givable.collect {|r| [r.name, r.id.to_s] } }
+      :type => :list_optional, :values => lambda {Role.givable.collect {|r| [r.name, r.id.to_s]}}
     )
     add_available_filter(
       "fixed_version_id",
-      :type => :list_optional, :values => lambda { fixed_version_values }
+      :type => :list_optional, :values => lambda {fixed_version_values}
     )
     add_available_filter(
       "fixed_version.due_date",
@@ -141,12 +141,12 @@ class IssueQuery < Query
       "fixed_version.status",
       :type => :list,
       :name => l(:label_attribute_of_fixed_version, :name => l(:field_status)),
-      :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s] }
+      :values => Version::VERSION_STATUSES.map{|s| [l("version_status_#{s}"), s]}
     )
     add_available_filter(
       "category_id",
       :type => :list_optional,
-      :values => lambda { project.issue_categories.collect{|s| [s.name, s.id.to_s] } }
+      :values => lambda {project.issue_categories.collect{|s| [s.name, s.id.to_s]}}
     ) if project
     add_available_filter "subject", :type => :text
     add_available_filter "description", :type => :text
@@ -178,22 +178,22 @@ class IssueQuery < Query
     if User.current.logged?
       add_available_filter(
         "watcher_id",
-        :type => :list, :values => lambda { watcher_values }
+        :type => :list, :values => lambda {watcher_values}
       )
     end
     add_available_filter(
       "updated_by",
-      :type => :list, :values => lambda { author_values }
+      :type => :list, :values => lambda {author_values}
     )
     add_available_filter(
       "last_updated_by",
-      :type => :list, :values => lambda { author_values }
+      :type => :list, :values => lambda {author_values}
     )
     if project && !project.leaf?
       add_available_filter(
         "subproject_id",
         :type => :list_subprojects,
-        :values => lambda { subproject_values }
+        :values => lambda {subproject_values}
       )
     end
 
@@ -201,7 +201,7 @@ class IssueQuery < Query
       "project.status",
       :type => :list,
       :name => l(:label_attribute_of_project, :name => l(:field_status)),
-      :values => lambda { project_statuses_values }
+      :values => lambda {project_statuses_values}
     ) if project.nil? || !project.leaf?
 
     add_custom_fields_filters(issue_custom_fields)
@@ -231,15 +231,16 @@ class IssueQuery < Query
         :values => [l(:general_text_Yes)],
         :group => 'or_filter'
 
-    Tracker.disabled_core_fields(trackers).each {|field|
+    Tracker.disabled_core_fields(trackers).each do |field|
       delete_available_filter field
-    }
+    end
   end
 
   def available_columns
     return @available_columns if @available_columns
+
     @available_columns = self.class.available_columns.dup
-    @available_columns += issue_custom_fields.visible.collect {|cf| QueryCustomFieldColumn.new(cf) }
+    @available_columns += issue_custom_fields.visible.collect {|cf| QueryCustomFieldColumn.new(cf)}
 
     if User.current.allowed_to?(:view_time_entries, project, :global => true)
       # insert the columns after total_estimated_hours or at the end
@@ -281,9 +282,9 @@ class IssueQuery < Query
 
     disabled_fields = Tracker.disabled_core_fields(trackers).map {|field| field.sub(/_id$/, '')}
     disabled_fields << "total_estimated_hours" if disabled_fields.include?("estimated_hours")
-    @available_columns.reject! {|column|
+    @available_columns.reject! do |column|
       disabled_fields.include?(column.name.to_s)
-    }
+    end
 
     @available_columns
   end
@@ -467,7 +468,7 @@ class IssueQuery < Query
 
   def sql_for_watcher_id_field(field, operator, value)
     db_table = Watcher.table_name
-    me, others = value.partition { |id| ['0', User.current.id.to_s].include?(id) }
+    me, others = value.partition {|id| ['0', User.current.id.to_s].include?(id)}
     sql =
       if others.any?
         "SELECT #{Issue.table_name}.id FROM #{Issue.table_name} " +
@@ -500,9 +501,9 @@ class IssueQuery < Query
     end
     groups ||= []
 
-    members_of_groups = groups.inject([]) {|user_ids, group|
+    members_of_groups = groups.inject([]) do |user_ids, group|
       user_ids + group.user_ids + [group.id]
-    }.uniq.compact.sort.collect(&:to_s)
+    end.uniq.compact.sort.collect(&:to_s)
 
     '(' + sql_for_field("assigned_to_id", operator, members_of_groups, Issue.table_name, "assigned_to_id", false) + ')'
   end
@@ -697,21 +698,35 @@ class IssueQuery < Query
         joins << "LEFT OUTER JOIN #{User.table_name} ON #{User.table_name}.id = #{queried_table_name}.assigned_to_id"
       end
       if order_options.include?('last_journal_user')
-        joins << "LEFT OUTER JOIN #{Journal.table_name} ON #{Journal.table_name}.id = (SELECT MAX(#{Journal.table_name}.id) FROM #{Journal.table_name}" +
-                " WHERE #{Journal.table_name}.journalized_type='Issue' AND #{Journal.table_name}.journalized_id=#{Issue.table_name}.id AND #{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})" +
-                " LEFT OUTER JOIN #{User.table_name} last_journal_user ON last_journal_user.id = #{Journal.table_name}.user_id";
+        joins <<
+           "LEFT OUTER JOIN #{Journal.table_name}" \
+             " ON #{Journal.table_name}.id = (SELECT MAX(#{Journal.table_name}.id)" \
+             " FROM #{Journal.table_name}" \
+             " WHERE #{Journal.table_name}.journalized_type = 'Issue'" \
+             " AND #{Journal.table_name}.journalized_id = #{Issue.table_name}.id " \
+             " AND #{Journal.visible_notes_condition(User.current, :skip_pre_condition => true)})" \
+             " LEFT OUTER JOIN #{User.table_name} last_journal_user" \
+             " ON last_journal_user.id = #{Journal.table_name}.user_id"
       end
       if order_options.include?('versions')
-        joins << "LEFT OUTER JOIN #{Version.table_name} ON #{Version.table_name}.id = #{queried_table_name}.fixed_version_id"
+        joins <<
+           "LEFT OUTER JOIN #{Version.table_name}" \
+             " ON #{Version.table_name}.id = #{queried_table_name}.fixed_version_id"
       end
       if order_options.include?('issue_categories')
-        joins << "LEFT OUTER JOIN #{IssueCategory.table_name} ON #{IssueCategory.table_name}.id = #{queried_table_name}.category_id"
+        joins <<
+           "LEFT OUTER JOIN #{IssueCategory.table_name}" \
+             " ON #{IssueCategory.table_name}.id = #{queried_table_name}.category_id"
       end
       if order_options.include?('trackers')
-        joins << "LEFT OUTER JOIN #{Tracker.table_name} ON #{Tracker.table_name}.id = #{queried_table_name}.tracker_id"
+        joins <<
+          "LEFT OUTER JOIN #{Tracker.table_name}" \
+            " ON #{Tracker.table_name}.id = #{queried_table_name}.tracker_id"
       end
       if order_options.include?('enumerations')
-        joins << "LEFT OUTER JOIN #{IssuePriority.table_name} ON #{IssuePriority.table_name}.id = #{queried_table_name}.priority_id"
+        joins <<
+          "LEFT OUTER JOIN #{IssuePriority.table_name}" \
+            " ON #{IssuePriority.table_name}.id = #{queried_table_name}.priority_id"
       end
     end
 

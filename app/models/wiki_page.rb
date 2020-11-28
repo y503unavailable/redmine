@@ -56,7 +56,7 @@ class WikiPage < ActiveRecord::Base
   after_save :handle_children_move, :delete_selected_attachments
 
   # eager load information about last updates, without loading text
-  scope :with_updated_on, lambda { preload(:content_without_text) }
+  scope :with_updated_on, lambda {preload(:content_without_text)}
 
   # Wiki pages that are protected by default
   DEFAULT_PROTECTED_PAGES = %w(sidebar)
@@ -90,8 +90,8 @@ class WikiPage < ActiveRecord::Base
     if attrs.respond_to?(:to_unsafe_hash)
       attrs = attrs.to_unsafe_hash
     end
-
     return unless attrs.is_a?(Hash)
+
     attrs = attrs.deep_dup
 
     # Project and Tracker must be set before since new_statuses_allowed_to depends on it.
@@ -325,13 +325,14 @@ class WikiAnnotate
       end
       positions.compact!
       # Stop if every line is annotated
-      break unless @lines.detect { |line| line[0].nil? }
+      break unless @lines.detect {|line| line[0].nil?}
+
       current = current.previous
     end
-    @lines.each { |line|
+    @lines.each do |line|
       line[0] ||= current.version
       # if the last known version is > 1 (eg. history was cleared), we don't know the author
       line[1] ||= current.author if current.version == 1
-    }
+    end
   end
 end

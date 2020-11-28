@@ -50,12 +50,19 @@ class NewsController < ApplicationController
                       offset(@offset).
                       to_a
     respond_to do |format|
-      format.html {
+      format.html do
         @news = News.new # for adding news inline
         render :layout => false if request.xhr?
-      }
+      end
       format.api
-      format.atom { render_feed(@newss, :title => (@project ? @project.name : Setting.app_title) + ": #{l(:label_news_plural)}") }
+      format.atom do
+        render_feed(
+          @newss,
+          :title =>
+            (@project ? @project.name : Setting.app_title) +
+              ": #{l(:label_news_plural)}"
+        )
+      end
     end
   end
 
@@ -74,17 +81,17 @@ class NewsController < ApplicationController
     @news.save_attachments(params[:attachments] || (params[:news] && params[:news][:uploads]))
     if @news.save
       respond_to do |format|
-        format.html {
+        format.html do
           render_attachment_warning_if_needed(@news)
           flash[:notice] = l(:notice_successful_create)
           redirect_to project_news_index_path(@project)
-        }
-        format.api  { render_api_ok }
+        end
+        format.api  {render_api_ok}
       end
     else
       respond_to do |format|
-        format.html { render :action => 'new' }
-        format.api  { render_validation_errors(@news) }
+        format.html {render :action => 'new'}
+        format.api  {render_validation_errors(@news)}
       end
     end
   end
@@ -97,17 +104,17 @@ class NewsController < ApplicationController
     @news.save_attachments(params[:attachments] || (params[:news] && params[:news][:uploads]))
     if @news.save
       respond_to do |format|
-        format.html {
+        format.html do
           render_attachment_warning_if_needed(@news)
           flash[:notice] = l(:notice_successful_update)
           redirect_to news_path(@news)
-        }
-        format.api  { render_api_ok }
+        end
+        format.api  {render_api_ok}
       end
     else
       respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.api  { render_validation_errors(@news) }
+        format.html {render :action => 'edit'}
+        format.api  {render_validation_errors(@news)}
       end
     end
   end
@@ -115,11 +122,11 @@ class NewsController < ApplicationController
   def destroy
     @news.destroy
     respond_to do |format|
-      format.html {
+      format.html do
         flash[:notice] = l(:notice_successful_delete)
         redirect_to project_news_index_path(@project)
-      }
-      format.api  { render_api_ok }
+      end
+      format.api  {render_api_ok}
     end
   end
 end

@@ -56,7 +56,7 @@ module Redmine
 
     def ll(lang, str, arg=nil)
       options = arg.is_a?(Hash) ? arg : {:value => arg}
-      locale = lang.to_s.gsub(%r{(.+)\-(.+)$}) { "#{$1}-#{$2.upcase}" }
+      locale = lang.to_s.gsub(%r{(.+)\-(.+)$}) {"#{$1}-#{$2.upcase}"}
       ::I18n.t(str.to_s, **options, locale: locale)
     end
 
@@ -89,7 +89,7 @@ module Redmine
       if Setting.timespan_format == 'minutes'
         h = hours.floor
         m = ((hours - h) * 60).round
-        "%d:%02d" % [ h, m ]
+        "%d:%02d" % [h, m]
       else
         "%.2f" % hours.to_f
       end
@@ -133,7 +133,11 @@ module Redmine
     end
 
     def find_language(lang)
-      @@languages_lookup ||= valid_languages.inject({}) {|k, v| k[v.to_s.downcase] = v; k }
+      @@languages_lookup ||=
+        valid_languages.inject({}) do |k, v|
+          k[v.to_s.downcase] = v
+          k
+        end
       @@languages_lookup[lang.to_s.downcase]
     end
 

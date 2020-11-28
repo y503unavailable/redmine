@@ -28,24 +28,28 @@ class TimeEntry < ActiveRecord::Base
   belongs_to :activity, :class_name => 'TimeEntryActivity'
 
   acts_as_customizable
-  acts_as_event :title =>
-                  Proc.new {|o|
-                    related   = o.issue if o.issue && o.issue.visible?
-                    related ||= o.project
-                    "#{l_hours(o.hours)} (#{related.event_title})"
-                  },
-                :url => Proc.new {|o| {:controller => 'timelog', :action => 'index', :project_id => o.project, :issue_id => o.issue}},
-                :author => :user,
-                :group => :issue,
-                :description => :comments
-
+  acts_as_event(
+    :title =>
+      Proc.new do |o|
+        related   = o.issue if o.issue && o.issue.visible?
+        related ||= o.project
+        "#{l_hours(o.hours)} (#{related.event_title})"
+      end,
+    :url =>
+      Proc.new do |o|
+        {:controller => 'timelog', :action => 'index', :project_id => o.project, :issue_id => o.issue}
+      end,
+    :author => :user,
+    :group => :issue,
+    :description => :comments
+  )
   acts_as_activity_provider :timestamp => "#{table_name}.created_on",
                             :author_key => :user_id,
-                            :scope => proc { joins(:project).preload(:project) }
+                            :scope => proc {joins(:project).preload(:project)}
 
   validates_presence_of :author_id, :user_id, :activity_id, :project_id, :hours, :spent_on
-  validates_presence_of :issue_id, :if => lambda { Setting.timelog_required_fields.include?('issue_id') }
-  validates_presence_of :comments, :if => lambda { Setting.timelog_required_fields.include?('comments') }
+  validates_presence_of :issue_id, :if => lambda {Setting.timelog_required_fields.include?('issue_id')}
+  validates_presence_of :comments, :if => lambda {Setting.timelog_required_fields.include?('comments')}
   validates_numericality_of :hours, :allow_nil => true, :message => :invalid
   validates_length_of :comments, :maximum => 1024, :allow_nil => true
   validates :spent_on, :date => true
@@ -54,19 +58,21 @@ class TimeEntry < ActiveRecord::Base
   before_validation :set_author_if_nil
   validate :validate_time_entry
 
-  scope :visible, lambda {|*args|
+  scope :visible, (lambda do |*args|
     joins(:project).
     where(TimeEntry.visible_condition(args.shift || User.current, *args))
-  }
-  scope :left_join_issue, lambda {
+  end)
+  scope :left_join_issue, (lambda do
     joins("LEFT OUTER JOIN #{Issue.table_name} ON #{Issue.table_name}.id = #{TimeEntry.table_name}.issue_id")
-  }
-  scope :on_issue, lambda {|issue|
+  end)
+  scope :on_issue, (lambda do |issue|
     joins(:issue).
     where("#{Issue.table_name}.root_id = #{issue.root_id} AND #{Issue.table_name}.lft >= #{issue.lft} AND #{Issue.table_name}.rgt <= #{issue.rgt}")
-  }
+  end)
 
-  safe_attributes 'user_id', 'hours', 'comments', 'project_id', 'issue_id', 'activity_id', 'spent_on', 'custom_field_values', 'custom_fields'
+  safe_attributes 'user_id', 'hours', 'comments', 'project_id',
+                  'issue_id', 'activity_id', 'spent_on',
+                  'custom_field_values', 'custom_fields'
 
   # Returns a SQL conditions string used to find all time entries visible by the specified user
   def self.visible_condition(user, options={})
@@ -212,7 +218,7 @@ class TimeEntry < ActiveRecord::Base
     users = []
     if project
       users = project.members.active.preload(:user)
-      users = users.map(&:user).select{ |u| u.allowed_to?(:log_time, project) }
+      users = users.map(&:user).select{|u| u.allowed_to?(:log_time, project)}
     end
     users << User.current if User.current.logged? && !users.include?(User.current)
     users

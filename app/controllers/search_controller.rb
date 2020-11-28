@@ -84,8 +84,11 @@ class SearchController < ApplicationController
       @question = ""
     end
     respond_to do |format|
-      format.html { render :layout => false if request.xhr? }
-      format.api  { @results ||= []; render :layout => false }
+      format.html {render :layout => false if request.xhr?}
+      format.api do
+        @results ||= []
+        render :layout => false
+      end
     end
   end
 end

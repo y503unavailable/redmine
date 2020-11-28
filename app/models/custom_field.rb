@@ -50,7 +50,7 @@ class CustomField < ActiveRecord::Base
   end
 
   scope :sorted, lambda {order(:position)}
-  scope :visible, lambda {|*args|
+  scope :visible, (lambda do |*args|
     user = args.shift || User.current
     if user.admin?
       # nop
@@ -64,7 +64,7 @@ class CustomField < ActiveRecord::Base
     else
       where(:visible => true)
     end
-  }
+  end)
   def visible_by?(project, user=User.current)
     visible? || user.admin?
   end
@@ -203,6 +203,7 @@ class CustomField < ActiveRecord::Base
   # Returns nil if the custom field can not be used for sorting.
   def order_statement
     return nil if multiple?
+
     format.order_statement(self)
   end
 
@@ -210,6 +211,7 @@ class CustomField < ActiveRecord::Base
   # Returns nil if the custom field can not be used for grouping.
   def group_statement
     return nil if multiple?
+
     format.group_statement(self)
   end
 

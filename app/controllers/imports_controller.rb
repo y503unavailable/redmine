@@ -70,13 +70,13 @@ class ImportsController < ApplicationController
       auto_map_fields
     elsif request.post?
       respond_to do |format|
-        format.html {
+        format.html do
           if params[:previous]
             redirect_to import_settings_path(@import)
           else
             redirect_to import_run_path(@import)
           end
-        }
+        end
         format.js # updates mapping form on project or tracker change
       end
     end
@@ -89,13 +89,13 @@ class ImportsController < ApplicationController
         :max_time => 10.seconds
       )
       respond_to do |format|
-        format.html {
+        format.html do
           if @import.finished?
             redirect_to import_path(@import)
           else
             redirect_to import_run_path(@import)
           end
-        }
+        end
         format.js
       end
     end
@@ -141,8 +141,7 @@ class ImportsController < ApplicationController
 
   def menu_items
     menu_item = import_type ? import_type.menu_item : nil
-
-    { self.controller_name.to_sym => { :actions => {}, :default => menu_item } }
+    {self.controller_name.to_sym => {:actions => {}, :default => menu_item}}
   end
 
   def authorize_import
@@ -179,6 +178,7 @@ class ImportsController < ApplicationController
     # Core fields
     import_type::AUTO_MAPPABLE_FIELDS.each do |field_nm, label_nm|
       next if mappings.include?(field_nm)
+
       index = headers.index(field_nm) || headers.index(l(label_nm).downcase)
       if index
         mappings[field_nm] = index
@@ -189,6 +189,7 @@ class ImportsController < ApplicationController
     @custom_fields.each do |field|
       field_nm = "cf_#{field.id}"
       next if mappings.include?(field_nm)
+
       index = headers.index(field_nm) || headers.index(field.name.downcase)
       if index
         mappings[field_nm] = index

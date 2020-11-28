@@ -511,7 +511,7 @@ module ApplicationHelper
     end
     jump = params[:jump].presence || current_menu_item
     s = (+'').html_safe
-    build_project_link = ->(project, level = 0) do
+    build_project_link = lambda do |project, level = 0|
       padding = level * 16
       text = content_tag('span', project.name, :style => "padding-left:#{padding}px;")
       s << link_to(text, project_path(project, :jump => jump),
@@ -895,7 +895,7 @@ module ApplicationHelper
         # search for the picture in attachments
         if found = Attachment.latest_attach(attachments, CGI.unescape(filename))
           image_url = download_named_attachment_url(found, found.filename, :only_path => only_path)
-          desc = found.description.to_s.gsub('"', '')
+          desc = found.description.to_s.delete('"')
           if !desc.blank? && alttext.blank?
             alt = " title=\"#{desc}\" alt=\"#{desc}\""
           end
@@ -1401,16 +1401,16 @@ module ApplicationHelper
     args << {} unless args.last.is_a?(Hash)
     options = args.last
     if args.first.is_a?(Symbol)
-      options.merge!(:as => args.shift)
+      options[:as] = args.shift
     end
-    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    options[:builder] = Redmine::Views::LabelledFormBuilder
     form_for(*args, &proc)
   end
 
   def labelled_fields_for(*args, &proc)
     args << {} unless args.last.is_a?(Hash)
     options = args.last
-    options.merge!({:builder => Redmine::Views::LabelledFormBuilder})
+    options[:builder] = Redmine::Views::LabelledFormBuilder
     fields_for(*args, &proc)
   end
 
@@ -1739,6 +1739,22 @@ module ApplicationHelper
     else
       render(options, locals, &block)
     end
+  end
+
+  def autocomplete_data_sources(project)
+    {
+      issues: auto_complete_issues_path(:project_id => project, :q => '')
+    }
+  end
+
+  def heads_for_auto_complete(project)
+    data_sources = autocomplete_data_sources(project)
+
+    javascript_tag(
+      "rm = window.rm || {};" +
+      "rm.AutoComplete = rm.AutoComplete || {};" +
+      "rm.AutoComplete.dataSources = '#{data_sources.to_json}';"
+    )
   end
 
   private

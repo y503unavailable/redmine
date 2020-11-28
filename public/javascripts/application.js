@@ -855,8 +855,15 @@ $(document).on('keydown', 'form textarea', function(e) {
   // Submit the form with Ctrl + Enter or Command + Return
   var targetForm = $(e.target).closest('form');
   if(e.keyCode == 13 && ((e.ctrlKey && !e.metaKey) || (!e.ctrlKey && e.metaKey) && targetForm.length)) {
-    $(e.target).closest('form').find('textarea').blur().removeData('changed');
-    targetForm.submit();
+    // For ajax, use click() instead of submit() to prevent "Invalid form authenticity token" error
+    if (targetForm.attr('data-remote') == 'true') {
+      if (targetForm.find('input[type=submit]').length === 0) { return false; }
+      targetForm.find('textarea').blur().removeData('changed');
+      targetForm.find('input[type=submit]').first().click();
+    } else {
+      targetForm.find('textarea').blur().removeData('changed');
+      targetForm.submit();
+    }
   }
 });
 
@@ -1045,11 +1052,15 @@ $(function () {
 
 function inlineAutoComplete(element) {
     'use strict';
-    // do not attach if Tribute is already initialized
-    if (element.dataset.tribute === 'true') {return;}
 
-    const issuesUrl = element.dataset.issuesUrl;
-    const usersUrl = element.dataset.usersUrl;
+    // do not attach if Tribute is already initialized
+    if (element.dataset.tribute === 'true') {return};
+
+    const getDataSource = function(entity) {
+      const dataSources = JSON.parse(rm.AutoComplete.dataSources);
+
+      return dataSources[entity];
+    }
 
     const remoteSearch = function(url, cb) {
       const xhr = new XMLHttpRequest();
@@ -1074,7 +1085,7 @@ function inlineAutoComplete(element) {
         if (event.target.type === 'text' && $(element).attr('autocomplete') != 'off') {
           $(element).attr('autocomplete', 'off');
         }
-        remoteSearch(issuesUrl + text, function (issues) {
+        remoteSearch(getDataSource('issues') + text, function (issues) {
           return cb(issues);
         });
       },

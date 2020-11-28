@@ -22,22 +22,36 @@ require File.expand_path('../test_helper', __FILE__)
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   DOWNLOADS_PATH = File.expand_path(File.join(Rails.root, 'tmp', 'downloads'))
 
+  # Allow running Capybara default server on custom IP address and/or port
+  Capybara.server_host = ENV['CAPYBARA_SERVER_HOST'] if ENV['CAPYBARA_SERVER_HOST']
+  Capybara.server_port = ENV['CAPYBARA_SERVER_PORT'] if ENV['CAPYBARA_SERVER_PORT']
+
+  options = {}
+  # Allow running tests using a remote Selenium hub
+  options[:url] = ENV['SELENIUM_REMOTE_URL'] if ENV['SELENIUM_REMOTE_URL']
+  options[:desired_capabilities] = Selenium::WebDriver::Remote::Capabilities.chrome(
+                  'chromeOptions' => {
+                    'prefs' => {
+                      'download.default_directory' => DOWNLOADS_PATH,
+                      'download.prompt_for_download' => false,
+                      'plugins.plugins_disabled' => ["Chrome PDF Viewer"]
+                    }
+                  }
+                )
+
   driven_by(
     :selenium, using: :chrome, screen_size: [1024, 900],
-    options: {
-      desired_capabilities: Selenium::WebDriver::Remote::Capabilities.chrome(
-        'chromeOptions' => {
-          'prefs' => {
-            'download.default_directory' => DOWNLOADS_PATH,
-            'download.prompt_for_download' => false,
-            'plugins.plugins_disabled' => ["Chrome PDF Viewer"]
-          }
-        }
-      )
-    }
+    options: options
   )
 
   setup do
+    # Allow defining a custom app host (useful when using a remote Selenium hub)
+    if ENV['CAPYBARA_APP_HOST']
+      Capybara.configure do |config|
+        config.app_host = ENV['CAPYBARA_APP_HOST']
+      end
+    end
+
     clear_downloaded_files
     Setting.delete_all
     Setting.clear_cache

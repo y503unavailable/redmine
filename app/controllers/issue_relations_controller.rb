@@ -29,7 +29,7 @@ class IssueRelationsController < ApplicationController
     @relations = @issue.relations
 
     respond_to do |format|
-      format.html { head 200 }
+      format.html {head 200}
       format.api
     end
   end
@@ -38,7 +38,7 @@ class IssueRelationsController < ApplicationController
     raise Unauthorized unless @relation.visible?
 
     respond_to do |format|
-      format.html { head 200 }
+      format.html {head 200}
       format.api
     end
   end
@@ -57,29 +57,30 @@ class IssueRelationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to issue_path(@issue) }
-      format.js {
-        @relations = @issue.reload.relations.select {|r| r.other_issue(@issue) && r.other_issue(@issue).visible? }
-      }
-      format.api {
+      format.html {redirect_to issue_path(@issue)}
+      format.js do
+        @relations = @issue.reload.relations.select {|r| r.other_issue(@issue) && r.other_issue(@issue).visible?}
+      end
+      format.api do
         if saved
           render :action => 'show', :status => :created, :location => relation_url(@relation)
         else
           render_validation_errors(@relation)
         end
-      }
+      end
     end
   end
 
   def destroy
     raise Unauthorized unless @relation.deletable?
+
     @relation.init_journals(User.current)
     @relation.destroy
 
     respond_to do |format|
-      format.html { redirect_to issue_path(@relation.issue_from) }
+      format.html {redirect_to issue_path(@relation.issue_from)}
       format.js
-      format.api  { render_api_ok }
+      format.api  {render_api_ok}
     end
   end
 

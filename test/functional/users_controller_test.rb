@@ -69,15 +69,22 @@ class UsersControllerTest < Redmine::ControllerTest
   def test_index_csv
     with_settings :default_language => 'en' do
       user = User.logged.status(1).first
-      user.update(passwd_changed_on: Time.current.last_month)
-      get :index, :params => { :format => 'csv' }
+      user.update(passwd_changed_on: Time.current.last_month, twofa_scheme: 'totp')
+      get :index, params: {format: 'csv'}
       assert_response :success
 
       assert_equal User.logged.status(1).count, response.body.chomp.split("\n").size - 1
-      assert_include 'active', response.body
-      assert_not_include 'locked', response.body
-      assert_include format_time(user.updated_on), response.body
-      assert_include format_time(user.passwd_changed_on), response.body
+      assert_include format_time(user.updated_on), response.body.split("\n").second
+      assert_include format_time(user.passwd_changed_on), response.body.split("\n").second
+
+      # status
+      assert_include 'active', response.body.split("\n").second
+      assert_not_include 'locked', response.body.split("\n").second
+
+      # twofa_scheme
+      assert_include 'Authenticator app', response.body.split("\n").second
+      assert_include 'disabled', response.body.split("\n").third
+
       assert_equal 'text/csv', @response.media_type
     end
   end
@@ -91,7 +98,7 @@ class UsersControllerTest < Redmine::ControllerTest
 
     User.find(@request.session[:user_id]).update(:language => nil)
     with_settings :default_language => 'fr' do
-      get :index, :params => { :name => user.lastname, :format => 'csv' }
+      get :index, :params => {:name => user.lastname, :format => 'csv'}
       assert_response :success
 
       assert_include 'float field;date field', response.body
@@ -102,7 +109,7 @@ class UsersControllerTest < Redmine::ControllerTest
 
   def test_index_csv_with_status_filter
     with_settings :default_language => 'en' do
-      get :index, :params => { :status => 3, :format => 'csv' }
+      get :index, :params => {:status => 3, :format => 'csv'}
       assert_response :success
 
       assert_equal User.logged.status(3).count, response.body.chomp.split("\n").size - 1
@@ -276,22 +283,25 @@ class UsersControllerTest < Redmine::ControllerTest
   end
 
   def test_create
-    Setting.bcc_recipients = '1'
-
-    assert_difference 'User.count' do
-      assert_difference 'ActionMailer::Base.deliveries.size' do
-        post :create, :params => {
-          :user => {
-            :firstname => 'John',
-            :lastname => 'Doe',
-            :login => 'jdoe',
-            :password => 'secret123',
-            :password_confirmation => 'secret123',
-            :mail => 'jdoe@gmail.com',
-            :mail_notification => 'none'
-          },
-          :send_information => '1'
-        }
+    with_settings :bcc_recipients => '1' do
+      assert_difference 'User.count' do
+        assert_difference 'ActionMailer::Base.deliveries.size' do
+          post(
+            :create,
+            :params => {
+              :user => {
+                :firstname => 'John',
+                :lastname => 'Doe',
+                :login => 'jdoe',
+                :password => 'secret123',
+                :password_confirmation => 'secret123',
+                :mail => 'jdoe@gmail.com',
+                :mail_notification => 'none'
+              },
+              :send_information => '1'
+            }
+          )
+        end
       end
     end
 
@@ -534,17 +544,21 @@ class UsersControllerTest < Redmine::ControllerTest
   end
 
   def test_update_with_activation_should_send_a_notification
-    u = User.new(:firstname => 'Foo', :lastname => 'Bar', :mail => 'foo.bar@somenet.foo', :language => 'fr')
+    u = User.new(:firstname => 'Foo', :lastname => 'Bar',
+                 :mail => 'foo.bar@somenet.foo', :language => 'fr')
     u.login = 'foo'
     u.status = User::STATUS_REGISTERED
     u.save!
     ActionMailer::Base.deliveries.clear
-    Setting.bcc_recipients = '1'
-
-    put :update, :params => {
-      :id => u.id,
-      :user => {:status => User::STATUS_ACTIVE}
-    }
+    with_settings :bcc_recipients => '1' do
+      put(
+        :update,
+        :params => {
+          :id => u.id,
+          :user => {:status => User::STATUS_ACTIVE}
+        }
+      )
+    end
     assert u.reload.active?
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
@@ -554,13 +568,19 @@ class UsersControllerTest < Redmine::ControllerTest
 
   def test_update_with_password_change_should_send_a_notification
     ActionMailer::Base.deliveries.clear
-    Setting.bcc_recipients = '1'
-
-    put :update, :params => {
-      :id => 2,
-      :user => {:password => 'newpass123', :password_confirmation => 'newpass123'},
-      :send_information => '1'
-    }
+    with_settings :bcc_recipients => '1' do
+      put(
+        :update,
+        :params => {
+          :id => 2,
+          :user => {
+            :password => 'newpass123',
+            :password_confirmation => 'newpass123'
+          },
+         :send_information => '1'
+        }
+      )
+    end
     u = User.find(2)
     assert u.check_password?('newpass123')
 
@@ -572,24 +592,28 @@ class UsersControllerTest < Redmine::ControllerTest
 
   def test_update_with_generate_password_should_email_the_password
     ActionMailer::Base.deliveries.clear
-    Setting.bcc_recipients = '1'
-
-    put :update, :params => {
-      :id => 2,
-      :user => {
-        :generate_password => '1',
-        :password => '',
-        :password_confirmation => ''
-      },
-      :send_information => '1'
-    }
-
+    with_settings :bcc_recipients => '1' do
+      put(
+        :update,
+        :params => {
+          :id => 2,
+          :user => {
+            :generate_password => '1',
+            :password => '',
+            :password_confirmation => ''
+          },
+          :send_information => '1'
+        }
+      )
+    end
     mail = ActionMailer::Base.deliveries.last
     assert_not_nil mail
+    u = User.find(2)
+    assert_equal [u.mail], mail.bcc
     m = mail_body(mail).match(/Password: ([a-zA-Z0-9]+)/)
     assert m
     password = m[1]
-    assert User.find(2).check_password?(password)
+    assert u.check_password?(password)
   end
 
   def test_update_without_generate_password_should_not_change_password

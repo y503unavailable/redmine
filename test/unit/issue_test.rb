@@ -151,15 +151,15 @@ class IssueTest < ActiveSupport::TestCase
     assert !issue.save
     assert_equal ["Database cannot be blank"], issue.errors.full_messages
     # Blank value
-    issue.custom_field_values = { field.id => '' }
+    issue.custom_field_values = {field.id => ''}
     assert !issue.save
     assert_equal ["Database cannot be blank"], issue.errors.full_messages
     # Invalid value
-    issue.custom_field_values = { field.id => 'SQLServer' }
+    issue.custom_field_values = {field.id => 'SQLServer'}
     assert !issue.save
     assert_equal ["Database is not included in the list"], issue.errors.full_messages
     # Valid value
-    issue.custom_field_values = { field.id => 'PostgreSQL' }
+    issue.custom_field_values = {field.id => 'PostgreSQL'}
     assert issue.save
     issue.reload
     assert_equal 'PostgreSQL', issue.custom_value_for(field).value
@@ -568,7 +568,7 @@ class IssueTest < ActiveSupport::TestCase
                       :description => 'IssueTest#test_create_with_required_custom_field')
     assert issue.available_custom_fields.include?(field)
     # Invalid value
-    issue.custom_field_values = { field.id => 'SQLServer' }
+    issue.custom_field_values = {field.id => 'SQLServer'}
 
     assert !issue.valid?
     assert_equal 1, issue.errors.full_messages.size
@@ -586,10 +586,10 @@ class IssueTest < ActiveSupport::TestCase
     # No change to custom values, issue can be saved
     assert issue.save
     # Blank value
-    issue.custom_field_values = { field.id => '' }
+    issue.custom_field_values = {field.id => ''}
     assert !issue.save
     # Valid value
-    issue.custom_field_values = { field.id => 'PostgreSQL' }
+    issue.custom_field_values = {field.id => 'PostgreSQL'}
     assert issue.save
     issue.reload
     assert_equal 'PostgreSQL', issue.custom_value_for(field).value
@@ -600,7 +600,7 @@ class IssueTest < ActiveSupport::TestCase
     field = IssueCustomField.find_by_name('Database')
     assert issue.available_custom_fields.include?(field)
 
-    issue.custom_field_values = { field.id => 'Invalid' }
+    issue.custom_field_values = {field.id => 'Invalid'}
     issue.subject = 'Should be not be saved'
     assert !issue.save
 
@@ -612,11 +612,11 @@ class IssueTest < ActiveSupport::TestCase
     field = IssueCustomField.find_by_name('Database')
 
     issue = Issue.find(1)
-    issue.custom_field_values = { field.id => 'PostgreSQL' }
+    issue.custom_field_values = {field.id => 'PostgreSQL'}
     assert issue.save
     custom_value = issue.custom_value_for(field)
     issue.reload
-    issue.custom_field_values = { field.id => 'MySQL' }
+    issue.custom_field_values = {field.id => 'MySQL'}
     assert issue.save
     issue.reload
     assert_equal custom_value.id, issue.custom_value_for(field).id
@@ -696,7 +696,7 @@ class IssueTest < ActiveSupport::TestCase
 
   def test_assigning_tracker_and_custom_fields_should_assign_custom_fields
     attributes = ActiveSupport::OrderedHash.new
-    attributes['custom_field_values'] = { '1' => 'MySQL' }
+    attributes['custom_field_values'] = {'1' => 'MySQL'}
     attributes['tracker_id'] = '1'
     issue = Issue.new(:project => Project.find(1))
     issue.attributes = attributes
@@ -1012,8 +1012,12 @@ class IssueTest < ActiveSupport::TestCase
   end
 
   def test_editable_custom_fields_should_return_custom_field_that_is_enabled_for_the_role_only
-    enabled_cf = IssueCustomField.generate!(:is_for_all => true, :tracker_ids => [1], :visible => false, :role_ids => [1,2])
-    disabled_cf = IssueCustomField.generate!(:is_for_all => true, :tracker_ids => [1], :visible => false, :role_ids => [2])
+    enabled_cf =
+      IssueCustomField.generate!(:is_for_all => true, :tracker_ids => [1],
+                                 :visible => false, :role_ids => [1, 2])
+    disabled_cf =
+      IssueCustomField.generate!(:is_for_all => true, :tracker_ids => [1],
+                                 :visible => false, :role_ids => [2])
     user = User.find(2)
     issue = Issue.new(:project_id => 1, :tracker_id => 1)
 
@@ -1140,7 +1144,8 @@ class IssueTest < ActiveSupport::TestCase
     Project.find(1).issue_categories.delete_all
     WorkflowPermission.delete_all
     WorkflowPermission.create!(:old_status_id => 1, :tracker_id => 1,
-      :role_id => 1, :field_name => 'category_id',:rule => 'required')
+                               :role_id => 1, :field_name => 'category_id',
+                               :rule => 'required')
     user = User.find(2)
 
     issue = Issue.new(:project_id => 1, :tracker_id => 1, :status_id => 1,
@@ -1152,7 +1157,8 @@ class IssueTest < ActiveSupport::TestCase
     Version.delete_all
     WorkflowPermission.delete_all
     WorkflowPermission.create!(:old_status_id => 1, :tracker_id => 1,
-      :role_id => 1, :field_name => 'fixed_version_id',:rule => 'required')
+                               :role_id => 1, :field_name => 'fixed_version_id',
+                               :rule => 'required')
     user = User.find(2)
 
     issue = Issue.new(:project_id => 1, :tracker_id => 1, :status_id => 1,
@@ -1162,7 +1168,9 @@ class IssueTest < ActiveSupport::TestCase
 
   def test_required_custom_field_that_is_not_visible_for_the_user_should_not_be_required
     CustomField.destroy_all
-    field = IssueCustomField.generate!(:is_required => true, :visible => false, :role_ids => [1], :trackers => Tracker.all, :is_for_all => true)
+    field = IssueCustomField.generate!(:is_required => true, :visible => false,
+                                       :role_ids => [1], :trackers => Tracker.all,
+                                       :is_for_all => true)
     user = User.generate!
     User.add_to_project(user, Project.find(1), Role.find(2))
 
@@ -1173,7 +1181,9 @@ class IssueTest < ActiveSupport::TestCase
 
   def test_required_custom_field_that_is_visible_for_the_user_should_be_required
     CustomField.destroy_all
-    field = IssueCustomField.generate!(:is_required => true, :visible => false, :role_ids => [1], :trackers => Tracker.all, :is_for_all => true)
+    field = IssueCustomField.generate!(:is_required => true, :visible => false,
+                                       :role_ids => [1], :trackers => Tracker.all,
+                                       :is_for_all => true)
     user = User.generate!
     User.add_to_project(user, Project.find(1), Role.find(1))
 

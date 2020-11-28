@@ -156,21 +156,21 @@ module Redmine
             end
           end
 
-          relations = issue.relations.select { |r| r.other_issue(issue).visible? }
+          relations = issue.relations.select {|r| r.other_issue(issue).visible?}
           unless relations.empty?
             truncate_length = (!is_cjk? ? 80 : 60)
             pdf.SetFontStyle('B',9)
             pdf.RDMCell(35+155,5, l(:label_related_issues) + ":", "LTR")
             pdf.ln
             relations.each do |relation|
-              buf = relation.to_s(issue) {|other|
+              buf = relation.to_s(issue) do |other|
                 text = ""
                 if Setting.cross_project_issue_relations?
                   text += "#{relation.other_issue(issue).project} - "
                 end
                 text += "#{other.tracker} ##{other.id}: #{other.subject}"
                 text
-              }
+              end
               buf = buf.truncate(truncate_length)
               pdf.SetFontStyle('', 8)
               pdf.RDMCell(35+155-60, 5, buf, border_first)
@@ -276,13 +276,13 @@ module Redmine
           col_width = []
           unless query.inline_columns.empty?
             col_width = calc_col_width(issues, query, table_width, pdf)
-            table_width = col_width.inject(0, :+)
+            table_width = col_width.sum
           end
 
           # use full width if the query has block columns (description, last_notes or full width custom fieds)
           if table_width > 0 && query.block_columns.any?
             col_width = col_width.map {|w| w * (page_width - right_margin - left_margin) / table_width}
-            table_width = col_width.inject(0, :+)
+            table_width = col_width.sum
           end
 
           # title
@@ -418,44 +418,44 @@ module Redmine
             if table_width > col_min * col_width_avg.length
               table_width -= col_min * col_width_avg.length
             else
-              ratio = table_width / col_width_avg.inject(0, :+)
+              ratio = table_width / col_width_avg.sum
               return col_width = col_width_avg.map {|w| w * ratio}
             end
           end
-          word_width_max = query.inline_columns.map {|c|
+          word_width_max = query.inline_columns.map do |c|
             n = 10
-            c.caption.split.each {|w|
+            c.caption.split.each do |w|
               x = pdf.get_string_width(w) + col_padding
               n = x if n < x
-            }
+            end
             n
-          }
+          end
 
           #  by properties of issues
           pdf.SetFontStyle('',8)
           k = 1
-          issue_list(issues) {|issue, level|
+          issue_list(issues) do |issue, level|
             k += 1
             values = fetch_row_values(issue, query, level)
-            values.each_with_index {|v,i|
+            values.each_with_index do |v,i|
               n = pdf.get_string_width(v) + col_padding * 2
               col_width_max[i] = n if col_width_max[i] < n
               col_width_min[i] = n if col_width_min[i] > n
               col_width_avg[i] += n
-              v.split.each {|w|
+              v.split.each do |w|
                 x = pdf.get_string_width(w) + col_padding
                 word_width_max[i] = x if word_width_max[i] < x
-              }
-            }
-          }
+              end
+            end
+          end
           col_width_avg.map! {|x| x / k}
 
           # calculate columns width
-          ratio = table_width / col_width_avg.inject(0, :+)
+          ratio = table_width / col_width_avg.sum
           col_width = col_width_avg.map {|w| w * ratio}
 
           # correct max word width if too many columns
-          ratio = table_width / word_width_max.inject(0, :+)
+          ratio = table_width / word_width_max.sum
           word_width_max.map! {|v| v * ratio} if ratio < 1
 
           # correct and lock width of some columns
@@ -479,7 +479,7 @@ module Redmine
           while done == 0
             # calculate free & locked columns width
             done = 1
-            ratio = table_width / col_width.inject(0, :+)
+            ratio = table_width / col_width.sum
 
             # correct columns width
             col_width.each_with_index do |w,i|
@@ -500,7 +500,7 @@ module Redmine
             end
           end
 
-          ratio = table_width / col_width.inject(0, :+)
+          ratio = table_width / col_width.sum
           col_width.map! {|v| v * ratio + col_min}
           col_width
         end

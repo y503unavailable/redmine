@@ -5,7 +5,7 @@ gem 'bundler', '>= 1.12.0'
 
 gem 'rails', '5.2.4.4'
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
-gem 'rouge', '~> 3.24.0'
+gem 'rouge', '~> 3.25.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
@@ -39,7 +39,7 @@ end
 
 # Optional gem for exporting the gantt to a PNG file
 group :minimagick do
-  gem 'mini_magick', '~> 4.10.1'
+  gem 'mini_magick', '~> 4.11.0'
 end
 
 # Optional Markdown support, not for JRuby
@@ -92,9 +92,9 @@ group :test do
   gem 'capybara', '~> 3.31.0'
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 0.81.0'
-  gem 'rubocop-performance', '~> 1.5.0'
-  gem 'rubocop-rails', '~> 2.5.0'
+  gem 'rubocop', '~> 1.0.0'
+  gem 'rubocop-performance', '~> 1.8.0'
+  gem 'rubocop-rails', '~> 2.8.0'
 end
 
 local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")

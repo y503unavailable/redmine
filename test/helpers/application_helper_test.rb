@@ -1326,12 +1326,13 @@ class ApplicationHelperTest < Redmine::HelperTest
   end
 
   def test_text_formatting
-    to_test = {'*_+bold, italic and underline+_*' => '<strong><em><ins>bold, italic and underline</ins></em></strong>',
-               '(_text within parentheses_)' => '(<em>text within parentheses</em>)',
-               'a *Humane Web* Text Generator' => 'a <strong>Humane Web</strong> Text Generator',
-               'a H *umane* W *eb* T *ext* G *enerator*' => 'a H <strong>umane</strong> W <strong>eb</strong> T <strong>ext</strong> G <strong>enerator</strong>',
-               'a *H* umane *W* eb *T* ext *G* enerator' => 'a <strong>H</strong> umane <strong>W</strong> eb <strong>T</strong> ext <strong>G</strong> enerator',
-              }
+    to_test = {
+      '*_+bold, italic and underline+_*' => '<strong><em><ins>bold, italic and underline</ins></em></strong>',
+      '(_text within parentheses_)' => '(<em>text within parentheses</em>)',
+      'a *Humane Web* Text Generator' => 'a <strong>Humane Web</strong> Text Generator',
+      'a H *umane* W *eb* T *ext* G *enerator*' => 'a H <strong>umane</strong> W <strong>eb</strong> T <strong>ext</strong> G <strong>enerator</strong>',
+      'a *H* umane *W* eb *T* ext *G* enerator' => 'a <strong>H</strong> umane <strong>W</strong> eb <strong>T</strong> ext <strong>G</strong> enerator',
+    }
     to_test.each {|text, result| assert_equal "<p>#{result}</p>", textilizable(text)}
   end
 
@@ -1423,7 +1424,7 @@ class ApplicationHelperTest < Redmine::HelperTest
                '</ul>'
 
     @project = Project.find(1)
-    assert textilizable(raw).gsub("\n", "").include?(expected)
+    assert textilizable(raw).delete("\n").include?(expected)
   end
 
   def test_table_of_content_should_generate_unique_anchors
@@ -1447,7 +1448,7 @@ class ApplicationHelperTest < Redmine::HelperTest
                   '</li>' +
                 '</ul>'
     @project = Project.find(1)
-    result = textilizable(raw).gsub("\n", "")
+    result = textilizable(raw).delete("\n")
     assert_include expected, result
     assert_include '<a name="Subtitle">', result
     assert_include '<a name="Subtitle-2">', result
@@ -1468,7 +1469,7 @@ class ApplicationHelperTest < Redmine::HelperTest
                '<li><a href="#Child-page-1">Child page 1</a></li>' +
                '</ul>'
     @project = Project.find(1)
-    assert textilizable(raw).gsub("\n", "").include?(expected)
+    assert textilizable(raw).delete("\n").include?(expected)
   end
 
   def test_toc_with_textile_formatting_should_be_parsed
@@ -1480,13 +1481,13 @@ class ApplicationHelperTest < Redmine::HelperTest
   end
 
   if Object.const_defined?(:Redcarpet)
-  def test_toc_with_markdown_formatting_should_be_parsed
-    with_settings :text_formatting => 'markdown' do
-      assert_select_in textilizable("{{toc}}\n\n# Heading"), 'ul.toc li', :text => 'Heading'
-      assert_select_in textilizable("{{<toc}}\n\n# Heading"), 'ul.toc.left li', :text => 'Heading'
-      assert_select_in textilizable("{{>toc}}\n\n# Heading"), 'ul.toc.right li', :text => 'Heading'
+    def test_toc_with_markdown_formatting_should_be_parsed
+      with_settings :text_formatting => 'markdown' do
+        assert_select_in textilizable("{{toc}}\n\n# Heading"), 'ul.toc li', :text => 'Heading'
+        assert_select_in textilizable("{{<toc}}\n\n# Heading"), 'ul.toc.left li', :text => 'Heading'
+        assert_select_in textilizable("{{>toc}}\n\n# Heading"), 'ul.toc.right li', :text => 'Heading'
+      end
     end
-  end
   end
 
   def test_section_edit_links
@@ -1519,7 +1520,7 @@ class ApplicationHelperTest < Redmine::HelperTest
         :edit_section_links =>
           {:controller => 'wiki', :action => 'edit',
            :project_id => '1', :id => 'Test'}
-      ).gsub("\n", "")
+      ).delete("\n")
     # heading that contains inline code
     assert_match(
       Regexp.new('<div class="contextual heading-2" title="Edit this section" id="section-4">' +

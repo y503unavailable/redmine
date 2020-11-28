@@ -89,44 +89,46 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_index_with_project
-    Setting.display_subprojects_issues = 0
-    get(:index, :params => {:project_id => 1})
-    assert_response :success
+    with_settings :display_subprojects_issues => '0' do
+      get(:index, :params => {:project_id => 1})
+      assert_response :success
 
-    # query form
-    assert_select 'form#query_form' do
-      assert_select 'div#query_form_with_buttons.hide-when-print' do
-        assert_select 'div#query_form_content' do
-          assert_select 'fieldset#filters.collapsible'
-          assert_select 'fieldset#options'
+      # query form
+      assert_select 'form#query_form' do
+        assert_select 'div#query_form_with_buttons.hide-when-print' do
+          assert_select 'div#query_form_content' do
+            assert_select 'fieldset#filters.collapsible'
+            assert_select 'fieldset#options'
+          end
+          assert_select 'p.buttons'
         end
-        assert_select 'p.buttons'
       end
+      assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
+      assert_select 'a[href="/issues/5"]', 0
     end
-
-    assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
-    assert_select 'a[href="/issues/5"]', 0
   end
 
   def test_index_with_project_and_subprojects
-    Setting.display_subprojects_issues = 1
-    get(:index, :params => {:project_id => 1})
-    assert_response :success
+    with_settings :display_subprojects_issues => '1' do
+      get(:index, :params => {:project_id => 1})
+      assert_response :success
 
-    assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
-    assert_select 'a[href="/issues/5"]', :text => /Subproject issue/
-    assert_select 'a[href="/issues/6"]', 0
+      assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
+      assert_select 'a[href="/issues/5"]', :text => /Subproject issue/
+      assert_select 'a[href="/issues/6"]', 0
+    end
   end
 
   def test_index_with_project_and_subprojects_should_show_private_subprojects_with_permission
     @request.session[:user_id] = 2
-    Setting.display_subprojects_issues = 1
-    get(:index, :params => {:project_id => 1})
-    assert_response :success
+    with_settings :display_subprojects_issues => '1' do
+      get(:index, :params => {:project_id => 1})
+      assert_response :success
 
-    assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
-    assert_select 'a[href="/issues/5"]', :text => /Subproject issue/
-    assert_select 'a[href="/issues/6"]', :text => /Issue of a private subproject/
+      assert_select 'a[href="/issues/1"]', :text => /Cannot print recipes/
+      assert_select 'a[href="/issues/5"]', :text => /Subproject issue/
+      assert_select 'a[href="/issues/6"]', :text => /Issue of a private subproject/
+    end
   end
 
   def test_index_with_project_and_default_filter
@@ -2261,25 +2263,26 @@ class IssuesControllerTest < Redmine::ControllerTest
   end
 
   def test_show_should_not_disclose_relations_to_invisible_issues
-    Setting.cross_project_issue_relations = '1'
-    IssueRelation.
-      create!(
-        :issue_from => Issue.find(1),
-        :issue_to => Issue.find(2),
-        :relation_type => 'relates'
-      )
-    # Relation to a private project issue
-    IssueRelation.
-      create!(
-        :issue_from => Issue.find(1),
-        :issue_to => Issue.find(4),
-        :relation_type => 'relates'
-      )
-    get(:show, :params => {:id => 1})
-    assert_response :success
-    assert_select 'div#relations' do
-      assert_select 'a', :text => /#2$/
-      assert_select 'a', :text => /#4$/, :count => 0
+    with_settings :cross_project_issue_relations => '1' do
+      IssueRelation.
+        create!(
+          :issue_from => Issue.find(1),
+          :issue_to => Issue.find(2),
+          :relation_type => 'relates'
+        )
+      # Relation to a private project issue
+      IssueRelation.
+        create!(
+          :issue_from => Issue.find(1),
+          :issue_to => Issue.find(4),
+          :relation_type => 'relates'
+        )
+      get(:show, :params => {:id => 1})
+      assert_response :success
+      assert_select 'div#relations' do
+        assert_select 'a', :text => /#2$/
+        assert_select 'a', :text => /#4$/, :count => 0
+      end
     end
   end
 
@@ -3015,6 +3018,14 @@ class IssuesControllerTest < Redmine::ControllerTest
 
     assert_response :success
     assert_select 'span.badge.badge-status-closed', text: 'closed'
+  end
+
+  def test_show_should_display_private_badge_for_private_issue
+    @request.session[:user_id] = 1
+    get :show, params: {id: 14}
+
+    assert_response :success
+    assert_select 'span.badge.badge-private', text: 'Private'
   end
 
   def test_get_new

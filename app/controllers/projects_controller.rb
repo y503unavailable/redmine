@@ -22,10 +22,13 @@ class ProjectsController < ApplicationController
   menu_item :settings, :only => :settings
   menu_item :projects, :only => [:index, :new, :copy, :create]
 
-  before_action :find_project, :except => [ :index, :autocomplete, :list, :new, :create, :copy ]
-  before_action :authorize, :except => [ :index, :autocomplete, :list, :new, :create, :copy, :archive, :unarchive]
+  before_action :find_project,
+                :except => [:index, :autocomplete, :list, :new, :create, :copy]
+  before_action :authorize,
+                :except => [:index, :autocomplete, :list, :new, :create, :copy,
+                            :archive, :unarchive]
   before_action :authorize_global, :only => [:new, :create]
-  before_action :require_admin, :only => [ :copy, :archive, :unarchive ]
+  before_action :require_admin, :only => [:copy, :archive, :unarchive]
   accept_rss_auth :index
   accept_api_auth :index, :show, :create, :update, :destroy
   require_sudo_mode :destroy
@@ -51,7 +54,7 @@ class ProjectsController < ApplicationController
     scope = project_scope
 
     respond_to do |format|
-      format.html {
+      format.html do
         # TODO: see what to do with the board view and pagination
         if @query.display_type == 'board'
           @entries = scope.to_a
@@ -60,33 +63,33 @@ class ProjectsController < ApplicationController
           @entry_pages = Paginator.new @entry_count, per_page_option, params['page']
           @entries = scope.offset(@entry_pages.offset).limit(@entry_pages.per_page).to_a
         end
-      }
-      format.api  {
+      end
+      format.api do
         @offset, @limit = api_offset_and_limit
         @project_count = scope.count
         @projects = scope.offset(@offset).limit(@limit).to_a
-      }
-      format.atom {
+      end
+      format.atom do
         projects = scope.reorder(:created_on => :desc).limit(Setting.feeds_limit.to_i).to_a
         render_feed(projects, :title => "#{Setting.app_title}: #{l(:label_project_latest)}")
-      }
-      format.csv {
+      end
+      format.csv do
         # Export all entries
         @entries = scope.to_a
         send_data(query_to_csv(@entries, @query, params), :type => 'text/csv; header=present', :filename => 'projects.csv')
-      }
+      end
     end
   end
 
   def autocomplete
     respond_to do |format|
-      format.js {
+      format.js do
         if params[:q].present?
           @projects = Project.visible.like(params[:q]).to_a
         else
           @projects = User.current.projects.to_a
         end
-      }
+      end
     end
   end
 
@@ -108,7 +111,7 @@ class ProjectsController < ApplicationController
         @project.add_default_member(User.current)
       end
       respond_to do |format|
-        format.html {
+        format.html do
           flash[:notice] = l(:notice_successful_create)
           if params[:continue]
             attrs = {:parent_id => @project.parent_id}.reject {|k,v| v.nil?}
@@ -116,13 +119,20 @@ class ProjectsController < ApplicationController
           else
             redirect_to settings_project_path(@project)
           end
-        }
-        format.api  { render :action => 'show', :status => :created, :location => url_for(:controller => 'projects', :action => 'show', :id => @project.id) }
+        end
+        format.api do
+          render(
+            :action => 'show',
+            :status => :created,
+            :location => url_for(:controller => 'projects',
+                                 :action => 'show', :id => @project.id)
+          )
+        end
       end
     else
       respond_to do |format|
-        format.html { render :action => 'new' }
-        format.api  { render_validation_errors(@project) }
+        format.html {render :action => 'new'}
+        format.api  {render_validation_errors(@project)}
       end
     end
   end
@@ -203,19 +213,19 @@ class ProjectsController < ApplicationController
     @project.safe_attributes = params[:project]
     if @project.save
       respond_to do |format|
-        format.html {
+        format.html do
           flash[:notice] = l(:notice_successful_update)
           redirect_to settings_project_path(@project, params[:tab])
-        }
-        format.api  { render_api_ok }
+        end
+        format.api {render_api_ok}
       end
     else
       respond_to do |format|
-        format.html {
+        format.html do
           settings
           render :action => 'settings'
-        }
-        format.api  { render_validation_errors(@project) }
+        end
+        format.api {render_validation_errors(@project)}
       end
     end
   end
@@ -243,7 +253,7 @@ class ProjectsController < ApplicationController
     end
     respond_to do |format|
       format.js
-      format.html { redirect_to project_path(@project) }
+      format.html {redirect_to project_path(@project)}
     end
   end
 
@@ -268,8 +278,12 @@ class ProjectsController < ApplicationController
     if api_request? || params[:confirm]
       @project_to_destroy.destroy
       respond_to do |format|
-        format.html { redirect_to User.current.admin? ? admin_projects_path : projects_path }
-        format.api  { render_api_ok }
+        format.html do
+          redirect_to(
+            User.current.admin? ? admin_projects_path : projects_path
+          )
+        end
+        format.api  {render_api_ok}
       end
     end
     # hide project in layout

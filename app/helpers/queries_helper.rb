@@ -160,6 +160,7 @@ module QueriesHelper
 
   def render_query_totals(query)
     return unless query.totalable_columns.present?
+
     totals = query.totalable_columns.map do |column|
       total_tag(column, query.total_for(column))
     end
@@ -309,6 +310,7 @@ module QueriesHelper
       scope = scope.or(klass.where(:project_id => @project)) if @project
       @query = scope.find(params[:query_id])
       raise ::Unauthorized unless @query.visible?
+
       @query.project = @project
       session[session_key] = {:id => @query.id, :project_id => @query.project_id} if use_session
     elsif api_request? || params[:set_filter] || !use_session || session[session_key].nil? || session[session_key][:project_id] != (@project ? @project.id : nil)
@@ -398,6 +400,7 @@ module QueriesHelper
   # Renders a group of queries
   def query_links(title, queries)
     return '' if queries.empty?
+
     # links to #index on issues/show
     url_params =
       if controller_name == 'issues'

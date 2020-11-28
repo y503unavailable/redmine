@@ -50,7 +50,7 @@ module Redmine
       end
 
       def provisioning_uri
-        totp.provisioning_uri(@user.mail)
+        totp.provisioning_uri(@user.login)
       end
 
       def init_pairing_view_variables
@@ -63,7 +63,7 @@ module Redmine
       private
 
       def totp
-        @totp ||= ROTP::TOTP.new(@user.twofa_totp_key, issuer: Setting.app_title)
+        @totp ||= ROTP::TOTP.new(@user.twofa_totp_key, issuer: Setting.host_name)
       end
     end
   end

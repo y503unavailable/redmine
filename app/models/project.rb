@@ -85,28 +85,28 @@ class Project < ActiveRecord::Base
   after_update :update_versions_from_hierarchy_change, :if => Proc.new {|project| project.saved_change_to_parent_id?}
   before_destroy :delete_all_members
 
-  scope :has_module, lambda {|mod|
+  scope :has_module, (lambda do |mod|
     where("#{Project.table_name}.id IN (SELECT em.project_id FROM #{EnabledModule.table_name} em WHERE em.name=?)", mod.to_s)
-  }
+  end)
   scope :active, lambda {where(:status => STATUS_ACTIVE)}
   scope :status, lambda {|arg| where(arg.blank? ? nil : {:status => arg.to_i})}
   scope :all_public, lambda {where(:is_public => true)}
   scope :visible, lambda {|*args| where(Project.visible_condition(args.shift || User.current, *args))}
-  scope :allowed_to, lambda {|*args|
+  scope :allowed_to, (lambda do |*args|
     user = args.first.is_a?(Symbol) ? User.current : args.shift
     permission = args.shift
     where(Project.allowed_to_condition(user, permission, *args))
-  }
-  scope :like, lambda {|arg|
+  end)
+  scope :like, (lambda do |arg|
     if arg.present?
       pattern = "%#{arg.to_s.strip}%"
       where("LOWER(identifier) LIKE LOWER(:p) OR LOWER(name) LIKE LOWER(:p)", :p => pattern)
     end
-  }
+  end)
   scope :sorted, lambda {order(:lft)}
-  scope :having_trackers, lambda {
+  scope :having_trackers, (lambda do
     where("#{Project.table_name}.id IN (SELECT DISTINCT project_id FROM #{table_name_prefix}projects_trackers#{table_name_suffix})")
-  }
+  end)
 
   def initialize(attributes=nil, *args)
     super
@@ -348,6 +348,7 @@ class Project < ActiveRecord::Base
     if args.first && args.first.is_a?(String) && !/^\d*$/.match?(args.first)
       project = find_by_identifier(*args)
       raise ActiveRecord::RecordNotFound, "Couldn't find Project with identifier=#{args.first}" if project.nil?
+
       project
     else
       super
@@ -415,6 +416,7 @@ class Project < ActiveRecord::Base
         exists?
       return false
     end
+
     Project.transaction do
       archive!
     end
@@ -440,6 +442,7 @@ class Project < ActiveRecord::Base
   # by the current user
   def allowed_parents(user=User.current)
     return @allowed_parents if @allowed_parents
+
     @allowed_parents = Project.allowed_to(user, :add_subprojects).to_a
     @allowed_parents = @allowed_parents - self_and_descendants
     if user.allowed_to?(:add_project, nil, :global => true) || (!new_record? && parent.nil?)
@@ -754,6 +757,7 @@ class Project < ActiveRecord::Base
       # No write action allowed on closed projects
       return false
     end
+
     # No action allowed on disabled modules
     if action.is_a? Hash
       allowed_actions.include? "#{action[:controller]}/#{action[:action]}"
@@ -854,8 +858,8 @@ class Project < ActiveRecord::Base
     if attrs.respond_to?(:to_unsafe_hash)
       attrs = attrs.to_unsafe_hash
     end
-
     return unless attrs.is_a?(Hash)
+
     attrs = attrs.deep_dup
 
     @unallowed_parent_id = nil
@@ -1032,6 +1036,7 @@ class Project < ActiveRecord::Base
       project.wiki.pages.each do |page|
         # Skip pages without content
         next if page.content.nil?
+
         new_wiki_content = WikiContent.new(page.content.attributes.dup.except("id", "page_id", "updated_on"))
         new_wiki_page = WikiPage.new(page.attributes.dup.except("id", "wiki_id", "created_on", "parent_id"))
         new_wiki_page.content = new_wiki_content
@@ -1188,6 +1193,7 @@ class Project < ActiveRecord::Base
       # inherited roles will be added when copying the group membership
       role_ids = member.member_roles.reject(&:inherited?).collect(&:role_id)
       next if role_ids.empty?
+
       new_member.role_ids = role_ids
       new_member.project = self
       self.members << new_member

@@ -51,7 +51,7 @@ class Issue < ActiveRecord::Base
                 :url => Proc.new {|o| {:controller => 'issues', :action => 'show', :id => o.id}},
                 :type => Proc.new {|o| 'issue' + (o.closed? ? '-closed' : '')}
 
-  acts_as_activity_provider :scope => proc { preload(:project, :author, :tracker, :status) },
+  acts_as_activity_provider :scope => proc {preload(:project, :author, :tracker, :status)},
                             :author_key => :author_id
 
   DONE_RATIO_OPTIONS = %w(issue_field issue_status)
@@ -72,39 +72,39 @@ class Issue < ActiveRecord::Base
   validates :due_date, :date => true
   validate :validate_issue, :validate_required_fields, :validate_permissions
 
-  scope :visible, lambda {|*args|
+  scope :visible, (lambda do |*args|
     joins(:project).
     where(Issue.visible_condition(args.shift || User.current, *args))
-  }
+  end)
 
-  scope :open, lambda {|*args|
+  scope :open, (lambda do |*args|
     is_closed = !args.empty? ? !args.first : false
     joins(:status).
     where(:issue_statuses => {:is_closed => is_closed})
-  }
+  end)
 
   scope :recently_updated, lambda {order(:updated_on => :desc)}
-  scope :on_active_project, lambda {
+  scope :on_active_project, (lambda do
     joins(:project).
     where(:projects => {:status => Project::STATUS_ACTIVE})
-  }
-  scope :fixed_version, lambda {|versions|
+  end)
+  scope :fixed_version, (lambda do |versions|
     ids = [versions].flatten.compact.map {|v| v.is_a?(Version) ? v.id : v}
     ids.any? ? where(:fixed_version_id => ids) : none
-  }
-  scope :assigned_to, lambda {|arg|
+  end)
+  scope :assigned_to, (lambda do |arg|
     arg = Array(arg).uniq
     ids = arg.map {|p| p.is_a?(Principal) ? p.id : p}
     ids += arg.select {|p| p.is_a?(User)}.map(&:group_ids).flatten.uniq
     ids.compact!
     ids.any? ? where(:assigned_to_id => ids) : none
-  }
-  scope :like, lambda {|q|
+  end)
+  scope :like, (lambda do |q|
     q = q.to_s
     if q.present?
       where("LOWER(#{table_name}.subject) LIKE LOWER(?)", "%#{q}%")
     end
-  }
+  end)
 
   before_validation :default_assign, on: :create
   before_validation :clear_disabled_fields
@@ -490,16 +490,16 @@ class Issue < ActiveRecord::Base
     :if => lambda {|issue, user| issue.new_record? && user.allowed_to?(:add_issue_watchers, issue.project)})
   safe_attributes(
     'is_private',
-    :if => lambda {|issue, user|
+    :if => lambda do |issue, user|
       user.allowed_to?(:set_issues_private, issue.project) ||
         (issue.author_id == user.id && user.allowed_to?(:set_own_issues_private, issue.project))
-    })
+    end)
   safe_attributes(
     'parent_issue_id',
-    :if => lambda {|issue, user|
+    :if => lambda do |issue, user|
       (issue.new_record? || issue.attributes_editable?(user)) &&
         user.allowed_to?(:manage_subtasks, issue.project)
-    })
+    end)
   safe_attributes(
     'deleted_attachment_ids',
     :if => lambda {|issue, user| issue.attachments_deletable?(user)})
@@ -1287,11 +1287,11 @@ class Issue < ActiveRecord::Base
     all = [self]
     last = [self]
     while last.any?
-      current = last.map {|i|
+      current = last.map do |i|
         i.relations_from.where(:relation_type => IssueRelation::TYPE_PRECEDES).map(&:issue_to) +
         i.leaves.to_a +
         i.ancestors.map {|a| a.relations_from.where(:relation_type => IssueRelation::TYPE_PRECEDES).map(&:issue_to)}
-      }.flatten.uniq
+      end.flatten.uniq
       current -= last
       current -= all
       return true if current.include?(other)
@@ -1788,12 +1788,12 @@ class Issue < ActiveRecord::Base
             else
               average = 1.0.to_d
             end
-            done = children.map {|c|
+            done = children.map do |c|
               estimated = (c.total_estimated_hours || 0.0).to_d
               estimated = average unless estimated > 0.0
               ratio = c.closed? ? 100 : (c.done_ratio || 0)
               estimated * ratio
-            }.sum
+            end.sum
             progress = done / (average * children.count)
             p.done_ratio = progress.floor
           end
