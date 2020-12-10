@@ -100,15 +100,17 @@ module IssuesHelper
       css << " idnt idnt-#{level}" if level > 0
       buttons =
         if manage_relations
-          link_to(l(:label_delete_link_to_subtask),
-                  issue_path(
-                    {:id => child.id, :issue => {:parent_issue_id => ''},
-                     :back_url => issue_path(issue.id), :no_flash => '1'}),
-                  :method => :put,
-                  :data => {:confirm => l(:text_are_you_sure)},
-                  :title => l(:label_delete_link_to_subtask),
-                  :class => 'icon-only icon-link-break'
-                  )
+          link_to(
+            l(:label_delete_link_to_subtask),
+            issue_path(
+              {:id => child.id, :issue => {:parent_issue_id => ''},
+               :back_url => issue_path(issue.id), :no_flash => '1'}
+            ),
+            :method => :put,
+            :data => {:confirm => l(:text_are_you_sure)},
+            :title => l(:label_delete_link_to_subtask),
+            :class => 'icon-only icon-link-break'
+          )
         else
           "".html_safe
         end
@@ -621,13 +623,55 @@ module IssuesHelper
     if @journals.present?
       journals_without_notes = @journals.select{|value| value.notes.blank?}
       journals_with_notes = @journals.reject{|value| value.notes.blank?}
-
-      tabs << {:name => 'history', :label => :label_history, :onclick => 'showIssueHistory("history", this.href)', :partial => 'issues/tabs/history', :locals => {:issue => @issue, :journals => @journals}}
-      tabs << {:name => 'notes', :label => :label_issue_history_notes, :onclick => 'showIssueHistory("notes", this.href)'} if journals_with_notes.any?
-      tabs << {:name => 'properties', :label => :label_issue_history_properties, :onclick => 'showIssueHistory("properties", this.href)'} if journals_without_notes.any?
+      tabs <<
+        {
+          :name => 'history',
+          :label => :label_history,
+          :onclick => 'showIssueHistory("history", this.href)',
+          :partial => 'issues/tabs/history',
+          :locals => {:issue => @issue, :journals => @journals}
+        }
+      if journals_with_notes.any?
+        tabs <<
+          {
+            :name => 'notes',
+            :label => :label_issue_history_notes,
+            :onclick => 'showIssueHistory("notes", this.href)'
+          }
+      end
+      if journals_without_notes.any?
+        tabs <<
+          {
+            :name => 'properties',
+            :label => :label_issue_history_properties,
+            :onclick => 'showIssueHistory("properties", this.href)'
+          }
+      end
     end
-    tabs << {:name => 'time_entries', :label => :label_time_entry_plural, :remote => true, :onclick => "getRemoteTab('time_entries', '#{tab_issue_path(@issue, :name => 'time_entries')}', '#{issue_path(@issue, :tab => 'time_entries')}')"} if User.current.allowed_to?(:view_time_entries, @project) && @issue.spent_hours > 0
-    tabs << {:name => 'changesets', :label => :label_associated_revisions, :remote => true, :onclick => "getRemoteTab('changesets', '#{tab_issue_path(@issue, :name => 'changesets')}', '#{issue_path(@issue, :tab => 'changesets')}')"} if @has_changesets
+    if User.current.allowed_to?(:view_time_entries, @project) && @issue.spent_hours > 0
+      tabs <<
+        {
+          :name => 'time_entries',
+          :label => :label_time_entry_plural,
+          :remote => true,
+          :onclick =>
+            "getRemoteTab('time_entries', " \
+            "'#{tab_issue_path(@issue, :name => 'time_entries')}', " \
+            "'#{issue_path(@issue, :tab => 'time_entries')}')"
+        }
+    end
+    if @has_changesets
+      tabs <<
+        {
+          :name => 'changesets',
+          :label => :label_associated_revisions,
+          :remote => true,
+          :onclick =>
+            "getRemoteTab('changesets', " \
+            "'#{tab_issue_path(@issue, :name => 'changesets')}', " \
+            "'#{issue_path(@issue, :tab => 'changesets')}')"
+        }
+    end
     tabs
   end
 
@@ -646,5 +690,4 @@ module IssuesHelper
       user_default_tab
     end
   end
-
 end

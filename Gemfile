@@ -5,7 +5,7 @@ gem 'bundler', '>= 1.12.0'
 
 gem 'rails', '5.2.4.4'
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
-gem 'rouge', '~> 3.25.0'
+gem 'rouge', '~> 3.26.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
@@ -28,7 +28,7 @@ gem 'rqrcode'
 
 # Optional gem for LDAP authentication
 group :ldap do
-  gem "net-ldap", "~> 0.16.0"
+  gem 'net-ldap', '~> 0.17.0'
 end
 
 # Optional gem for OpenID authentication
@@ -92,9 +92,9 @@ group :test do
   gem 'capybara', '~> 3.31.0'
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 1.0.0'
-  gem 'rubocop-performance', '~> 1.8.0'
-  gem 'rubocop-rails', '~> 2.8.0'
+  gem 'rubocop', '~> 1.5.2'
+  gem 'rubocop-performance', '~> 1.9.0'
+  gem 'rubocop-rails', '~> 2.9.0'
 end
 
 local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")

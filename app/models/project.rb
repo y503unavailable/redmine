@@ -201,10 +201,18 @@ class Project < ActiveRecord::Base
   # * :member => true                   limit the condition to the user projects
   def self.allowed_to_condition(user, permission, options={})
     perm = Redmine::AccessControl.permission(permission)
-    base_statement = (perm && perm.read? ? "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED}" : "#{Project.table_name}.status = #{Project::STATUS_ACTIVE}")
+    base_statement =
+      if perm && perm.read?
+        "#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED}"
+      else
+        "#{Project.table_name}.status = #{Project::STATUS_ACTIVE}"
+      end
     if !options[:skip_pre_condition] && perm && perm.project_module
       # If the permission belongs to a project module, make sure the module is enabled
-      base_statement += " AND EXISTS (SELECT 1 AS one FROM #{EnabledModule.table_name} em WHERE em.project_id = #{Project.table_name}.id AND em.name='#{perm.project_module}')"
+      base_statement +=
+        " AND EXISTS (SELECT 1 AS one FROM #{EnabledModule.table_name} em" \
+          " WHERE em.project_id = #{Project.table_name}.id" \
+          " AND em.name='#{perm.project_module}')"
     end
     if project = options[:project]
       project_statement = project.project_condition(options[:with_subprojects])
@@ -222,7 +230,10 @@ class Project < ActiveRecord::Base
           if user.id
             group = role.anonymous? ? Group.anonymous : Group.non_member
             principal_ids = [user.id, group.id].compact
-            s = "(#{s} AND #{Project.table_name}.id NOT IN (SELECT project_id FROM #{Member.table_name} WHERE user_id IN (#{principal_ids.join(',')})))"
+            s =
+              "(#{s} AND #{Project.table_name}.id NOT IN " \
+                "(SELECT project_id FROM #{Member.table_name} " \
+                "WHERE user_id IN (#{principal_ids.join(',')})))"
           end
           statement_by_role[role] = s
         end
@@ -340,14 +351,19 @@ class Project < ActiveRecord::Base
   #   project.project_condition(false) => "projects.id = 1"
   def project_condition(with_subprojects)
     cond = "#{Project.table_name}.id = #{id}"
-    cond = "(#{cond} OR (#{Project.table_name}.lft > #{lft} AND #{Project.table_name}.rgt < #{rgt}))" if with_subprojects
+    if with_subprojects
+      cond = "(#{cond} OR (#{Project.table_name}.lft > #{lft} AND " \
+               "#{Project.table_name}.rgt < #{rgt}))"
+    end
     cond
   end
 
   def self.find(*args)
     if args.first && args.first.is_a?(String) && !/^\d*$/.match?(args.first)
       project = find_by_identifier(*args)
-      raise ActiveRecord::RecordNotFound, "Couldn't find Project with identifier=#{args.first}" if project.nil?
+      if project.nil?
+        raise ActiveRecord::RecordNotFound, "Couldn't find Project with identifier=#{args.first}"
+      end
 
       project
     else
@@ -512,7 +528,10 @@ class Project < ActiveRecord::Base
     @rolled_up_versions ||=
       Version.
         joins(:project).
-        where("#{Project.table_name}.lft >= ? AND #{Project.table_name}.rgt <= ? AND #{Project.table_name}.status <> ?", lft, rgt, STATUS_ARCHIVED)
+        where(
+          "#{Project.table_name}.lft >= ? AND #{Project.table_name}.rgt <= ?" \
+          " AND #{Project.table_name}.status <> ?", lft, rgt, STATUS_ARCHIVED
+        )
   end
 
   # Returns a scope of the Versions used by the project
@@ -521,20 +540,29 @@ class Project < ActiveRecord::Base
       Version.
         joins(:project).
         preload(:project).
-        where("#{Project.table_name}.status <> ? AND #{Version.table_name}.sharing = 'system'", STATUS_ARCHIVED)
+        where("#{Project.table_name}.status <> ? AND #{Version.table_name}.sharing = 'system'",
+              STATUS_ARCHIVED)
     else
       @shared_versions ||= begin
         r = root? ? self : root
         Version.
           joins(:project).
           preload(:project).
-          where("#{Project.table_name}.id = #{id}" +
-                  " OR (#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND (" +
-                    " #{Version.table_name}.sharing = 'system'" +
-                    " OR (#{Project.table_name}.lft >= #{r.lft} AND #{Project.table_name}.rgt <= #{r.rgt} AND #{Version.table_name}.sharing = 'tree')" +
-                    " OR (#{Project.table_name}.lft < #{lft} AND #{Project.table_name}.rgt > #{rgt} AND #{Version.table_name}.sharing IN ('hierarchy', 'descendants'))" +
-                    " OR (#{Project.table_name}.lft > #{lft} AND #{Project.table_name}.rgt < #{rgt} AND #{Version.table_name}.sharing = 'hierarchy')" +
-                  "))")
+          where(
+            "#{Project.table_name}.id = #{id}" \
+            " OR (#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND (" \
+            " #{Version.table_name}.sharing = 'system'" \
+            " OR (#{Project.table_name}.lft >= #{r.lft}" \
+            " AND #{Project.table_name}.rgt <= #{r.rgt}" \
+            " AND #{Version.table_name}.sharing = 'tree')" \
+            " OR (#{Project.table_name}.lft < #{lft}" \
+            " AND #{Project.table_name}.rgt > #{rgt}" \
+            " AND #{Version.table_name}.sharing IN ('hierarchy', 'descendants'))" \
+            " OR (#{Project.table_name}.lft > #{lft}" \
+            " AND #{Project.table_name}.rgt < #{rgt}" \
+            " AND #{Version.table_name}.sharing = 'hierarchy')" \
+            "))"
+          )
       end
     end
   end
@@ -576,7 +604,9 @@ class Project < ActiveRecord::Base
 
   # TODO: Remove this method in Redmine 5.0
   def members_by_role
-    ActiveSupport::Deprecation.warn "Project#members_by_role will be removed. Use Project#principals_by_role instead."
+    ActiveSupport::Deprecation.warn(
+      "Project#members_by_role will be removed. Use Project#principals_by_role instead."
+    )
     principals_by_role
   end
 
@@ -598,7 +628,10 @@ class Project < ActiveRecord::Base
   # Deletes all project's members
   def delete_all_members
     me, mr = Member.table_name, MemberRole.table_name
-    self.class.connection.delete("DELETE FROM #{mr} WHERE #{mr}.member_id IN (SELECT #{me}.id FROM #{me} WHERE #{me}.project_id = #{id})")
+    self.class.connection.delete(
+      "DELETE FROM #{mr} WHERE #{mr}.member_id IN (SELECT #{me}.id FROM #{me} " \
+        "WHERE #{me}.project_id = #{id})"
+    )
     Member.where(:project_id => id).delete_all
   end
 
@@ -618,7 +651,10 @@ class Project < ActiveRecord::Base
 
     if tracker
       # Rejects users that cannot the view the tracker
-      roles = Role.where(:assignable => true).select {|role| role.permissions_tracker?(:view_issues, tracker)}
+      roles =
+        Role.where(:assignable => true).select do |role|
+          role.permissions_tracker?(:view_issues, tracker)
+        end
       scope = scope.where(:roles => {:id => roles.map(&:id)})
     end
 
@@ -634,7 +670,12 @@ class Project < ActiveRecord::Base
   # Returns the users that should be notified on project events
   def notified_users
     # TODO: User part should be extracted to User#notify_about?
-    members.preload(:principal).select {|m| m.principal.present? && (m.mail_notification? || m.principal.mail_notification == 'all')}.collect {|m| m.principal}
+    users =
+      members.preload(:principal).select do |m|
+        m.principal.present? &&
+         (m.mail_notification? || m.principal.mail_notification == 'all')
+      end
+    users.collect {|m| m.principal}
   end
 
   # Returns a scope of all custom fields enabled for project issues
@@ -730,12 +771,12 @@ class Project < ActiveRecord::Base
   # progress on it's versions.
   def completed_percent(options={:include_subprojects => false})
     if options.delete(:include_subprojects)
-      total = self_and_descendants.collect(&:completed_percent).sum
+      total = self_and_descendants.sum(&:completed_percent)
 
       total / self_and_descendants.count
     else
       if versions.count > 0
-        total = versions.collect(&:completed_percent).sum
+        total = versions.sum(&:completed_percent)
 
         total / versions.count
       else
@@ -789,7 +830,11 @@ class Project < ActiveRecord::Base
   def enabled_module_names=(module_names)
     if module_names && module_names.is_a?(Array)
       module_names = module_names.collect(&:to_s).reject(&:blank?)
-      self.enabled_modules = module_names.collect {|name| enabled_modules.detect {|mod| mod.name == name} || EnabledModule.new(:name => name)}
+      self.enabled_modules =
+        module_names.collect do |name|
+          enabled_modules.detect {|mod| mod.name == name} ||
+            EnabledModule.new(:name => name)
+        end
     else
       enabled_modules.clear
     end
@@ -927,7 +972,9 @@ class Project < ActiveRecord::Base
         to_be_copied.each do |name|
           send "copy_#{name}", project
         end
-        Redmine::Hook.call_hook(:model_project_copy_before_save, :source_project => project, :destination_project => self)
+        Redmine::Hook.call_hook(:model_project_copy_before_save,
+                                :source_project => project,
+                                :destination_project => self)
         save
       else
         false
@@ -939,7 +986,9 @@ class Project < ActiveRecord::Base
   def self.copy_from(project)
     project = project.is_a?(Project) ? project : Project.find(project)
     # clear unique attributes
-    attributes = project.attributes.dup.except('id', 'name', 'identifier', 'status', 'parent_id', 'lft', 'rgt')
+    attributes =
+      project.attributes.dup.except('id', 'name', 'identifier',
+                                    'status', 'parent_id', 'lft', 'rgt')
     copy = Project.new(attributes)
     copy.enabled_module_names = project.enabled_module_names
     copy.trackers = project.trackers
@@ -1004,7 +1053,9 @@ class Project < ActiveRecord::Base
       parent.memberships.each do |parent_member|
         member = Member.find_or_new(self.id, parent_member.user_id)
         parent_member.member_roles.each do |parent_member_role|
-          member.member_roles << MemberRole.new(:role => parent_member_role.role, :inherited_from => parent_member_role.id)
+          member.member_roles <<
+            MemberRole.new(:role => parent_member_role.role,
+                           :inherited_from => parent_member_role.id)
         end
         member.save!
       end
@@ -1037,11 +1088,14 @@ class Project < ActiveRecord::Base
         # Skip pages without content
         next if page.content.nil?
 
-        new_wiki_content = WikiContent.new(page.content.attributes.dup.except("id", "page_id", "updated_on"))
-        new_wiki_page = WikiPage.new(page.attributes.dup.except("id", "wiki_id", "created_on", "parent_id"))
+        new_wiki_content =
+          WikiContent.new(page.content.attributes.dup.except("id", "page_id", "updated_on"))
+        new_wiki_page =
+          WikiPage.new(page.attributes.dup.except("id", "wiki_id", "created_on", "parent_id"))
         new_wiki_page.content = new_wiki_content
         wiki.pages << new_wiki_page
-        new_wiki_page.attachments = page.attachments.map{|attachement| attachement.copy(:container => new_wiki_page)}
+        new_wiki_page.attachments =
+          page.attachments.map{|attachement| attachement.copy(:container => new_wiki_page)}
         wiki_pages_map[page.id] = new_wiki_page
       end
 
@@ -1061,7 +1115,8 @@ class Project < ActiveRecord::Base
   def copy_versions(project)
     project.versions.each do |version|
       new_version = Version.new
-      new_version.attributes = version.attributes.dup.except("id", "project_id", "created_on", "updated_on")
+      new_version.attributes =
+        version.attributes.dup.except("id", "project_id", "created_on", "updated_on")
 
       new_version.attachments = version.attachments.map do |attachment|
         attachment.copy(:container => new_version)
@@ -1137,7 +1192,12 @@ class Project < ActiveRecord::Base
 
       self.issues << new_issue
       if new_issue.new_record?
-        logger.info "Project#copy_issues: issue ##{issue.id} could not be copied: #{new_issue.errors.full_messages}" if logger && logger.info?
+        if logger && logger.info?
+          logger.info(
+            "Project#copy_issues: issue ##{issue.id} could not be copied: " \
+              "#{new_issue.errors.full_messages}"
+          )
+        end
       else
         issues_map[issue.id] = new_issue unless new_issue.new_record?
       end
@@ -1159,7 +1219,8 @@ class Project < ActiveRecord::Base
       # Relations
       issue.relations_from.each do |source_relation|
         new_issue_relation = IssueRelation.new
-        new_issue_relation.attributes = source_relation.attributes.dup.except("id", "issue_from_id", "issue_to_id")
+        new_issue_relation.attributes =
+          source_relation.attributes.dup.except("id", "issue_from_id", "issue_to_id")
         new_issue_relation.issue_to = issues_map[source_relation.issue_to_id]
         if new_issue_relation.issue_to.nil? && Setting.cross_project_issue_relations?
           new_issue_relation.issue_to = source_relation.issue_to
@@ -1169,7 +1230,8 @@ class Project < ActiveRecord::Base
 
       issue.relations_to.each do |source_relation|
         new_issue_relation = IssueRelation.new
-        new_issue_relation.attributes = source_relation.attributes.dup.except("id", "issue_from_id", "issue_to_id")
+        new_issue_relation.attributes =
+          source_relation.attributes.dup.except("id", "issue_from_id", "issue_to_id")
         new_issue_relation.issue_from = issues_map[source_relation.issue_from_id]
         if new_issue_relation.issue_from.nil? && Setting.cross_project_issue_relations?
           new_issue_relation.issue_from = source_relation.issue_from
@@ -1204,7 +1266,9 @@ class Project < ActiveRecord::Base
   def copy_queries(project)
     project.queries.each do |query|
       new_query = query.class.new
-      new_query.attributes = query.attributes.dup.except("id", "project_id", "sort_criteria", "user_id", "type")
+      new_query.attributes =
+        query.attributes.dup.except("id", "project_id", "sort_criteria",
+                                    "user_id", "type")
       new_query.sort_criteria = query.sort_criteria if query.sort_criteria
       new_query.project = self
       new_query.user_id = query.user_id
@@ -1217,7 +1281,9 @@ class Project < ActiveRecord::Base
   def copy_boards(project)
     project.boards.each do |board|
       new_board = Board.new
-      new_board.attributes = board.attributes.dup.except("id", "project_id", "topics_count", "messages_count", "last_message_id")
+      new_board.attributes =
+        board.attributes.dup.except("id", "project_id", "topics_count",
+                                    "messages_count", "last_message_id")
       new_board.project = self
       self.boards << new_board
     end

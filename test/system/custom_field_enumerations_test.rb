@@ -17,22 +17,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-module Redmine
-  module AccessKeys
-    unless const_defined?(:ACCESSKEYS)
-      ACCESSKEYS = {
-        :edit => 'e',
-        :preview => 'r',
-        :quick_search => 'f',
-        :search => '4',
-        :new_issue => '7',
-        :previous => 'p',
-        :next => 'n'
-      }.freeze
-    end
+require File.expand_path('../../application_system_test_case', __FILE__)
 
-    def self.key_for(action)
-      ACCESSKEYS[action]
-    end
+class CustomFieldEnumerationsTest < ApplicationSystemTestCase
+  fixtures :projects, :users, :email_addresses, :roles, :members, :member_roles,
+           :trackers, :projects_trackers, :enabled_modules, :issue_statuses, :issues,
+           :enumerations, :custom_fields, :custom_values, :custom_fields_trackers,
+           :watchers, :journals, :journal_details
+
+  def test_add_empty_value
+    custom_field = IssueCustomField.generate!(field_format: 'enumeration')
+    log_user('admin', 'admin')
+    visit "custom_fields/#{custom_field.id}/enumerations"
+
+    click_on 'Add'
+    assert page.has_css?('#errorExplanation', text: 'Name cannot be blank')
   end
 end
