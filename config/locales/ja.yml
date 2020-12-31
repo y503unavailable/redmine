@@ -38,14 +38,14 @@ ja:
     distance_in_words:
       half_a_minute: "30秒前後"
       less_than_x_seconds:
-        one:   "1秒以内"
-        other: "%{count}秒以内"
+        one:   "1秒未満"
+        other: "%{count}秒未満"
       x_seconds:
         one:   "1秒"
         other: "%{count}秒"
       less_than_x_minutes:
-        one:   "1分以内"
-        other: "%{count}分以内"
+        one:   "1分未満"
+        other: "%{count}分未満"
       x_minutes:
         one:   "1分"
         other: "%{count}分"
@@ -1382,3 +1382,4 @@ ja:
   permission_delete_project: プロジェクトの削除
   text_user_destroy_confirmation: 本当にこのユーザーとこのユーザーへのすべての参照を削除しますか? 削除後は元に戻せません。通常は削除よりロックのほうが適切です。削除する場合は確認のためログインID (%{login}) を入力してください。
   text_project_destroy_enter_identifier: 確認のためプロジェクト識別子 (%{identifier}) を入力してください。
+  button_add_subtask: 子チケットを追加

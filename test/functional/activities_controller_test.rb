@@ -106,51 +106,47 @@ class ActivitiesControllerTest < Redmine::ControllerTest
   end
 
   def test_index_atom_feed
-    with_settings :protocol => 'http', :host_name => 'redmine.test' do
-      get(
-        :index,
-        :params => {
-          :format => 'atom',
-          :with_subprojects => 0
-        }
-      )
-    end
+    get(
+      :index,
+      :params => {
+        :format => 'atom',
+        :with_subprojects => 0
+      }
+    )
     assert_response :success
 
     assert_select 'feed' do
-      assert_select 'link[rel=self][href=?]', 'http://redmine.test/activity.atom?with_subprojects=0'
-      assert_select 'link[rel=alternate][href=?]', 'http://redmine.test/activity?with_subprojects=0'
+      assert_select 'link[rel=self][href=?]', 'http://test.host/activity.atom?with_subprojects=0'
+      assert_select 'link[rel=alternate][href=?]', 'http://test.host/activity?with_subprojects=0'
       assert_select 'entry' do
-        assert_select 'link[href=?]', 'http://redmine.test/issues/11'
+        assert_select 'link[href=?]', 'http://test.host/issues/11'
       end
     end
   end
 
   def test_index_atom_feed_with_explicit_selection
-    with_settings :protocol => 'https', :host_name => 'redmine.example' do
-      get(
-        :index,
-        :params => {
-          :format => 'atom',
-          :with_subprojects => 0,
-          :show_changesets => 1,
-          :show_documents => 1,
-          :show_files => 1,
-          :show_issues => 1,
-          :show_messages => 1,
-          :show_news => 1,
-          :show_time_entries => 1,
-          :show_wiki_edits => 1
-        }
-      )
-    end
+    get(
+      :index,
+      :params => {
+        :format => 'atom',
+        :with_subprojects => 0,
+        :show_changesets => 1,
+        :show_documents => 1,
+        :show_files => 1,
+        :show_issues => 1,
+        :show_messages => 1,
+        :show_news => 1,
+        :show_time_entries => 1,
+        :show_wiki_edits => 1
+      }
+    )
     assert_response :success
 
     assert_select 'feed' do
-      assert_select 'link[rel=self][href=?]', 'https://redmine.example/activity.atom?show_changesets=1&show_documents=1&show_files=1&show_issues=1&show_messages=1&show_news=1&show_time_entries=1&show_wiki_edits=1&with_subprojects=0'
-      assert_select 'link[rel=alternate][href=?]', 'https://redmine.example/activity?show_changesets=1&show_documents=1&show_files=1&show_issues=1&show_messages=1&show_news=1&show_time_entries=1&show_wiki_edits=1&with_subprojects=0'
+      assert_select 'link[rel=self][href=?]', 'http://test.host/activity.atom?show_changesets=1&show_documents=1&show_files=1&show_issues=1&show_messages=1&show_news=1&show_time_entries=1&show_wiki_edits=1&with_subprojects=0'
+      assert_select 'link[rel=alternate][href=?]', 'http://test.host/activity?show_changesets=1&show_documents=1&show_files=1&show_issues=1&show_messages=1&show_news=1&show_time_entries=1&show_wiki_edits=1&with_subprojects=0'
       assert_select 'entry' do
-        assert_select 'link[href=?]', 'https://redmine.example/issues/11'
+        assert_select 'link[href=?]', 'http://test.host/issues/11'
       end
     end
   end
@@ -179,6 +175,26 @@ class ActivitiesControllerTest < Redmine::ControllerTest
     )
     assert_response :success
     assert_select 'title', :text => "Redmine: #{User.find(2).name}"
+  end
+
+  def test_index_atom_feed_with_subprojects
+    get(
+      :index,
+      :params => {
+        :format => 'atom',
+        :id => 'ecookbook',
+        :with_subprojects => 1,
+        :show_issues => 1
+      }
+    )
+    assert_response :success
+
+    assert_select 'feed' do
+      # eCookbook
+      assert_select 'title', text: 'Bug #1: Cannot print recipes'
+      # eCookbook Subproject 1
+      assert_select 'title', text: 'eCookbook Subproject 1 - Bug #5 (New): Subproject issue'
+    end
   end
 
   def test_index_should_show_private_notes_with_permission_only

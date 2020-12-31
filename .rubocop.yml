@@ -37,6 +37,10 @@ Layout/ClosingParenthesisIndentation:
   Exclude:
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
+Layout/DotPosition:
+  Enabled: true
+  EnforcedStyle: trailing
+
 Layout/EmptyLinesAroundAccessModifier:
   Enabled: true
   Exclude:
@@ -44,6 +48,21 @@ Layout/EmptyLinesAroundAccessModifier:
 
 Layout/EmptyLineBetweenDefs:
   AllowAdjacentOneLineDefs: true
+
+Layout/FirstHashElementIndentation:
+  Enabled: true
+  Exclude:
+    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
+
+Layout/LineLength:
+  Enabled: true
+  IgnoredPatterns: ['\A\s+test \".+\" do\z', '\A\s*\#']
+  Exclude:
+    - 'db/migrate/0*.rb'
+    - 'db/migrate/1*.rb'
+    - 'db/migrate/201*.rb'
+    - 'db/migrate/20200*.rb'
+    - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
 
 Layout/RescueEnsureAlignment:
   Enabled: true
@@ -123,6 +142,11 @@ Style/AsciiComments:
     # We can not change nor remove it.
     - 'app/models/repository/git.rb'
 
+Style/BlockComments:
+  Enabled: true
+  Exclude:
+    - 'lib/diff.rb'
+
 Style/BlockDelimiters:
   Enabled: true
   Exclude:
@@ -165,6 +189,10 @@ Style/IdenticalConditionalBranches:
   Exclude:
     - 'config/initializers/10-patches.rb'
     - 'lib/redmine/wiki_formatting/textile/redcloth3.rb'
+
+Style/Lambda:
+  Enabled: true
+  EnforcedStyle: lambda
 
 Style/NegatedIfElseCondition:
   Enabled: false

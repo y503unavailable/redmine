@@ -900,10 +900,10 @@ class Query < ActiveRecord::Base
 
   def project_statement
     project_clauses = []
-    active_subprojects_ids = []
+    subprojects_ids = []
 
-    active_subprojects_ids = project.descendants.active.map(&:id) if project
-    if active_subprojects_ids.any?
+    subprojects_ids = project.descendants.where.not(status: Project::STATUS_ARCHIVED).ids if project
+    if subprojects_ids.any?
       if has_filter?("subproject_id")
         case operator_for("subproject_id")
         when '='
@@ -912,7 +912,7 @@ class Query < ActiveRecord::Base
           project_clauses << "#{Project.table_name}.id IN (%s)" % ids.join(',')
         when '!'
           # exclude the selected subprojects
-          ids = [project.id] + active_subprojects_ids - values_for("subproject_id").map(&:to_i)
+          ids = [project.id] + subprojects_ids - values_for("subproject_id").map(&:to_i)
           project_clauses << "#{Project.table_name}.id IN (%s)" % ids.join(',')
         when '!*'
           # main project only
@@ -1186,9 +1186,11 @@ class Query < ActiveRecord::Base
     if /[<>]/.match?(operator)
       where = "(#{where}) AND #{db_table}.#{db_field} <> ''"
     end
-    "#{queried_table_name}.#{customized_key} #{not_in} IN (" +
-      "SELECT #{customized_class.table_name}.id FROM #{customized_class.table_name}" +
-      " LEFT OUTER JOIN #{db_table} ON #{db_table}.customized_type='#{customized_class}' AND #{db_table}.customized_id=#{customized_class.table_name}.id AND #{db_table}.custom_field_id=#{custom_field_id}" +
+    "#{queried_table_name}.#{customized_key} #{not_in} IN (" \
+      "SELECT #{customized_class.table_name}.id FROM #{customized_class.table_name}" \
+      " LEFT OUTER JOIN #{db_table} ON #{db_table}.customized_type='#{customized_class}'" \
+      " AND #{db_table}.customized_id=#{customized_class.table_name}.id" \
+      " AND #{db_table}.custom_field_id=#{custom_field_id}" \
       " WHERE (#{where}) AND (#{filter[:field].visibility_by_project_condition}))"
   end
 
@@ -1677,7 +1679,10 @@ class Query < ActiveRecord::Base
 
   # Returns a SQL clause for a date or datetime field using relative dates.
   def relative_date_clause(table, field, days_from, days_to, is_custom_filter)
-    date_clause(table, field, (days_from ? User.current.today + days_from : nil), (days_to ? User.current.today + days_to : nil), is_custom_filter)
+    date_clause(
+      table, field, (days_from ? User.current.today + days_from : nil),
+      (days_to ? User.current.today + days_to : nil), is_custom_filter
+    )
   end
 
   # Returns a Date or Time from the given filter value

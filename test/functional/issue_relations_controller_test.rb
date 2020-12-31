@@ -154,7 +154,9 @@ class IssueRelationsControllerTest < Redmine::ControllerTest
   end
 
   def test_create_follows_relation_should_update_relations_list
-    issue1 = Issue.generate!(:subject => 'Followed issue', :start_date => Date.yesterday, :due_date => Date.today)
+    issue1 = Issue.generate!(:subject => 'Followed issue',
+                             :start_date => Date.yesterday,
+                             :due_date => Date.today)
     issue2 = Issue.generate!
 
     assert_difference 'IssueRelation.count' do
@@ -175,21 +177,22 @@ class IssueRelationsControllerTest < Redmine::ControllerTest
   end
 
   def test_should_create_relations_with_visible_issues_only
-    Setting.cross_project_issue_relations = '1'
-    assert_nil Issue.visible(User.find(3)).find_by_id(4)
+    with_settings :cross_project_issue_relations => '1' do
+      assert_nil Issue.visible(User.find(3)).find_by_id(4)
 
-    assert_no_difference 'IssueRelation.count' do
-      post(
-        :create,
-        :params => {
-          :issue_id => 1,
-          :relation => {
-            :issue_to_id => '4',
-            :relation_type => 'relates',
-            :delay => ''
+      assert_no_difference 'IssueRelation.count' do
+        post(
+          :create,
+          :params => {
+            :issue_id => 1,
+            :relation => {
+              :issue_to_id => '4',
+              :relation_type => 'relates',
+              :delay => ''
+            }
           }
-        }
-      )
+        )
+      end
     end
   end
 
@@ -211,6 +214,53 @@ class IssueRelationsControllerTest < Redmine::ControllerTest
       assert_equal 'text/javascript', response.media_type
     end
     assert_include 'Related issue cannot be blank', response.body
+  end
+
+  def test_bulk_create_with_multiple_issue_to_id_issues
+    assert_difference 'IssueRelation.count', +3 do
+      post :create, :params => {
+        :issue_id => 1,
+        :relation => {
+          # js autocomplete adds a comma at the end
+          # issue to id should accept both id and hash with id
+          :issue_to_id => '2,3,#7, ',
+          :relation_type => 'relates',
+          :delay => ''
+        }
+      },
+      :xhr => true
+    end
+
+    assert_response :success
+    relations = IssueRelation.where(:issue_from_id => 1, :issue_to_id => [2, 3, 7])
+    assert_equal 3, relations.count
+    # all relations types should be 'relates'
+    relations.map {|r| assert_equal 'relates', r.relation_type}
+
+    # no error messages should be returned in the response
+    assert_not_include 'id=\"errorExplanation\"', response.body
+  end
+
+  def test_bulk_create_should_show_errors
+    assert_difference 'IssueRelation.count', +3 do
+      post :create, :params => {
+        :issue_id => 1,
+        :relation => {
+          :issue_to_id => '1,2,3,4,5,7',
+          :relation_type => 'relates',
+          :delay => ''
+        }
+      },
+      :xhr => true
+    end
+
+    assert_response :success
+    assert_equal 'text/javascript', response.media_type
+    # issue #1 is invalid
+    assert_include 'Related issue is invalid: #1', response.body
+    # issues #4 and #5 can't be related by default
+    assert_include 'Related issue cannot be blank', response.body
+    assert_include 'Related issue doesn&#39;t belong to the same project', response.body
   end
 
   def test_destroy
