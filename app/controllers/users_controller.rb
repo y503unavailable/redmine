@@ -28,6 +28,7 @@ class UsersController < ApplicationController
 
   helper :sort
   include SortHelper
+  helper :issues
   helper :custom_fields
   include CustomFieldsHelper
   include UsersHelper
