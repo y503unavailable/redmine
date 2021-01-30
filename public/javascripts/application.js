@@ -1,13 +1,6 @@
 /* Redmine - project management software
    Copyright (C) 2006-2020  Jean-Philippe Lang */
 
-/* Fix for CVE-2015-9251, to be removed with JQuery >= 3.0 */
-$.ajaxPrefilter(function (s) {
-  if (s.crossDomain) {
-    s.contents.script = false;
-  }
-});
-
 function checkAll(id, checked) {
   $('#'+id).find('input[type=checkbox]:enabled').prop('checked', checked);
 }
@@ -1079,15 +1072,15 @@ function setupWikiTableSortableHeader() {
 }
 
 $(function () {
-    $('[title]').tooltip({
-        show: {
-          delay: 400
-        },
-        position: {
-          my: "center bottom-5",
-          at: "center top"
-        }
-    });
+  $("[title]:not(.no-tooltip)").tooltip({
+    show: {
+      delay: 400
+    },
+    position: {
+      my: "center bottom-5",
+      at: "center top"
+    }
+  });
 });
 
 function inlineAutoComplete(element) {

@@ -2340,6 +2340,54 @@ class IssuesControllerTest < Redmine::ControllerTest
     end
   end
 
+  def test_show_should_show_subtasks_stats
+    @request.session[:user_id] = 1
+    child1 = Issue.generate!(parent_issue_id: 1, subject: 'Open child issue')
+    Issue.generate!(parent_issue_id: 1, subject: 'Closed child issue', status_id: 5)
+    Issue.generate!(parent_issue_id: child1.id, subject: 'Open child of child')
+    # Issue not visible for anonymous
+    Issue.generate!(parent_issue_id: 1, subject: 'Private child', project_id: 5)
+
+    get(:show, params: {:id => 1})
+    assert_response :success
+
+    assert_select 'div#issue_tree span.issues-stat' do
+      assert_select 'span.badge', text: '4'
+      assert_select 'span.open a', text: '3 open'
+      assert_equal CGI.unescape(css_select('span.open a').first.attr('href')),
+                   "/issues?parent_id=~1&set_filter=true&status_id=o"
+
+      assert_select 'span.closed a', text: '1 closed'
+      assert_equal CGI.unescape(css_select('span.closed a').first.attr('href')),
+                   "/issues?parent_id=~1&set_filter=true&status_id=c"
+    end
+  end
+
+  def test_show_subtasks_stats_should_not_link_if_issue_has_zero_open_or_closed_subtasks
+    child1 = Issue.generate!(parent_issue_id: 1, subject: 'Open child issue')
+
+    get(:show, params: {:id => 1})
+    assert_response :success
+
+    assert_select 'div#issue_tree span.issues-stat' do
+      assert_select 'span.open a', text: '1 open'
+      assert_equal CGI.unescape(css_select('span.open a').first.attr('href')),
+                   "/issues?parent_id=~1&set_filter=true&status_id=o"
+      assert_select 'span.closed', text: '0 closed'
+      assert_select 'span.closed a', 0
+    end
+  end
+
+  def test_show_should_not_show_subtasks_stats_if_subtasks_are_not_visible
+    # Issue not visible for anonymous
+    Issue.generate!(parent_issue_id: 1, subject: 'Private child', project_id: 5)
+
+    get(:show, params: {:id => 1})
+    assert_response :success
+
+    assert_select 'div#issue_tree span.issues-stat', 0
+  end
+
   def test_show_should_list_parents
     issue = Issue.
               create!(
@@ -2605,6 +2653,21 @@ class IssuesControllerTest < Redmine::ControllerTest
         assert_select 'img.gravatar[title=?]', 'A Team'
         assert_select 'a[href="/users/10"]', false
         assert_select 'a[class*=delete]'
+      end
+    end
+  end
+
+  def test_show_should_mark_invalid_watchers
+    @request.session[:user_id] = 2
+    issue = Issue.find(4)
+    issue.add_watcher User.find(4)
+
+    get :show, :params => {:id => issue.id}
+
+    assert_response :success
+    assert_select 'div#watchers ul' do
+      assert_select 'li.user-4' do
+        assert_select 'span.icon-warning[title=?]', l(:notice_invalid_watcher), text: l(:notice_invalid_watcher)
       end
     end
   end
@@ -3139,6 +3202,30 @@ class IssuesControllerTest < Redmine::ControllerTest
     )
     assert_response :success
     assert_select 'select[name="issue[project_id]"]', 0
+  end
+
+  def test_get_new_should_not_show_invalid_projects_when_issue_is_a_subtask
+    @request.session[:user_id] = 2
+    issue = Issue.find(1)
+    issue.parent_id = 3
+    issue.save
+
+    with_settings :cross_project_subtasks => 'tree' do
+      get(
+        :new,
+        :params => {
+          :project_id => 1,
+          :parent_issue_id => 1
+        }
+      )
+    end
+    assert_response :success
+    assert_select 'select[name="issue[project_id]"]' do
+      assert_select 'option', 3
+
+      # Onlinestore project should not be included
+      assert_select 'option[value=?]', '2', 0
+    end
   end
 
   def test_get_new_with_minimal_permissions
@@ -4037,6 +4124,8 @@ class IssuesControllerTest < Redmine::ControllerTest
       )
     end
     assert_response :success
+
+    assert_select 'label[for=?][class=?]', "issue_custom_field_values_#{field.id}", 'error'
     assert_select_error /Database cannot be blank/
   end
 
@@ -4070,6 +4159,10 @@ class IssuesControllerTest < Redmine::ControllerTest
       )
       assert_response :success
     end
+
+    assert_select 'label[for=?][class=?]', 'issue_due_date', 'error'
+    assert_select 'label[for=?][class=?]', "issue_custom_field_values_#{cf2.id}", 'error'
+
     assert_select_error /Due date cannot be blank/i
     assert_select_error /Bar cannot be blank/i
   end

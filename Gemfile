@@ -13,7 +13,7 @@ gem 'roadie-rails', (RUBY_VERSION < '2.5' ? '~> 1.3.0' : '~> 2.2.0')
 gem "mimemagic"
 gem "mail", "~> 2.7.1"
 gem 'csv', (RUBY_VERSION < '2.5' ? ['>= 3.1.1', '<= 3.1.5'] : '~> 3.1.1')
-gem "nokogiri", "~> 1.10.0"
+gem 'nokogiri', (RUBY_VERSION < '2.5' ? '~> 1.10.0' : '~> 1.11.1')
 gem 'i18n', '~> 1.8.2'
 gem "rbpdf", "~> 1.20.0"
 gem 'addressable'
@@ -92,7 +92,7 @@ group :test do
   gem 'capybara', '~> 3.31.0'
   gem "selenium-webdriver"
   # RuboCop
-  gem 'rubocop', '~> 1.5.2'
+  gem 'rubocop', '~> 1.8.1'
   gem 'rubocop-performance', '~> 1.9.0'
   gem 'rubocop-rails', '~> 2.9.0'
 end

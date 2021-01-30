@@ -104,6 +104,7 @@ div#wrapper, div#wrapper2, div#wrapper3 { min-height: inherit; }
 #sidebar div.wiki ul li {list-style-type:inherit;}
 #sidebar a.icon-only {opacity: 0.4; margin-left: 5px;}
 #sidebar a.icon-only:hover {opacity: 1;}
+#sidebar span.icon-warning {margin-left: 5px;}
 #sidebar li input[type=checkbox] {height: 20px;}
 
 #content { flex-grow: 1; background-color: #fff; margin: 0px; padding: 10px 16px 10px 16px; overflow-x: auto;}
@@ -540,6 +541,8 @@ body.controller-issues h2.inline-flex {padding-right: 0}
 #issue_tree td.checkbox, #relations td.checkbox {display:none;}
 #issue_tree td.subject, #relations td.subject {width: 50%;}
 #issue_tree td.buttons, #relations td.buttons {padding:0;}
+#issue_tree .issues-stat {font-size: 80%}
+#issue_tree .issues-stat .badge {bottom: initial;}
 
 #trackers_description {display:none;}
 #trackers_description dt {font-weight: bold; text-decoration: underline;}
@@ -925,7 +928,7 @@ span.required {color: #bb0000;}
 a.remove-upload:hover {text-decoration:none !important;}
 .existing-attachment.deleted .filename {text-decoration:line-through; color:#999 !important;}
 
-div.fileover { background-color: lavender; }
+div.fileover, p.custom-field-filedroplistner.fileover { background-color: lavender; }
 
 div.attachments p { margin:4px 0 2px 0; }
 div.attachments img { vertical-align: middle; }
@@ -1470,6 +1473,10 @@ td.gantt_selected_column .gantt_hdr,.gantt_selected_column_container {
   color: #1D781D;
   border: 1px solid #1D781D;
 }
+.badge-issues-count {
+  background: #EEEEEE;
+}
+
 /***** Tooltips *****/
 .ui-tooltip {
   background: #000;
