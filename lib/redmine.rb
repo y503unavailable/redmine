@@ -162,7 +162,7 @@ Redmine::AccessControl.map do |map|
   end
 
   map.project_module :wiki do |map|
-    map.permission :view_wiki_pages, {:wiki => [:index, :show, :special, :date_index]}, :read => true
+    map.permission :view_wiki_pages, {:wiki => [:index, :show, :special, :date_index], :auto_complete => [:wiki_pages]}, :read => true
     map.permission :view_wiki_edits, {:wiki => [:history, :diff, :annotate]}, :read => true
     map.permission :export_wiki_pages, {:wiki => [:export]}, :read => true
     map.permission :edit_wiki_pages, :wiki => [:new, :edit, :update, :preview, :add_attachment], :attachments => :upload
@@ -178,7 +178,7 @@ Redmine::AccessControl.map do |map|
     map.permission :browse_repository, {:repositories => [:show, :browse, :entry, :raw, :annotate, :changes, :diff, :stats, :graph]}, :read => true
     map.permission :commit_access, {}
     map.permission :manage_related_issues, {:repositories => [:add_related_issue, :remove_related_issue]}
-    map.permission :manage_repository, {:projects => :settings, :repositories => [:new, :create, :edit, :update, :committers, :destroy]}, :require => :member
+    map.permission :manage_repository, {:projects => :settings, :repositories => [:new, :create, :edit, :update, :committers, :destroy, :fetch_changesets]}, :require => :member
   end
 
   map.project_module :boards do |map|
@@ -188,6 +188,9 @@ Redmine::AccessControl.map do |map|
     map.permission :edit_own_messages, {:messages => :edit, :attachments => :upload}, :require => :loggedin
     map.permission :delete_messages, {:messages => :destroy}, :require => :member
     map.permission :delete_own_messages, {:messages => :destroy}, :require => :loggedin
+    map.permission :view_message_watchers, {}, :read => true
+    map.permission :add_message_watchers, {:watchers => [:new, :create, :autocomplete_for_user]}
+    map.permission :delete_message_watchers, {:watchers => :destroy}
     map.permission :manage_boards, {:projects => :settings, :boards => [:new, :create, :edit, :update, :destroy]}, :require => :member
   end
 
@@ -225,7 +228,7 @@ Redmine::MenuManager.map :application_menu do |menu|
   menu.push :projects, {:controller => 'projects', :action => 'index'},
             :permission => nil,
             :caption => :label_project_plural
-  menu.push :activity, {:controller => 'activities', :action => 'index'}
+  menu.push :activity, {:controller => 'activities', :action => 'index', :id => nil}
   menu.push(
     :issues,
     {:controller => 'issues', :action => 'index'},

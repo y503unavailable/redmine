@@ -1702,7 +1702,7 @@ module ApplicationHelper
   # Returns the javascript tags that are included in the html layout head
   def javascript_heads
     tags = javascript_include_tag(
-      'jquery-3.5.1-ui-1.12.1-ujs-5.2.3',
+      'jquery-3.5.1-ui-1.12.1-ujs-5.2.4.5',
       'jquery-migrate-3.3.2.min.js',
       'tribute-5.1.3.min',
       'tablesort-5.2.1.min.js',
@@ -1804,7 +1804,8 @@ module ApplicationHelper
 
   def autocomplete_data_sources(project)
     {
-      issues: auto_complete_issues_path(:project_id => project, :q => '')
+      issues: auto_complete_issues_path(:project_id => project, :q => ''),
+      wiki_pages: auto_complete_wiki_pages_path(:project_id => project, :q => '')
     }
   end
 
@@ -1814,6 +1815,14 @@ module ApplicationHelper
       "rm = window.rm || {};" \
       "rm.AutoComplete = rm.AutoComplete || {};" \
       "rm.AutoComplete.dataSources = '#{data_sources.to_json}';"
+    )
+  end
+
+  def copy_object_url_link(url)
+    link_to_function(
+      l(:button_copy_link), 'copyTextToClipboard(this);',
+      class: 'icon icon-copy-link',
+      data: {'clipboard-text' => url}
     )
   end
 

@@ -218,7 +218,7 @@ fa:
   warning_attachments_not_saved: "%{count} پرونده نتوانست ذخیره شود."
   error_password_expired: "گذرواژه‌ی شما منقضی شده است یا راه‌بر درخواست تغییر آن را داده است."
   error_invalid_file_encoding: "این پرونده یک پرونده با کدگذاری %{encoding} نیست"
-  error_invalid_csv_file_or_settings: "این پرونده یک پرونده CSV نیست یا با تنظیمات زیر همخوان نیست."
+  error_invalid_csv_file_or_settings: "این پرونده یک پرونده CSV نیست یا با تنظیمات زیر همخوان نیست. (%{value})"
   error_can_not_read_import_file: "در هنگام خواندن پرونده برای ورود، خطایی رخ داد"
   error_attachment_extension_not_allowed: "پسوند %{extension} برای پیوست یک پسوند مجاز نیست"
   error_ldap_bind_credentials: "حساب/گذرواژه نامعتبر LDAP"
@@ -1090,7 +1090,6 @@ fa:
 
   text_select_mail_notifications: عمل‌هایی که برای آن‌ها باید رایانامه فرستاده شود را انتخاب کنید.
   text_regexp_info: برای نمونه ^[A-Z0-9]+$
-  text_min_max_length_info: 0 یعنی نامحدود
   text_project_destroy_confirmation: آیا واقعاً می‌خواهید این پروژه و همه داده‌های آن را حذف کنید؟
   text_subprojects_destroy_warning: "زیرپروژه‌های آن: %{value} هم حذف خواهند شد."
   text_workflow_edit: یک نقش و یک نوع مسأله را برای ویرایش گردش کار انتخاب کنید
@@ -1378,3 +1377,9 @@ fa:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

@@ -682,7 +682,6 @@ pt-BR:
 
   text_select_mail_notifications: Ações a serem notificadas por e-mail
   text_regexp_info: ex. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 = sem restrição
   text_project_destroy_confirmation: Você tem certeza que deseja excluir este projeto e todos os dados relacionados?
   text_subprojects_destroy_warning: "Seu(s) subprojeto(s): %{value} também serão excluídos."
   text_workflow_edit: Selecione um papel e um tipo de tarefa para editar o fluxo de trabalho
@@ -1158,7 +1157,7 @@ pt-BR:
   notice_import_finished_with_errors: "%{count} fora de %{total} não puderam ser importados"
   error_invalid_file_encoding: O arquivo não é válido %{encoding} é a codificação do arquivo
   error_invalid_csv_file_or_settings: O arquivo não é um arquivo CSV ou não corresponde às
-    definições abaixo
+    definições abaixo (%{value})
   error_can_not_read_import_file: Ocorreu um erro ao ler o arquivo para importação
   permission_import_issues: Importar tarefas
   label_import_issues: Importar tarefas
@@ -1409,3 +1408,9 @@ pt-BR:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

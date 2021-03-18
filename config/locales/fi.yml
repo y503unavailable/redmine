@@ -625,7 +625,6 @@ fi:
 
   text_select_mail_notifications: Valitse tapahtumat joista tulisi lähettää sähköpostimuistutus.
   text_regexp_info: esim. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 tarkoittaa, ei rajoitusta
   text_project_destroy_confirmation: Oletko varma että haluat poistaa tämän projektin ja kaikki siihen kuuluvat tiedot?
   text_workflow_edit: Valitse rooli ja tapahtuma muokataksesi työnkulkua
   text_are_you_sure: Oletko varma?
@@ -1161,7 +1160,7 @@ fi:
   notice_import_finished_with_errors: "%{count} out of %{total} items could not be imported"
   error_invalid_file_encoding: The file is not a valid %{encoding} encoded file
   error_invalid_csv_file_or_settings: The file is not a CSV file or does not match the
-    settings below
+    settings below (%{value})
   error_can_not_read_import_file: An error occurred while reading the file to import
   permission_import_issues: Import issues
   label_import_issues: Import issues
@@ -1425,3 +1424,9 @@ fi:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

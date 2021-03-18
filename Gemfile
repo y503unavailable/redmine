@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '>= 2.4.0', '< 2.8.0'
 gem 'bundler', '>= 1.12.0'
 
-gem 'rails', '5.2.4.4'
+gem 'rails', '5.2.4.5'
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
 gem 'rouge', '~> 3.26.0'
 gem 'request_store', '~> 1.5.0'
@@ -91,9 +91,10 @@ group :test do
   gem 'puma'
   gem 'capybara', '~> 3.31.0'
   gem "selenium-webdriver"
+  gem 'webdrivers', '~> 4.4', require: false
   # RuboCop
-  gem 'rubocop', '~> 1.8.1'
-  gem 'rubocop-performance', '~> 1.9.0'
+  gem 'rubocop', '~> 1.11.0'
+  gem 'rubocop-performance', '~> 1.10.1'
   gem 'rubocop-rails', '~> 2.9.0'
 end
 

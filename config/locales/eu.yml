@@ -798,7 +798,6 @@ eu:
 
   text_select_mail_notifications: Jakinarazpenak zein ekintzetarako bidaliko diren hautatu.
   text_regexp_info: adib. ^[A-Z0-9]+$
-  text_min_max_length_info: 0k mugarik gabe esan nahi du
   text_project_destroy_confirmation: Ziur zaude proiektu hau eta erlazionatutako datu guztiak ezabatu nahi dituzula?
   text_subprojects_destroy_warning: "%{value} azpiproiektuak ere ezabatuko dira."
   text_workflow_edit: Hautatu rola eta aztarnaria workflow-a editatzeko
@@ -1141,7 +1140,7 @@ eu:
   notice_import_finished_with_errors: "%{count} out of %{total} items could not be imported"
   error_invalid_file_encoding: The file is not a valid %{encoding} encoded file
   error_invalid_csv_file_or_settings: The file is not a CSV file or does not match the
-    settings below
+    settings below (%{value})
   error_can_not_read_import_file: An error occurred while reading the file to import
   permission_import_issues: Import issues
   label_import_issues: Import issues
@@ -1405,3 +1404,9 @@ eu:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

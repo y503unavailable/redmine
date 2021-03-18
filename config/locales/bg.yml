@@ -224,7 +224,7 @@ bg:
   warning_attachments_not_saved: "%{count} файла не бяха записани."
   error_password_expired: Вашата парола е с изтекъл срок или администраторът изисква да я смените.
   error_invalid_file_encoding: Файлът няма валидно %{encoding} кодиране.
-  error_invalid_csv_file_or_settings: Файлът не е CSV файл или не съответства на зададеното по-долу
+  error_invalid_csv_file_or_settings: Файлът не е CSV файл или не съответства на зададеното по-долу (%{value})
   error_can_not_read_import_file: Грешка по време на четене на импортирания файл
   error_attachment_extension_not_allowed: Файлове от тип %{extension} не са позволени
   error_ldap_bind_credentials: Невалидни LDAP име/парола
@@ -1150,6 +1150,7 @@ bg:
   button_copy: Копиране
   button_copy_and_follow: Копиране и продължаване
   button_annotate: Анотация
+  button_fetch_changesets: Извличане на ревизиите
   button_update: Обновяване
   button_configure: Конфигуриране
   button_quote: Цитат
@@ -1183,7 +1184,6 @@ bg:
 
   text_select_mail_notifications: Изберете събития за изпращане на e-mail.
   text_regexp_info: пр. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 - без ограничения
   text_project_destroy_confirmation: Сигурни ли сте, че искате да изтриете проекта и данните в него?
   text_subprojects_destroy_warning: "Неговите подпроекти: %{value} също ще бъдат изтрити."
   text_workflow_edit: Изберете роля и тракер за да редактирате работния процес
@@ -1364,3 +1364,8 @@ bg:
     Това действие не може да бъде отменено. Често заключването на потребителя е по-добро решение от изтриването му.
     За да потвърдите, въведете името (%{login}) по-долу.
   text_project_destroy_enter_identifier: За да потвърдите действието, въведете идентификатора на проекта (%{identifier}) по-долу.
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

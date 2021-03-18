@@ -637,6 +637,7 @@ module IssuesHelper
   end
 
   # Find the name of an associated record stored in the field attribute
+  # For project, return the associated record only if is visible for the current User
   def find_name_by_reflection(field, id)
     return nil if id.blank?
 
@@ -645,7 +646,7 @@ module IssuesHelper
       name = nil
       if association
         record = association.klass.find_by_id(key.last)
-        if record
+        if (record && !record.is_a?(Project)) || (record.is_a?(Project) && record.visible?)
           name = record.name.force_encoding('UTF-8')
         end
       end
@@ -746,7 +747,7 @@ module IssuesHelper
   def projects_for_select(issue)
     if issue.parent_issue_id.present?
       issue.allowed_target_projects_for_subtask(User.current)
-    elsif issue.new_record? && !issue.copy?
+    elsif @project && issue.new_record? && !issue.copy?
       issue.allowed_target_projects(User.current, 'descendants')
     else
       issue.allowed_target_projects(User.current)

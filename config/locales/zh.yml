@@ -836,7 +836,6 @@ zh:
 
   text_select_mail_notifications: 选择需要发送邮件通知的动作
   text_regexp_info: 例如：^[A-Z0-9]+$
-  text_min_max_length_info: 0 表示没有限制
   text_project_destroy_confirmation: 您确信要删除这个项目以及所有相关的数据吗？
   text_subprojects_destroy_warning: "以下子项目也将被同时删除：%{value}"
   text_workflow_edit: 选择角色和跟踪标签来编辑工作流程
@@ -1136,7 +1135,7 @@ zh:
   notice_import_finished: 成功导入 %{count} 个项目
   notice_import_finished_with_errors: 有 %{count} 个项目无法导入(共计 %{total} 个)
   error_invalid_file_encoding: 这不是一个有效的 %{encoding} 编码文件
-  error_invalid_csv_file_or_settings: 这不是一个CSV文件或者不符合以下设置
+  error_invalid_csv_file_or_settings: 这不是一个CSV文件或者不符合以下设置 (%{value})
   error_can_not_read_import_file: 读取导入文件时发生错误
   permission_import_issues: 问题导入
   label_import_issues: 问题导入
@@ -1359,3 +1358,9 @@ zh:
   button_add_subtask: 新建子任务
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

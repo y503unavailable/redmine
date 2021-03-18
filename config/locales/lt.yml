@@ -218,7 +218,7 @@ lt:
   warning_attachments_not_saved: "%{count} byla(-ų) negali būti išsaugota."
   error_password_expired: "Jūsų slaptažodžio galiojimo laikas baigėsi arba administratorius reikalauja jūsų jį pasikeisti"
   error_invalid_file_encoding: "Failas nėra tinkamas %{encoding} koduotės failas"
-  error_invalid_csv_file_or_settings: "Failas nėra CSV failas arba neatitinka žemiau esančių nustatymų"
+  error_invalid_csv_file_or_settings: "Failas nėra CSV failas arba neatitinka žemiau esančių nustatymų (%{value})"
   error_can_not_read_import_file: "Iškilo klaida skaitant importuojamą failą"
   error_attachment_extension_not_allowed: "Priedo plėtinys %{extension} negalimas"
   error_ldap_bind_credentials: "Netinkamas LDAP Vartotojo vardas/Slaptažodis"
@@ -1054,7 +1054,6 @@ lt:
 
   text_select_mail_notifications: Išrinkite veiksmus, apie kuriuos būtų pranešta elektroniniu paštu.
   text_regexp_info: pvz. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 reiškia jokių apribojimų
   text_project_destroy_confirmation: Ar esate įsitikinęs, kad norite pašalinti šį projektą ir visus susijusius duomenis?
   text_subprojects_destroy_warning: "Šis(-ie) sub-projektas(-ai): %{value} bus taip pat pašalinti."
   text_workflow_edit: Išrinkite vaidmenį ir pėdsekį, kad redaguotumėte darbų eigą
@@ -1394,3 +1393,9 @@ lt:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

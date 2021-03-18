@@ -234,7 +234,7 @@ fr:
   warning_attachments_not_saved: "%{count} fichier(s) n'ont pas pu être sauvegardés."
   error_password_expired: "Votre mot de passe a expiré ou nécessite d'être changé."
   error_invalid_file_encoding: "Le fichier n'est pas un fichier %{encoding} valide"
-  error_invalid_csv_file_or_settings: "Le fichier n'est pas un fichier CSV ou n'est pas conforme aux paramètres sélectionnés"
+  error_invalid_csv_file_or_settings: "Le fichier n'est pas un fichier CSV ou n'est pas conforme aux paramètres sélectionnés (%{value})"
   error_can_not_read_import_file: "Une erreur est survenue lors de la lecture du fichier à importer"
   error_attachment_extension_not_allowed: "L'extension %{extension} n'est pas autorisée"
   error_ldap_bind_credentials: "Identifiant ou mot de passe LDAP incorrect"
@@ -1099,7 +1099,6 @@ fr:
 
   text_select_mail_notifications: Actions pour lesquelles une notification par e-mail est envoyée
   text_regexp_info: ex. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 pour aucune restriction
   text_project_destroy_confirmation: Êtes-vous sûr de vouloir supprimer ce projet et toutes ses données ?
   text_subprojects_destroy_warning: "Ses sous-projets : %{value} seront également supprimés."
   text_workflow_edit: Sélectionner un tracker et un rôle pour éditer le workflow
@@ -1394,3 +1393,9 @@ fr:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

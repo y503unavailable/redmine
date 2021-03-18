@@ -741,7 +741,6 @@ nl:
   text_issues_ref_in_commit_messages: Opzoeken en aanpassen van issues in commitberichten
   text_length_between: "Lengte tussen %{min} en %{max} tekens."
   text_load_default_configuration: Standaardconfiguratie laden
-  text_min_max_length_info: 0 betekent geen beperking
   text_no_configuration_data: "Rollen, trackers, issuestatussen en workflows zijn nog niet geconfigureerd.\nHet is ten zeerste aangeraden om de standaardconfiguratie in te laden. U kunt deze aanpassen nadat deze is ingeladen."
   text_plugin_assets_writable: Plugin assets map schrijfbaar
   text_project_destroy_confirmation: Weet u zeker dat u dit project en alle gerelateerde gegevens wilt verwijderen?
@@ -1117,7 +1116,7 @@ nl:
   notice_import_finished: "%{count} items werden geïmporteerd"
   notice_import_finished_with_errors: "%{count} van in totaal %{total} items kunnen niet geïmporteerd worden"
   error_invalid_file_encoding: Het bestand is geen geldig geëncodeerd %{encoding} bestand
-  error_invalid_csv_file_or_settings: Het bestand is geen CSV-bestand of voldoet niet aan onderstaande instellingen
+  error_invalid_csv_file_or_settings: Het bestand is geen CSV-bestand of voldoet niet aan onderstaande instellingen (%{value})
   error_can_not_read_import_file: Er is een fout opgetreden bij het inlezen van het bestand
   permission_import_issues: Issues importeren
   label_import_issues: Issues importeren
@@ -1379,3 +1378,9 @@ nl:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

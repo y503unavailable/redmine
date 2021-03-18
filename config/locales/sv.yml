@@ -990,7 +990,6 @@ sv:
 
   text_select_mail_notifications: Välj för vilka händelser mail ska skickas.
   text_regexp_info: eg. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 betyder ingen gräns
   text_project_destroy_confirmation: Är du säker på att du vill ta bort detta projekt och all relaterad data?
   text_subprojects_destroy_warning: "Alla underprojekt: %{value} kommer också tas bort."
   text_workflow_edit: Välj en roll och en ärendetyp för att ändra arbetsflöde
@@ -1173,7 +1172,7 @@ sv:
   notice_import_finished_with_errors: "%{count} av %{total} artiklar kunde inte importeras"
   error_invalid_file_encoding: Filen är inte en %{encoding}-kodad fil
   error_invalid_csv_file_or_settings: Filen är inte en CSV-fil eller stämmer inte med
-    inställningarna nedan
+    inställningarna nedan (%{value})
   error_can_not_read_import_file: Fel vid läsning av fil att importera
   permission_import_issues: Importera ärenden
   label_import_issues: Importera ärenden
@@ -1437,3 +1436,9 @@ sv:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

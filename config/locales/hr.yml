@@ -788,7 +788,6 @@ hr:
 
   text_select_mail_notifications: Izbor akcija za koje će biti poslana obavijest e-poštom.
   text_regexp_info: eg. ^[A-Z0-9]+$
-  text_min_max_length_info: 0 znači bez ograničenja
   text_project_destroy_confirmation: Da li ste sigurni da želite izbrisati ovaj projekt i sve njegove podatke?
   text_subprojects_destroy_warning: "Njegov(i) potprojekt(i): %{value} će također biti obrisan."
   text_workflow_edit: Select a role and a tracker to edit the workflow
@@ -1137,7 +1136,7 @@ hr:
   notice_import_finished_with_errors: "%{count} out of %{total} items could not be imported"
   error_invalid_file_encoding: The file is not a valid %{encoding} encoded file
   error_invalid_csv_file_or_settings: The file is not a CSV file or does not match the
-    settings below
+    settings below (%{value})
   error_can_not_read_import_file: An error occurred while reading the file to import
   permission_import_issues: Import issues
   label_import_issues: Import issues
@@ -1401,3 +1400,9 @@ hr:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link

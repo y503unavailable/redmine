@@ -604,7 +604,6 @@ uk:
 
   text_select_mail_notifications: Виберіть дії, на які відсилатиметься повідомлення на електронну пошту.
   text_regexp_info: наприклад ^[A-Z0-9]+$
-  text_min_max_length_info: 0 означає відсутність заборон
   text_project_destroy_confirmation: Ви наполягаєте на видаленні цього проекту і всієї інформації, що відноситься до нього?
   text_workflow_edit: Виберіть роль і координатор для редагування послідовності дій
   text_are_you_sure: Ви впевнені?
@@ -1141,7 +1140,7 @@ uk:
   notice_import_finished: "%{count} елементи(ів) було імпортовано"
   notice_import_finished_with_errors: "%{count} з %{total} елементи(ів) неможливо імпортувати"
   error_invalid_file_encoding: Кодування файлу не відповідає видраній(ому) %{encoding}
-  error_invalid_csv_file_or_settings: Файл не є файлом CSV або не відповідає вибраним налаштуванням
+  error_invalid_csv_file_or_settings: Файл не є файлом CSV або не відповідає вибраним налаштуванням (%{value})
   error_can_not_read_import_file: Під час читання файлу для імпорту виникла помилка
   permission_import_issues: Імпорт задач
   label_import_issues: Імпорт задач
@@ -1392,3 +1391,9 @@ uk:
   button_add_subtask: Add subtask
   notice_invalid_watcher: 'Invalid watcher: User will not receive any notifications
     because it does not have access to view this object.'
+  button_fetch_changesets: Fetch commits
+  permission_view_message_watchers: View message watchers list
+  permission_add_message_watchers: Add message watchers
+  permission_delete_message_watchers: Delete message watchers
+  label_message_watchers: Watchers
+  button_copy_link: Copy link
