@@ -1110,6 +1110,9 @@ function setupWikiTableSortableHeader() {
 
 $(function () {
   $("[title]:not(.no-tooltip)").tooltip({
+    content: function() {
+      return $(title)
+    },
     show: {
       delay: 400
     },
