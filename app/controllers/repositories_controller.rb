@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@ class RepositoriesController < ApplicationController
   before_action :find_changeset, :only => [:revision, :add_related_issue, :remove_related_issue]
   before_action :authorize
   accept_rss_auth :revisions
+  accept_api_auth :add_related_issue, :remove_related_issue
 
   rescue_from Redmine::Scm::Adapters::CommandFailed, :with => :show_error_command_failed
 
@@ -233,8 +234,14 @@ class RepositoriesController < ApplicationController
       @issue = nil
     end
 
-    if @issue
-      @changeset.issues << @issue
+    respond_to do |format|
+      if @issue
+        @changeset.issues << @issue
+        format.api { render_api_ok }
+      else
+        format.api { render_api_errors "#{l(:label_issue)} #{l('activerecord.errors.messages.invalid')}" }
+      end
+      format.js
     end
   end
 
@@ -244,6 +251,10 @@ class RepositoriesController < ApplicationController
     @issue = Issue.visible.find_by_id(params[:issue_id])
     if @issue
       @changeset.issues.delete(@issue)
+    end
+    respond_to do |format|
+      format.api { render_api_ok }
+      format.js
     end
   end
 

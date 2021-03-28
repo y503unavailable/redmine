@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -368,8 +368,10 @@ class Attachment < ActiveRecord::Base
   end
 
   def self.latest_attach(attachments, filename)
+    return unless filename.valid_encoding?
+
     attachments.sort_by(&:created_on).reverse.detect do |att|
-      filename.casecmp(att.filename) == 0
+      filename.casecmp?(att.filename)
     end
   end
 

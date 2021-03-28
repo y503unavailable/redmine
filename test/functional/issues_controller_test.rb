@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -2076,8 +2076,8 @@ class IssuesControllerTest < Redmine::ControllerTest
       assert_select 'a', {:count => 1, :text => 'Edit'}
       assert_select 'a', {:count => 0, :text => 'Log time'}
       assert_select 'a', {:count => 0, :text => 'Watch'}
+      assert_select 'a', {:count => 0, :text => 'Copy'}
       assert_select 'div.drdn-items a', {:count => 1, :text => 'Copy link'}
-      assert_select 'div.drdn-items a', {:count => 0, :text => 'Copy'}
       assert_select 'div.drdn-items a', {:count => 0, :text => 'Delete'}
     end
     # anonymous role is allowed to add a note
@@ -2098,8 +2098,8 @@ class IssuesControllerTest < Redmine::ControllerTest
       assert_select 'a', {:count => 1, :text => 'Edit'}
       assert_select 'a', {:count => 1, :text => 'Log time'}
       assert_select 'a', {:count => 1, :text => 'Watch'}
+      assert_select 'a', {:count => 1, :text => 'Copy'}
       assert_select 'div.drdn-items a', {:count => 1, :text => 'Copy link'}
-      assert_select 'div.drdn-items a', {:count => 1, :text => 'Copy'}
       assert_select 'div.drdn-items a', {:count => 1, :text => 'Delete'}
     end
     assert_select 'form#issue-form' do
@@ -3203,16 +3203,16 @@ class IssuesControllerTest < Redmine::ControllerTest
     get(
       :new,
       :params => {
-        :project_id => 1,
+        :project_id => 3,
         :tracker_id => 1
       }
     )
     assert_response :success
     assert_select 'select[name="issue[project_id]"]' do
       assert_select 'option', 3
-      assert_select 'option[selected=selected]', :text => 'eCookbook'
+      assert_select 'option[value=?]', '1', :text => 'eCookbook'
       assert_select 'option[value=?]', '5', :text => '  » Private child of eCookbook'
-      assert_select 'option[value=?]', '3', :text => '  » eCookbook Subproject 1'
+      assert_select 'option[selected=selected][value=?]', '3', :text => '  » eCookbook Subproject 1'
 
       # user_id 2 is not allowed to add issues on project_id 4 (it's not a member)
       assert_select 'option[value=?]', '4', 0

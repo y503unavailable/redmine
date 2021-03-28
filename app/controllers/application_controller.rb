@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
       cookies.delete(autologin_cookie_name)
       self.logged_user = nil
       set_localization
-      render_error :status => 422, :message => "Invalid form authenticity token."
+      render_error :status => 422, :message => l(:error_invalid_authenticity_token)
     end
   end
 
@@ -735,7 +735,7 @@ class ApplicationController < ActionController::Base
   def query_statement_invalid(exception)
     logger.error "Query::StatementInvalid: #{exception.message}" if logger
     session.delete(:issue_query)
-    render_error "An error occurred while executing the query and has been logged. Please report this error to your Redmine administrator."
+    render_error l(:error_query_statement_invalid)
   end
 
   # Renders a 204 response for successful updates or deletions via the API

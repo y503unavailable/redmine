@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -748,7 +748,7 @@ module IssuesHelper
     if issue.parent_issue_id.present?
       issue.allowed_target_projects_for_subtask(User.current)
     elsif @project && issue.new_record? && !issue.copy?
-      issue.allowed_target_projects(User.current, 'descendants')
+      issue.allowed_target_projects(User.current, 'tree')
     else
       issue.allowed_target_projects(User.current)
     end

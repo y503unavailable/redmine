@@ -3,14 +3,14 @@ source 'https://rubygems.org'
 ruby '>= 2.4.0', '< 2.8.0'
 gem 'bundler', '>= 1.12.0'
 
-gem 'rails', '5.2.4.5'
+gem 'rails', '5.2.5'
 gem 'sprockets', '~> 3.7.2' if RUBY_VERSION < '2.5'
 gem 'rouge', '~> 3.26.0'
 gem 'request_store', '~> 1.5.0'
 gem "mini_mime", "~> 1.0.1"
 gem "actionpack-xml_parser"
 gem 'roadie-rails', (RUBY_VERSION < '2.5' ? '~> 1.3.0' : '~> 2.2.0')
-gem "mimemagic"
+gem 'marcel'
 gem "mail", "~> 2.7.1"
 gem 'csv', (RUBY_VERSION < '2.5' ? ['>= 3.1.1', '<= 3.1.5'] : '~> 3.1.1')
 gem 'nokogiri', (RUBY_VERSION < '2.5' ? '~> 1.10.0' : '~> 1.11.1')
@@ -93,7 +93,7 @@ group :test do
   gem "selenium-webdriver"
   gem 'webdrivers', '~> 4.4', require: false
   # RuboCop
-  gem 'rubocop', '~> 1.11.0'
+  gem 'rubocop', '~> 1.12.0'
   gem 'rubocop-performance', '~> 1.10.1'
   gem 'rubocop-rails', '~> 2.9.0'
 end

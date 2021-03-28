@@ -1,5 +1,11 @@
 /* Redmine - project management software
-   Copyright (C) 2006-2020  Jean-Philippe Lang */
+   Copyright (C) 2006-2021  Jean-Philippe Lang */
+
+function sanitizeHTML(string) {
+  var temp = document.createElement('span');
+  temp.textContent = string;
+  return temp.innerHTML;
+}
 
 function checkAll(id, checked) {
   $('#'+id).find('input[type=checkbox]:enabled').prop('checked', checked);
@@ -364,15 +370,29 @@ function showIssueHistory(journal, url) {
 
   switch(journal) {
     case 'notes':
+      tab_content.find('.journal').show();
       tab_content.find('.journal:not(.has-notes)').hide();
-      tab_content.find('.journal.has-notes').show();
+      tab_content.find('.journal .wiki').show();
+      tab_content.find('.journal .contextual .journal-actions').show();
+
+      // always show thumbnails in notes tab
+      var thumbnails = tab_content.find('.journal .thumbnails');
+      thumbnails.show();
+      // show journals without notes, but with thumbnails
+      thumbnails.parents('.journal').show();
       break;
     case 'properties':
-      tab_content.find('.journal.has-notes').hide();
-      tab_content.find('.journal:not(.has-notes)').show();
+      tab_content.find('.journal').show();
+      tab_content.find('.journal:not(.has-details)').hide();
+      tab_content.find('.journal .wiki').hide();
+      tab_content.find('.journal .thumbnails').hide();
+      tab_content.find('.journal .contextual .journal-actions').hide();
       break;
     default:
       tab_content.find('.journal').show();
+      tab_content.find('.journal .wiki').show();
+      tab_content.find('.journal .thumbnails').show();
+      tab_content.find('.journal .contextual .journal-actions').show();
   }
 
   return false;
@@ -1147,6 +1167,9 @@ function inlineAutoComplete(element) {
           selectTemplate: function (issue) {
             return '#' + issue.original.id;
           },
+          menuItemTemplate: function (issue) {
+            return sanitizeHTML(issue.original.label);
+          },
           noMatchTemplate: function () {
             return '<span style:"visibility: hidden;"></span>';
           }
@@ -1163,6 +1186,9 @@ function inlineAutoComplete(element) {
           requireLeadingSpace: true,
           selectTemplate: function (wikiPage) {
             return '[[' + wikiPage.original.value + ']]';
+          },
+          menuItemTemplate: function (wikiPage) {
+            return sanitizeHTML(wikiPage.original.label);
           },
           noMatchTemplate: function () {
             return '<span style:"visibility: hidden;"></span>';

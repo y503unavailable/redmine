@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ module RolesHelper
   include ApplicationHelper
 
   def permissions_to_csv(roles, permissions)
-    Redmine::Export::CSV.generate do |csv|
+    Redmine::Export::CSV.generate(:encoding => params[:encoding]) do |csv|
       # csv header fields
       headers = [l(:field_cvs_module), l(:label_permissions)] + roles.collect(&:name)
       csv << headers

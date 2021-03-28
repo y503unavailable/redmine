@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Redmine - project management software
-# Copyright (C) 2006-2020  Jean-Philippe Lang
+# Copyright (C) 2006-2021  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -44,6 +44,14 @@ class WikiControllerTest < Redmine::ControllerTest
     get :show, :params => {:project_id => 'ecookbook'}
     assert_response :success
     assert_select 'a[href=?]', '/projects/ecookbook/wiki/CookBook_documentation.txt'
+  end
+
+  def test_edit_sidebar_link
+    Role.anonymous.add_permission! :edit_wiki_pages
+    Role.anonymous.add_permission! :protect_wiki_pages
+    get :show, :params => {:project_id => 'ecookbook'}
+    assert_response :success
+    assert_select 'a[href=?]', '/projects/ecookbook/wiki/sidebar/edit'
   end
 
   def test_show_page_with_name
