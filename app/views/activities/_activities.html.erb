@@ -10,6 +10,16 @@
   <%= link_to format_activity_title(e.event_title), e.event_url %>
   </dt>
   <dd class="<%= "grouped" if in_group %>"><span class="description"><%= format_activity_description(e.event_description) %></span>
+  <% if e.event_type.eql?('issue-note') %>
+    <% @journal=Journal.find(e.id) %>
+      <% if @journal.details.any? %>
+        <ul class="details">
+        <% details_to_strings(@journal.visible_details).each do |string| %>
+         <li><%= string %></li>
+      <% end %>
+      </ul>
+    <% end %>
+  <% end %>
   <span class="author"><%= link_to_user(e.event_author) if e.respond_to?(:event_author) %></span></dd>
 <% end -%>
 </dl>
