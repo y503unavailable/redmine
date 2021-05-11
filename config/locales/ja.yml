@@ -1392,3 +1392,5 @@ ja:
   error_invalid_authenticity_token: Invalid form authenticity token.
   error_query_statement_invalid: An error occurred while executing the query and has
     been logged. Please report this error to your Redmine administrator.
+  setting_text_send_mail_multi_or_single: メール送信形態選択（単一/個別）
+ 
