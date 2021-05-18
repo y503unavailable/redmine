@@ -1139,6 +1139,22 @@ class Issue < ActiveRecord::Base
     notified_users.collect(&:mail)
   end
 
+  #revert 17584
+  def each_notification(users, &block)
+    if users.any?
+      if custom_field_values.detect {|value| !value.custom_field.visible?}
+        users_by_custom_field_visibility = users.group_by do |user|
+          visible_custom_field_values(user).map(&:custom_field_id).sort
+        end
+        users_by_custom_field_visibility.values.each do |users|
+          yield(users)
+        end
+      else
+        yield(users)
+      end
+    end
+  end
+
   def notify?
     @notify != false
   end
