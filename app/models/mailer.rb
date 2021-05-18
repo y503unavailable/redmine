@@ -83,10 +83,10 @@ class Mailer < ActionMailer::Base
     subject = "[#{issue.project.name} - #{issue.tracker.name} ##{issue.id}]"
     subject += " (#{issue.status.name})" if Setting.show_status_changes_in_mail_subject?
     subject += " #{issue.subject}"
-  # Temporary measures for cases where emails are not sent if the conditions for
-  # sending emails are individuals
- Rails.logger.error user
-  ActionMailer::Base.perform_deliveries=true
+    # Temporary measures for cases where emails are not sent if the conditions for
+    # sending emails are individuals
+    Rails.logger.error user
+    ActionMailer::Base.perform_deliveries=true
     mail :to => user,
       :subject => subject
   end
@@ -106,8 +106,8 @@ class Mailer < ActionMailer::Base
     @issue_url = url_for(:controller => 'issues', :action => 'show', :id => issue)
     @user = @users[0]
 
-  # Temporary measures for cases where emails are not sent if the conditions for sending emails are individuals
-  ActionMailer::Base.perform_deliveries=true
+    # Temporary measures for cases where emails are not sent if the conditions for sending emails are individuals
+    ActionMailer::Base.perform_deliveries=true
 
     mail :to => to_users,
       :cc => cc_users,
@@ -120,7 +120,7 @@ class Mailer < ActionMailer::Base
   #   Mailer.deliver_issue_add(issue)
   def self.deliver_issue_add(issue)
     if !Setting.text_send_mail_multi_or_single? then
-      Rails.logger.error "multimail"
+      Rails.logger.error "multimail-issue_add"
       # for multimail Redmine 4.0 and later style
       users = issue.notified_users | issue.notified_watchers
       users.each do |user|
@@ -128,7 +128,7 @@ class Mailer < ActionMailer::Base
         # issue_add(user, issue).deliver
       end
     else
-      Rails.logger.error "singlemail"
+      Rails.logger.error "singlemail-issue_add"
       # for singlemail before Redmine 4.0 style
       to = issue.notified_users
       cc = issue.notified_watchers - to
@@ -190,8 +190,8 @@ class Mailer < ActionMailer::Base
   # Example:
   #   Mailer.deliver_issue_edit(journal)
   def self.deliver_issue_edit(journal)
-  #  if Setting.text_send_mail_multi_or_singlei !="991" then
-     if "aa"=="aa" then
+    if !Setting.text_send_mail_multi_or_single? then
+      Rails.logger.error "multimail-issue_edit"
       # for multimail 4.0 and later style
       users  = journal.notified_users | journal.notified_watchers
       users.select! do |user|
@@ -201,6 +201,7 @@ class Mailer < ActionMailer::Base
         issue_edit(user, journal).deliver_later
       end
     else
+      Rails.logger.error "singlemail-issue_edit"
       # for singlemail before 4.0 style
       issue = journal.journalized.reload
       to = journal.notified_users
