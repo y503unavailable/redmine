@@ -109,8 +109,8 @@ class Mailer < ActionMailer::Base
     # Temporary measures for cases where emails are not sent if the conditions for sending emails are individuals
     ActionMailer::Base.perform_deliveries=true
 
-    mail :to => to_users,
-      :cc => cc_users,
+    mail :to => to_user,
+      :cc => @users,
       :subject => "[#{issue.project.name} - #{issue.tracker.name} ##{issue.id}] (#{issue.status.name}) #{issue.subject}"
   end
 
@@ -180,8 +180,8 @@ class Mailer < ActionMailer::Base
     @journal = journal
     @journal_details = journal.visible_details(@users.first)
     @issue_url = url_for(:controller => 'issues', :action => 'show', :id => issue, :anchor => "change-#{journal.id}")
-    mail :to => to_users,
-      :cc => cc_users,
+    mail :to => to_users[0],
+      :cc => @users,
       :subject => s
   end
 
@@ -206,11 +206,11 @@ class Mailer < ActionMailer::Base
       issue = journal.journalized.reload
       to = journal.notified_users
       cc = journal.notified_watchers - to
-      journal.each_notification(to + cc) do |users|
-        issue.each_notification(users) do |users2|
+      # journal.each_notification(to + cc) do |users|
+        # issue.each_notification(users) do |users2|
           issue_edit_singlemail(journal, to & users2, cc & users2).deliver_later
-        end
-      end
+        # end
+      # end
     end
   end
 
