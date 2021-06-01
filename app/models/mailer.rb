@@ -166,6 +166,7 @@ class Mailer < ActionMailer::Base
   def issue_edit_singlemail(journal, to_users, cc_users)
     issue = journal.journalized
     redmine_headers 'Project' => issue.project.identifier,
+                    'Issue-Tracker' => issue.tracker.name,
                     'Issue-Id' => issue.id,
                     'Issue-Author' => issue.author.login
     redmine_headers 'Issue-Assignee' => issue.assigned_to.login if issue.assigned_to
@@ -173,14 +174,14 @@ class Mailer < ActionMailer::Base
     references issue
     @author = journal.user
     s = "[#{issue.project.name} - #{issue.tracker.name} ##{issue.id}] "
-    s << "(#{issue.status.name}) " if journal.new_value_for('status_id')
-    s << issue.subject
+    s += "(#{issue.status.name}) " if journal.new_value_for('status_id') && Setting.show_status_changes_in_mail_subject?
+    s += issue.subject
     @issue = issue
     @users = to_users + cc_users
     @journal = journal
-    @journal_details = journal.visible_details(@users.first)
+    @journal_details = journal.visible_details
     @issue_url = url_for(:controller => 'issues', :action => 'show', :id => issue, :anchor => "change-#{journal.id}")
-    mail :to => to_users[0],
+    mail :to => @author,
       :cc => @users,
       :subject => s
   end
@@ -208,7 +209,7 @@ class Mailer < ActionMailer::Base
       cc = journal.notified_watchers - to
       # journal.each_notification(to + cc) do |users|
         # issue.each_notification(users) do |users2|
-          issue_edit_singlemail(journal, to & users2, cc & users2).deliver_later
+      issue_edit_singlemail(journal, to , cc ).deliver_later
         # end
       # end
     end
