@@ -163,7 +163,7 @@ class Mailer < ActionMailer::Base
 
   # Builds a mail for notifying to_users and cc_users about an issue update
   # Single message version
-  def issue_edit_singlemail(journal, to_users, cc_users)
+  def issue_edit_singlemail(author, journal, to_users, cc_users)
     issue = journal.journalized
     redmine_headers 'Project' => issue.project.identifier,
                     'Issue-Tracker' => issue.tracker.name,
@@ -205,13 +205,10 @@ class Mailer < ActionMailer::Base
       Rails.logger.error "singlemail-issue_edit"
       # for singlemail before 4.0 style
       issue = journal.journalized.reload
+      author = journal.user
       to = journal.notified_users
       cc = journal.notified_watchers - to
-      # journal.each_notification(to + cc) do |users|
-        # issue.each_notification(users) do |users2|
-      issue_edit_singlemail(journal, to , cc ).deliver_later
-        # end
-      # end
+      issue_edit_singlemail(author,journal, to , cc ).deliver_later
     end
   end
 
